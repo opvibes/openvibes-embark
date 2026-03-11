@@ -1,0 +1,4 @@
+[submodule "packages/duckflux-site"]
+	path = packages/duckflux-site
+	url = git@github.com:duckflux/site.git
+	fetchRecurseSubmodules = true

@@ -3,6 +3,8 @@
 {
   bun run scripts/ensure-deploy-config.ts
   bun run scripts/normalize-package-json.ts
+  bun run scripts/update-root-scripts.ts
+  bun run scripts/update-apps-jsonc.ts
   bun run scripts/generate-workflows.ts
   bun run scripts/sync-workflows-cli.ts
   bun run scripts/cleanup-orphan-workflows.ts
@@ -12,6 +14,8 @@
   # Fallback: run without tty if /dev/tty not available
   bun run scripts/ensure-deploy-config.ts
   bun run scripts/normalize-package-json.ts
+  bun run scripts/update-root-scripts.ts
+  bun run scripts/update-apps-jsonc.ts
   bun run scripts/generate-workflows.ts
   bun run scripts/sync-workflows-cli.ts
   bun run scripts/cleanup-orphan-workflows.ts

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 76" shape-rendering="crispEdges">
+  <!-- Crown spikes -->
+  <rect x="16" y="0"  width="6"  height="12" fill="#DAA520"/>
+  <rect x="27" y="0"  width="6"  height="12" fill="#DAA520"/>
+  <rect x="38" y="0"  width="6"  height="12" fill="#DAA520"/>
+  <rect x="17" y="1"  width="4"  height="4"  fill="#FF4444"/>
+  <rect x="28" y="1"  width="4"  height="4"  fill="#44DD88"/>
+  <rect x="39" y="1"  width="4"  height="4"  fill="#AA44FF"/>
+  <rect x="14" y="10" width="32" height="8"  fill="#DAA520"/>
+  <!-- Head -->
+  <rect x="18" y="16" width="26" height="2"  fill="#FFD700"/>
+  <rect x="14" y="18" width="34" height="20" fill="#FFD700"/>
+  <rect x="18" y="36" width="26" height="2"  fill="#FFD700"/>
+  <!-- Eye -->
+  <rect x="36" y="22" width="8"  height="8"  fill="#111827"/>
+  <rect x="37" y="23" width="3"  height="3"  fill="#FFFFFF"/>
+  <!-- Beak -->
+  <rect x="48" y="26" width="12" height="6"  fill="#FF8C00"/>
+  <!-- Neck -->
+  <rect x="16" y="38" width="28" height="4"  fill="#FFD700"/>
+  <!-- Body -->
+  <rect x="12" y="42" width="36" height="4"  fill="#FFD700"/>
+  <rect x="8"  y="46" width="44" height="22" fill="#FFD700"/>
+  <rect x="12" y="66" width="36" height="4"  fill="#FFD700"/>
+  <!-- Wing -->
+  <rect x="10" y="48" width="24" height="16" fill="#F0B800"/>
+  <!-- Feet -->
+  <rect x="18" y="70" width="10" height="4"  fill="#FF8C00"/>
+  <rect x="14" y="72" width="14" height="3"  fill="#FF8C00"/>
+  <rect x="36" y="70" width="10" height="4"  fill="#FF8C00"/>
+  <rect x="36" y="72" width="14" height="3"  fill="#FF8C00"/>
+</svg>

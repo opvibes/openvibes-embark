@@ -1,0 +1,120 @@
+---
+import { Code } from 'astro:components';
+
+const goInstall = `# Install with Go
+go install github.com/your-org/duckflux/cmd/duck@latest
+
+# Or download binary
+curl -sSL https://install.duckflux.dev | sh
+
+# Run a workflow
+duck run ./my-workflow.duck.yaml
+
+# Run with inputs
+duck run ./pipeline.duck.yaml \\
+  --input repo=https://github.com/org/repo \\
+  --input branch=main
+
+# Watch mode
+duck run ./pipeline.duck.yaml --watch`;
+
+const bunInstall = `# Install with Bun
+bun add -g duckflux
+
+# Or with npm / pnpm
+npm install -g duckflux
+pnpm add -g duckflux
+
+# Run a workflow
+duck run ./my-workflow.duck.yaml
+
+# Use as library in your Bun app
+import { run } from 'duckflux';
+
+const result = await run('./pipeline.duck.yaml', {
+  inputs: { repo: 'https://github.com/org/repo' }
+});`;
+---
+
+<section id="runtimes" class="py-24 relative">
+  <!-- Top border accent -->
+  <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-surface-border to-transparent"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Section header -->
+    <div class="reveal text-center mb-16">
+      <h2 class="section-heading mb-4">Same YAML, any <span class="gradient-text">Runtime</span></h2>
+      <p class="section-subheading max-w-2xl mx-auto">
+        One workflow definition runs anywhere. Use the Go CLI for production and edge deployments,
+        or the JS/TS runtime to integrate with your Node/Bun ecosystem.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+
+      <!-- Go Runtime -->
+      <div class="reveal section-card rounded-xl border border-surface-border overflow-hidden hover:border-blue-500/40 transition-all duration-300">
+        <div class="p-6 border-b border-surface-border">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <!-- Go gopher icon (text fallback) -->
+              <div class="w-12 h-12 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center">
+                <svg class="w-7 h-7 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M1.811 10.231c-.047 0-.058-.023-.035-.059l.246-.315c.023-.035.081-.058.128-.058h4.172c.046 0 .058.035.035.07l-.199.303c-.023.036-.082.07-.117.07zM.047 11.306c-.047 0-.059-.023-.035-.058l.245-.316c.023-.035.082-.058.129-.058h5.328c.047 0 .058.023.047.059l-.093.28c-.012.047-.059.07-.105.07zm2.828 1.075c-.047 0-.059-.035-.035-.07l.163-.292c.023-.035.07-.07.117-.07h2.337c.047 0 .07.035.07.082l-.023.28c0 .047-.047.082-.082.082zM23.952 10.22c-.647.168-1.088.292-1.735.47-.609.164-.656.21-.82-.174-.187-.386-.327-.633-.574-.87-.609-.574-1.264-.82-2.278-.82-1.96 0-3.2 1.241-3.2 3.178 0 1.888 1.24 3.131 3.2 3.131.632 0 1.194-.07 1.783-.41v-.856h-2.278c-.28 0-.386-.187-.304-.445l.374-.948c.082-.245.304-.399.562-.399h3.576c.234 0 .4.164.4.4v3.4c0 .457-.117.561-.445.748-1.147.54-2.313.842-3.53.842-2.96 0-5.19-1.737-5.19-4.55 0-2.79 2.278-4.843 5.47-4.843 1.526 0 2.884.398 3.682 1.147.246.234.492.633.304.82zm-15.55 4.164c0 .538.42.96.957.96h.292c.28 0 .548-.105.726-.293l.105-.105c.105-.105.257-.14.397-.082l.76.327c.14.058.187.2.14.34l-.187.48c-.047.117-.14.246-.246.34-.457.387-.993.598-1.596.598h-.292c-1.005 0-1.818-.82-1.818-1.818v-4.678c0-.164.14-.304.305-.304h1.147c.164 0 .304.14.304.304v4.63zm10.805 1.69l-1.806-4.772c-.07-.187-.047-.34.023-.457.07-.117.199-.199.352-.199h1.088c.14 0 .256.07.315.199l1.077 2.86 1.076-2.86c.059-.129.175-.199.316-.199h1.088c.152 0 .28.082.35.199.07.117.094.27.024.457l-1.807 4.772c-.059.164-.175.258-.316.258h-1.007c-.14 0-.258-.094-.316-.258z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-mono font-bold text-white text-lg">Go CLI</h3>
+                <p class="text-white/45 text-sm">Production-ready binary</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span class="px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-mono">v0.1.0</span>
+              <span class="px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 text-xs font-mono">stable</span>
+            </div>
+          </div>
+
+        </div>
+
+        <Code code={goInstall} lang="bash" theme="one-dark-pro" />
+      </div>
+
+      <!-- JS/TS Runtime -->
+      <div class="reveal delay-200 section-card rounded-xl border border-surface-border overflow-hidden hover:border-duck-700/50 transition-all duration-300">
+        <div class="p-6 border-b border-surface-border">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <!-- Bun logo area -->
+              <div class="w-12 h-12 rounded-xl bg-duck-500/15 border border-duck-700/40 flex items-center justify-center text-2xl">
+                🍞
+              </div>
+              <div>
+                <h3 class="font-mono font-bold text-white text-lg">JS/TS (Bun)</h3>
+                <p class="text-white/45 text-sm">Bun &amp; Node.js compatible</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span class="px-2.5 py-1 rounded-full bg-duck-500/15 border border-duck-700/40 text-duck-500 text-xs font-mono">v0.1.0</span>
+              <span class="px-2.5 py-1 rounded-full bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-mono">beta</span>
+            </div>
+          </div>
+
+        </div>
+
+        <Code code={bunInstall} lang="bash" theme="one-dark-pro" />
+      </div>
+    </div>
+
+    <!-- Quick start CTA -->
+    <div class="reveal mt-10 text-center">
+      <p class="text-white/40 text-sm font-mono mb-4">Not sure which to choose?</p>
+      <a href="/docs/choosing-a-runtime" class="inline-flex items-center gap-2 text-duck-500 hover:text-duck-400 font-mono text-sm transition-colors">
+        Read the runtime comparison guide
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

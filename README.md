@@ -342,7 +342,7 @@ When changes are pushed to `main` **outside of `packages/`** (scripts, workflows
 <!-- PACKAGES:START -->
 | Package | Description |
 |---------|-------------|
-| `embark` | Embark your vibe codes applications with a fast deploy and configurations |
+| `duckflux` | Define complex multi-agent pipelines in YAML. Let LLMs do creative work. Let duckflux handle the plumbing. |
 <!-- PACKAGES:END -->
 
 ### Embark Website

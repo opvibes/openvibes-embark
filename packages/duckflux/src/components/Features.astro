@@ -1,0 +1,408 @@
+---
+import { Code } from 'astro:components';
+
+const features = [
+  {
+    id: 'loops',
+    icon: '🔁',
+    title: 'Loops',
+    desc: 'Iterate over collections with `for` loops. Process each item through a participant or nested sub-workflow.',
+    code: `steps:
+  - for:
+      var: item
+      in: "{{ inputs.items }}"
+      steps:
+        - run: process_item
+          input: item
+          output: "results[item.id]"`,
+  },
+  {
+    id: 'parallel',
+    icon: '⚡',
+    title: 'Parallel execution',
+    desc: 'Run multiple participants concurrently and synchronize results. Fan-out, fan-in — built into the DSL.',
+    code: `steps:
+  - parallel:
+      - run: agent_a
+        output: result_a
+      - run: agent_b
+        output: result_b
+      - run: agent_c
+        output: result_c
+  - run: aggregator
+    input: [result_a, result_b, result_c]`,
+  },
+  {
+    id: 'conditionals',
+    icon: '🔀',
+    title: 'Conditionals',
+    desc: 'CEL-powered `when` guards on any step. Route execution based on previous outputs, inputs, or context.',
+    code: `steps:
+  - run: analyze
+    output: analysis
+
+  - run: handle_success
+    when: "analysis.score >= 0.8"
+
+  - run: handle_failure
+    when: "analysis.score < 0.8"
+    input: analysis.reason`,
+  },
+  {
+    id: 'retry',
+    icon: '🛡️',
+    title: 'Guards & retry',
+    desc: 'Automatic retry with configurable backoff, max attempts, and CEL conditions. Guards prevent steps from running when prerequisites aren\'t met.',
+    code: `steps:
+  - run: reviewer
+    output: review
+    retry:
+      max: 3
+      delay: 2s
+      when: "!review.approved"
+    on_error: handle_review_error`,
+  },
+  {
+    id: 'events',
+    icon: '📡',
+    title: 'Events',
+    desc: 'Emit events to named channels and pause execution waiting for external events. Perfect for human-in-the-loop workflows.',
+    code: `steps:
+  - run: draft_code
+    output: draft
+
+  - emit:
+      channel: "approvals"
+      data: { draft: draft, author: inputs.user }
+
+  - wait:
+      event: "approval.received"
+      timeout: 24h
+      output: decision
+
+  - run: deploy
+    when: "decision.approved == true"`,
+  },
+  {
+    id: 'schemas',
+    icon: '📋',
+    title: 'Input/Output schemas',
+    desc: 'Typed inputs and outputs with validation. CEL expressions reference inputs and previous outputs by name — fully type-aware.',
+    code: `inputs:
+  repo:
+    type: string
+    required: true
+  branch:
+    type: string
+    default: "main"
+  dry_run:
+    type: boolean
+    default: false
+
+outputs:
+  deploy_url:
+    type: string
+  exit_code:
+    type: integer`,
+  },
+  {
+    id: 'nested',
+    icon: '🪆',
+    title: 'Nested workflows',
+    desc: 'Compose complex pipelines from smaller reusable sub-workflows. Pass context down and collect results back up.',
+    code: `participants:
+  test_suite:
+    type: workflow
+    path: ./workflows/test-suite.duck.yaml
+  deploy:
+    type: workflow
+    path: ./workflows/deploy.duck.yaml
+
+steps:
+  - run: test_suite
+    input: "{{ context }}"
+    output: test_results
+    when: "!inputs.skip_tests"`,
+  },
+  {
+    id: 'error-handling',
+    icon: '🔧',
+    title: 'Error handling',
+    desc: 'Declare error handlers per-step or globally. Capture, transform, or re-raise errors using CEL expressions.',
+    code: `steps:
+  - run: risky_operation
+    output: result
+    on_error:
+      run: error_handler
+      input:
+        error: "{{ error }}"
+        context: "{{ context }}"
+
+on_failure:
+  - run: notify_slack
+    input: "{{ error }}"`,
+  },
+];
+---
+
+<section id="features" class="py-24 relative">
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-surface/30 to-transparent pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Section header -->
+    <div class="reveal text-center mb-16">
+      <h2 class="section-heading mb-4"><span class="gradient-text">Features</span></h2>
+      <p class="section-subheading max-w-2xl mx-auto">
+        From simple scripts to complex multi-agent pipelines — duckflux speaks
+        the same YAML regardless of complexity.
+      </p>
+    </div>
+
+    <!-- Duck swim lane + cards -->
+    <div id="features-content" class="relative">
+
+      <!-- Swim lane (desktop only) -->
+      <div class="hidden lg:block absolute left-0 top-0 bottom-0 w-24 pointer-events-none" aria-hidden="true">
+        <div id="features-swim-lane" class="relative h-full flex justify-center">
+
+          <!-- Vertical dashed path -->
+          <div class="absolute inset-y-0 left-1/2 -translate-x-1/2" style="width:2px; background: repeating-linear-gradient(to bottom, rgba(42,42,74,0.9) 0, rgba(42,42,74,0.9) 8px, transparent 8px, transparent 16px)"></div>
+
+          <!-- Station dots -->
+          {features.map((_, i) => (
+            <div
+              class="station-dot absolute w-3 h-3 rounded-full border-2 border-surface-border bg-[#0a0a1a] transition-all duration-300"
+              style={`top: ${(i / (features.length - 1)) * 100}%; left: 50%; transform: translate(-50%, -50%)`}
+            ></div>
+          ))}
+
+          <!-- Duck + wake wrapper — moved by JS lerp -->
+          <div id="features-duck-wrapper" class="absolute" style="top: 0%; left: 50%; transform: translateX(-50%)">
+            <!-- Duck image -->
+            <img
+              id="features-duck-img"
+              src="/duckflow.png"
+              alt=""
+              class="duck-img"
+            />
+            <!-- Water wake ripples -->
+            <div class="wake-ripple wake-r1"></div>
+            <div class="wake-ripple wake-r2"></div>
+            <div class="wake-ripple wake-r3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature cards (accordion — opens on scroll) -->
+      <div class="flex flex-col gap-5 lg:pl-32">
+        {features.map((f, i) => (
+          <div
+            class={`feature-card section-card rounded-xl border border-surface-border hover:border-duck-700/40 transition-all duration-300 overflow-hidden`}
+          >
+            <!-- Header (always visible) -->
+            <div class="flex items-center gap-4 p-5 cursor-pointer select-none feature-card-header">
+              <span class="text-2xl w-10 h-10 flex items-center justify-center rounded-xl bg-surface-hover shrink-0">{f.icon}</span>
+              <h3 class="font-mono font-semibold text-white text-base flex-1">{f.title}</h3>
+              <svg class="feature-chevron w-5 h-5 text-white/30 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+
+            <!-- Body (starts collapsed, expands on scroll or click) -->
+            <div class="feature-card-body">
+              <div class="border-t border-surface-border">
+                <p class="px-5 pt-4 pb-2 text-white/60 text-sm leading-relaxed">{f.desc}</p>
+                <div class="relative px-5 pb-5">
+                  <button
+                    class="feature-copy-btn absolute top-3 right-8 z-10 p-1.5 rounded text-white/30 hover:text-duck-500 hover:bg-surface-hover transition-colors"
+                    aria-label="Copy code"
+                  >
+                    <svg class="w-3.5 h-3.5 copy-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    <svg class="w-3.5 h-3.5 check-icon hidden text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </button>
+                  <Code code={f.code} lang="yaml" theme="one-dark-pro" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── Duck ─────────────────────────────────────────────── */
+  #features-duck-wrapper {
+    /* JS controls `top`, we only translate horizontally here */
+    transform: translateX(-50%);
+    /* NO CSS transition — lerp in JS handles smoothness */
+  }
+
+  .duck-img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.9));
+    animation: duck-rock 2.2s ease-in-out infinite;
+    transform: translateY(-50%);
+    position: relative;
+  }
+
+  @keyframes duck-rock {
+    0%   { transform: translateY(-50%) rotate(-8deg); }
+    25%  { transform: translateY(calc(-50% - 5px)) rotate(-2deg); }
+    50%  { transform: translateY(-50%) rotate(8deg); }
+    75%  { transform: translateY(calc(-50% - 3px)) rotate(2deg); }
+    100% { transform: translateY(-50%) rotate(-8deg); }
+  }
+
+  /* ── Wake / water ripples ─────────────────────────────── */
+  .wake-ripple {
+    position: absolute;
+    left: 50%;
+    width: 60px;
+    height: 16px;
+    border: 1.5px solid rgba(255, 215, 0, 0.55);
+    border-radius: 50%;
+    /* at duck's belly / waterline — duck center is at top:0 via translateY(-50%) */
+    top: 14px;
+    animation: wake-spread 1s ease-out infinite;
+  }
+
+  .wake-r1 { animation-delay: 0s; }
+  .wake-r2 { animation-delay: 0.33s; }
+  .wake-r3 { animation-delay: 0.66s; }
+
+  @keyframes wake-spread {
+    0% {
+      transform: translate(-50%, 0) scaleX(0.2);
+      opacity: 0.85;
+      border-color: rgba(255, 215, 0, 0.7);
+    }
+    50% {
+      opacity: 0.35;
+    }
+    100% {
+      transform: translate(-50%, 14px) scaleX(1);
+      opacity: 0;
+      border-color: rgba(255, 215, 0, 0.05);
+    }
+  }
+
+  /* ── Accordion body ────────────────────────────────────── */
+  .feature-card-body {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.4s ease 0.1s;
+  }
+
+  .feature-card.open .feature-card-body {
+    max-height: 600px;
+    opacity: 1;
+  }
+
+  .feature-card.open .feature-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* ── Station dots ─────────────────────────────────────── */
+  .station-dot.active {
+    background: rgba(255, 215, 0, 0.85);
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+</style>
+
+<script>
+  // ── Copy buttons ────────────────────────────────────────
+  document.querySelectorAll('.feature-copy-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pre = btn.closest('.feature-card')?.querySelector('pre');
+      const text = pre?.textContent ?? '';
+      navigator.clipboard.writeText(text.trim()).then(() => {
+        const copyIcon  = btn.querySelector('.copy-icon')!;
+        const checkIcon = btn.querySelector('.check-icon')!;
+        copyIcon.classList.add('hidden');
+        checkIcon.classList.remove('hidden');
+        setTimeout(() => {
+          copyIcon.classList.remove('hidden');
+          checkIcon.classList.add('hidden');
+        }, 2000);
+      });
+    });
+  });
+
+  // ── Accordion: manual click only ────────────────────────
+  document.querySelectorAll('.feature-card-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const card = header.closest('.feature-card')!;
+      card.classList.toggle('open');
+    });
+  });
+
+  // ── Swimming duck — lerp-based smooth navigation ────────
+  // Use #features-content (the cards area) — NOT the whole section (which
+  // includes the header/padding and throws off the percentage).
+  const cardsArea  = document.getElementById('features-content');
+  const wrapper    = document.getElementById('features-duck-wrapper') as HTMLElement | null;
+  const dots       = Array.from(document.querySelectorAll('.station-dot'));
+  const dotCount   = dots.length;
+
+  if (cardsArea && wrapper) {
+    let targetPct  = 0;
+    let currentPct = 0;
+    let rafHandle  = 0;
+
+    function calcTarget(): number {
+      const rect  = cardsArea.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      // When top of cards area reaches viewport center → 0 %
+      // When bottom of cards area reaches viewport center → 100 %
+      const center   = viewH / 2;
+      const progress = (center - rect.top) / (rect.height);
+      return Math.max(0, Math.min(100, progress * 100));
+    }
+
+    function refreshDots(pct: number) {
+      dots.forEach((dot, i) => {
+        const threshold = dotCount > 1 ? (i / (dotCount - 1)) * 100 : 0;
+        dot.classList.toggle('active', pct >= threshold - 2);
+      });
+    }
+
+    // Lerp loop — keeps running until the duck catches up
+    function tick() {
+      const diff = targetPct - currentPct;
+      if (Math.abs(diff) < 0.05) {
+        currentPct = targetPct;
+        rafHandle  = 0;
+      } else {
+        currentPct += diff * 0.07;
+        rafHandle = requestAnimationFrame(tick);
+      }
+      wrapper.style.top = currentPct + '%';
+      refreshDots(currentPct);
+    }
+
+    function onScroll() {
+      targetPct = calcTarget();
+      if (!rafHandle) rafHandle = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    currentPct = targetPct = calcTarget();
+    wrapper.style.top = currentPct + '%';
+    refreshDots(currentPct);
+  }
+</script>

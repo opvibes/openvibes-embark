@@ -1,0 +1,222 @@
+---
+import { Code } from 'astro:components';
+
+const celExamples = [
+  {
+    id: 'when',
+    label: 'Step conditions',
+    highlightLines: [6, 9, 12],
+    yaml: `steps:
+  - run: analyze
+    output: result
+
+  - run: approve
+    when: "result.score >= 0.9 && result.issues.size() == 0"
+
+  - run: review
+    when: "result.score >= 0.6 && result.score < 0.9"
+
+  - run: reject
+    when: "result.score < 0.6"`,
+    explanation: [
+      { expr: 'result.score >= 0.9', desc: 'Direct field access with comparison' },
+      { expr: 'result.issues.size() == 0', desc: 'CEL built-in: list length check' },
+      { expr: '&&', desc: 'Boolean AND — both conditions must be true' },
+    ],
+  },
+  {
+    id: 'retry',
+    label: 'Retry conditions',
+    highlightLines: [8, 9, 10, 11],
+    yaml: `steps:
+  - run: llm_reviewer
+    output: review
+    retry:
+      max: 5
+      delay: 1s
+      backoff: exponential
+      when: >
+        review.status == "incomplete" ||
+        review.confidence < 0.7 ||
+        "RETRY" in review.flags`,
+    explanation: [
+      { expr: 'review.status == "incomplete"', desc: 'String equality check' },
+      { expr: 'review.confidence < 0.7', desc: 'Numeric threshold condition' },
+      { expr: '"RETRY" in review.flags', desc: 'CEL `in` operator: list membership' },
+    ],
+  },
+  {
+    id: 'input',
+    label: 'Dynamic inputs',
+    highlightLines: [12, 13, 14, 15, 16],
+    yaml: `participants:
+  deploy:
+    type: exec
+    command: >
+      deploy.sh
+      --env {{ inputs.environment }}
+      --tag {{ inputs.tag }}
+
+steps:
+  - run: deploy
+    input:
+      target: >
+        inputs.environment == "prod"
+          ? inputs.prod_cluster
+          : inputs.staging_cluster
+      replicas: "inputs.replicas * (inputs.environment == 'prod' ? 2 : 1)"`,
+    explanation: [
+      { expr: 'inputs.environment == "prod" ? … : …', desc: 'Ternary operator for dynamic values' },
+      { expr: 'inputs.replicas * 2', desc: 'Arithmetic in expressions' },
+      { expr: '{{ inputs.tag }}', desc: 'Template interpolation in commands' },
+    ],
+  },
+];
+---
+
+<section class="py-24 relative overflow-hidden">
+  <!-- Background accent -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-duck-500/20 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-duck-500/20 to-transparent"></div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-purple-900/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Section header -->
+    <div class="reveal text-center mb-16">
+      <h2 class="section-heading mb-4">Powered by Google <span class="gradient-text">CEL</span></h2>
+      <p class="section-subheading max-w-2xl mx-auto">
+        <a
+          href="https://github.com/google/cel-spec"
+          target="_blank"
+          rel="noopener"
+          class="text-duck-500 hover:text-duck-400 transition-colors font-semibold"
+        >Google's Common Expression Language</a>
+        keeps your logic safe, predictable, and
+        readable. The same engine that powers Kubernetes admission controllers.
+      </p>
+    </div>
+
+    <!-- CEL feature pills -->
+    <div class="reveal flex flex-wrap justify-center gap-3 mb-12">
+      {[
+        { label: 'Type-safe', color: 'text-blue-400 border-blue-500/30 bg-blue-500/10' },
+        { label: 'Sandboxed', color: 'text-green-400 border-green-500/30 bg-green-500/10' },
+        { label: 'No side effects', color: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10' },
+        { label: 'Fast evaluation', color: 'text-purple-400 border-purple-500/30 bg-purple-500/10' },
+        { label: 'Kubernetes-proven', color: 'text-pink-400 border-pink-500/30 bg-pink-500/10' },
+        { label: 'Human-readable', color: 'text-orange-400 border-orange-500/30 bg-orange-500/10' },
+      ].map(p => (
+        <span class={`px-4 py-1.5 rounded-full border text-sm font-mono ${p.color}`}>{p.label}</span>
+      ))}
+    </div>
+
+    <!-- Tabbed examples -->
+    <div class="reveal">
+      <!-- Tabs -->
+      <div class="flex gap-1 mb-0 p-1 bg-surface rounded-t-xl border border-surface-border border-b-0 w-fit">
+        {celExamples.map((ex, i) => (
+          <button
+            class={`cel-tab px-4 py-2 rounded-lg text-sm font-mono transition-all duration-150 ${i === 0 ? 'bg-surface-hover text-duck-500' : 'text-white/40 hover:text-white/70'}`}
+            data-target={`cel-pane-${ex.id}`}
+            data-highlight={JSON.stringify(ex.highlightLines)}
+          >
+            {ex.label}
+          </button>
+        ))}
+      </div>
+
+      <!-- Panes -->
+      {celExamples.map((ex, i) => (
+        <div
+          id={`cel-pane-${ex.id}`}
+          class={`cel-pane ${i !== 0 ? 'hidden' : ''} grid lg:grid-cols-2 gap-0 border border-surface-border rounded-b-xl rounded-tr-xl overflow-hidden`}
+        >
+          <!-- Code -->
+          <div class="border-r border-surface-border cel-code-wrapper">
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-surface-border bg-surface">
+              <div class="flex gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
+              </div>
+              <span class="text-xs font-mono text-white/40 ml-1">workflow.duck.yaml</span>
+            </div>
+            <div class="cel-code-dim">
+              <Code code={ex.yaml} lang="yaml" theme="one-dark-pro" />
+            </div>
+          </div>
+
+          <!-- Explanation -->
+          <div class="bg-surface/50 p-6 flex flex-col gap-4">
+            <h4 class="font-mono font-semibold text-white text-sm">CEL expressions used</h4>
+            <div class="flex flex-col gap-4">
+              {ex.explanation.map(item => (
+                <div class="group">
+                  <code class="block px-3 py-2 rounded-lg bg-surface border border-purple-500/20 text-purple-300 text-xs font-mono mb-2 group-hover:border-purple-500/40 transition-colors">
+                    {item.expr}
+                  </code>
+                  <p class="text-white/50 text-sm leading-relaxed pl-1">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div class="mt-auto pt-4 border-t border-surface-border">
+              <a href="/docs/cel-expressions" class="inline-flex items-center gap-2 text-duck-500 hover:text-duck-400 text-sm font-mono transition-colors">
+                Full CEL reference
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  function applyLineHighlights(pane: Element, highlightLines: number[]) {
+    const codeEl = pane.querySelector('.cel-code-dim code');
+    if (!codeEl) return;
+    const lines = codeEl.querySelectorAll('.line');
+    lines.forEach((line, idx) => {
+      const lineNum = idx + 1;
+      if (highlightLines.includes(lineNum)) {
+        line.classList.add('cel-highlight');
+      } else {
+        line.classList.remove('cel-highlight');
+      }
+    });
+  }
+
+  // Apply initial highlights to first pane
+  const firstPane = document.querySelector('.cel-pane:not(.hidden)');
+  const firstTab = document.querySelector('.cel-tab') as HTMLElement | null;
+  if (firstPane && firstTab) {
+    const lines = JSON.parse(firstTab.dataset.highlight ?? '[]');
+    applyLineHighlights(firstPane, lines);
+  }
+
+  document.querySelectorAll('.cel-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = (tab as HTMLElement).dataset.target!;
+      const highlightLines: number[] = JSON.parse((tab as HTMLElement).dataset.highlight ?? '[]');
+
+      document.querySelectorAll('.cel-tab').forEach(t => {
+        t.className = 'cel-tab px-4 py-2 rounded-lg text-sm font-mono transition-all duration-150 text-white/40 hover:text-white/70';
+      });
+      document.querySelectorAll('.cel-pane').forEach(p => p.classList.add('hidden'));
+
+      tab.className = 'cel-tab px-4 py-2 rounded-lg text-sm font-mono transition-all duration-150 bg-surface-hover text-duck-500';
+      const pane = document.getElementById(target)!;
+      pane.classList.remove('hidden');
+
+      // Apply line highlights
+      applyLineHighlights(pane, highlightLines);
+    });
+  });
+</script>

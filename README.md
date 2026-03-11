@@ -46,7 +46,7 @@ A monorepo framework that automates everything between **code** and **production
 
 ```bash
 # clone & install
-git clone https://github.com/blpsoares/embark.git
+git clone https://github.com/Open-Vibes/embark.git
 cd embark
 bun install
 

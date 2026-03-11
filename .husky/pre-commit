@@ -1,0 +1,20 @@
+#!/bin/sh
+# Redirect stdin from terminal when available to allow interactive prompts
+{
+  bun run scripts/ensure-deploy-config.ts
+  bun run scripts/normalize-package-json.ts
+  bun run scripts/generate-workflows.ts
+  bun run scripts/sync-workflows-cli.ts
+  bun run scripts/cleanup-orphan-workflows.ts
+  bun run scripts/generate-dockerfiles-ai.ts
+  bun run scripts/update-readme-packages.ts
+} < /dev/tty 2>/dev/null || {
+  # Fallback: run without tty if /dev/tty not available
+  bun run scripts/ensure-deploy-config.ts
+  bun run scripts/normalize-package-json.ts
+  bun run scripts/generate-workflows.ts
+  bun run scripts/sync-workflows-cli.ts
+  bun run scripts/cleanup-orphan-workflows.ts
+  bun run scripts/generate-dockerfiles-ai.ts
+  bun run scripts/update-readme-packages.ts
+}

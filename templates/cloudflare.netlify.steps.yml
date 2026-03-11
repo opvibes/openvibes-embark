@@ -1,0 +1,51 @@
+
+      - name: Get or Create subdomain on Cloudflare
+        run: |
+          HOSTNAME=$(echo $SITE_URL | sed -E 's|https?://||')
+
+          EXISTING=$(curl -s "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/dns_records?name=${SUBDOMAIN}.${DOMAIN}" \
+            -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}")
+
+          RECORD_ID=$(echo "$EXISTING" | jq -r '.result[0].id // empty')
+
+          if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ]; then
+            echo "✓ DNS record already exists"
+          else
+            echo "Creating DNS record..."
+
+            RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/dns_records" \
+              -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              --data "{
+                \"type\": \"CNAME\",
+                \"name\": \"${SUBDOMAIN}\",
+                \"content\": \"${HOSTNAME}\",
+                \"ttl\": 120,
+                \"proxied\": true
+              }")
+
+            echo "$RESPONSE"
+          fi
+
+      - name: Register domain in Netlify
+        run: |
+          CUSTOM_DOMAIN="${SUBDOMAIN}.${DOMAIN}"
+
+          EXISTING=$(curl -s "https://api.netlify.com/api/v1/sites/$SITE_ID" \
+            -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}")
+
+          CURRENT_DOMAIN=$(echo "$EXISTING" | jq -r '.custom_domain // empty')
+
+          if [ "$CURRENT_DOMAIN" = "$CUSTOM_DOMAIN" ]; then
+            echo "✓ Custom domain already set: $CUSTOM_DOMAIN"
+          else
+            echo "Setting custom domain $CUSTOM_DOMAIN..."
+
+            RESPONSE=$(curl -s -X PATCH "https://api.netlify.com/api/v1/sites/$SITE_ID" \
+              -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"custom_domain\": \"$CUSTOM_DOMAIN\"}")
+
+            echo "$RESPONSE" | jq -r '.custom_domain // .errors'
+            echo "✓ Custom domain set"
+          fi

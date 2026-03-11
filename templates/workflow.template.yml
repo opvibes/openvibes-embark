@@ -1,0 +1,32 @@
+name: Deploy __PACKAGE_NAME__
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/__PACKAGE_NAME__/**"
+  workflow_dispatch:
+
+env:
+  PACKAGE_PATH: packages/__PACKAGE_NAME__
+  SUBDOMAIN: __SUBDOMAIN__
+  DOMAIN: ${{ secrets.DOMAIN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build project
+        run: bun run --cwd $PACKAGE_PATH build

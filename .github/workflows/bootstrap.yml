@@ -1,0 +1,42 @@
+name: Bootstrap Workflows
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Generate missing workflows
+        run: bun scripts/generate-workflows.ts
+
+      - name: Commit generated workflows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --cached --quiet; then
+            echo "No new workflows generated"
+          else
+            git commit -m "ci: gerar workflows para novos pacotes [skip ci]"
+            git push
+          fi

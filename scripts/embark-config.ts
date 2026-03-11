@@ -158,7 +158,7 @@ export async function getPackagesWithIncompleteConfig(
 }
 
 export function validateSubdomain(subdomain: string): boolean {
-  return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/.test(subdomain);
+  return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/.test(subdomain);
 }
 
 export interface RootDomainState {

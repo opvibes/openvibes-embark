@@ -51,7 +51,7 @@ Static site deployment directly to Cloudflare Pages with automatic DNS configura
 | `CF_ZONE_ID` | Domain Zone ID | Cloudflare → Your domain → Overview (right side) |
 | `DOMAIN` | Base domain | e.g. `embark.dev` |
 
-> **Note:** The project name is automatically derived from your domain. For example, if `DOMAIN=blpsoares.dev` and subdomain is `myapp`, the project will be `blpsoares-myapp`.
+> **Note:** The project name is automatically derived from your domain. For example, if `DOMAIN=openvibes.tech` and subdomain is `myapp`, the project will be `blpsoares-myapp`.
 
 ### CF_TOKEN_PAGES Permissions
 

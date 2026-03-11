@@ -1,10 +1,10 @@
-name: duckflux
+name: duckflux-site
 
 on:
   push:
     branches: [main]
     paths:
-      - "packages/duckflux/**"
+      - "packages/duckflux-site/**"
   workflow_dispatch:
 
 jobs:
@@ -24,18 +24,18 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun run --cwd packages/duckflux build
+        run: bun run --cwd packages/duckflux-site build
 
       - name: Create Cloudflare Pages project
         id: project
         env:
           CF_TOKEN: ${{ secrets.CF_TOKEN_PAGES }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          SUBDOMAIN: duckflux
+          SUBDOMAIN: site.duckflux
           ROOT_DOMAIN: false
           DOMAIN_SETUP: true
           DOMAIN: ${{ secrets.DOMAIN }}
-          PACKAGE_NAME: duckflux
+          PACKAGE_NAME: duckflux-site
         run: |
           if [ "$DOMAIN_SETUP" = "true" ]; then
             # Extract prefix from DOMAIN (e.g., openvibes.tech -> blpsoares)
@@ -84,7 +84,7 @@ jobs:
           apiToken: ${{ secrets.CF_TOKEN_PAGES }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages deploy dist --project-name=${{ steps.project.outputs.project_name }} --commit-dirty=true
-          workingDirectory: packages/duckflux
+          workingDirectory: packages/duckflux-site
 
       - name: Add Custom Domain to Cloudflare Pages
         if: true
@@ -93,7 +93,7 @@ jobs:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
           PROJECT_NAME: ${{ steps.project.outputs.project_name }}
-          SUBDOMAIN: duckflux
+          SUBDOMAIN: site.duckflux
           ROOT_DOMAIN: false
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |

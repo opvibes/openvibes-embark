@@ -38,7 +38,7 @@ jobs:
           PACKAGE_NAME: __PACKAGE_NAME__
         run: |
           if [ "$DOMAIN_SETUP" = "true" ]; then
-            # Extract prefix from DOMAIN (e.g., blpsoares.dev -> blpsoares)
+            # Extract prefix from DOMAIN (e.g., openvibes.tech -> blpsoares)
             DOMAIN_PREFIX="${DOMAIN%%.*}"
             # Project name: root domain uses just domain prefix; subdomain uses {domain-prefix}-{subdomain}
             if [ "$ROOT_DOMAIN" = "true" ]; then

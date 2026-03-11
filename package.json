@@ -13,7 +13,7 @@
     "new-dockerfile": "bun scripts/generate-dockerfiles-ai.ts",
     "sync-workflows": "bun scripts/sync-workflows-cli.ts",
     "init": "bun scripts/init.ts",
-    "embark": "bun run --filter @embark/embark dev"
+    "duckflux": "bun run --filter @embark/duckflux dev"
   },
   "devDependencies": {
     "@types/bun": "^1.3.9",

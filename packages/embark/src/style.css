@@ -221,26 +221,32 @@ code {
 }
 
 .version-badge {
-  display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.03em;
-  padding: 0.1rem 0.4rem;
-  border-radius: 999px;
-  background: rgba(34, 211, 238, 0.06);
-  border: 1px solid rgba(34, 211, 238, 0.18);
-  color: rgba(34, 211, 238, 0.6);
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(34, 211, 238, 0.07);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  color: rgba(34, 211, 238, 0.55);
   text-decoration: none;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
-  line-height: 1.6;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  /* reset nav-links inherited styles */
+  display: inline-flex;
+  align-items: center;
+}
+
+.version-badge::before,
+.version-badge::after {
+  display: none !important;
 }
 
 .version-badge:hover {
-  background: rgba(34, 211, 238, 0.12);
-  border-color: rgba(34, 211, 238, 0.4);
-  color: var(--neon-cyan);
+  background: rgba(34, 211, 238, 0.13);
+  border-color: rgba(34, 211, 238, 0.38);
+  color: rgba(34, 211, 238, 0.85);
 }
 
 .version-badge:empty {

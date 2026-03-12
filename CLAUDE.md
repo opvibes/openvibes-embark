@@ -58,20 +58,22 @@ embark/
 bun install
 ```
 
-### Initialize Repository (for new users)
+### Setup Repository (for new users)
 
-If you cloned this repo to use as a template for your own project, run the init script:
+If you cloned this repo to use as a template for your own project, run the setup script:
 
 ```bash
-bun run init
+bun run setup
 ```
 
 This script will:
-1. Remove the demo package (`packages/embark`)
-2. Remove the demo workflow (`.github/workflows/embark.yml`)
-3. Optionally remove `.git` to start fresh with your own repository
+1. **Configure releases** — choose to enable Release Please (resets version to 0.0.0) or remove all release automation
+2. Protect release files from upstream sync via `.gitattributes`
+3. Configure upstream remote (pull-only, push disabled)
+4. Install dependencies
+5. Optionally remove `.git` to start fresh with your own repository
 
-After running init, you can create your own packages and connect to your own GitHub remote.
+Release files (`.release-please-manifest.json`, `release-please-config.json`, `CHANGELOG.md`) are protected from upstream sync via `merge=ours` in `.gitattributes`, so your fork's versioning is never overwritten by the upstream.
 
 ### Run scripts for a specific package
 

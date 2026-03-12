@@ -36,9 +36,9 @@ const commands: Command[] = [
     script: "scripts/sync-workflows-cli.ts",
   },
   {
-    label: "init",
-    desc: "Initialize repo for personal use (remove demo, configure upstream)",
-    script: "scripts/init.ts",
+    label: "setup",
+    desc: "Setup repo for personal use (configure releases, upstream remote)",
+    script: "scripts/setup.ts",
   },
   {
     label: "sync-upstream",

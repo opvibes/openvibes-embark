@@ -29,7 +29,7 @@
     "subdomain": "embark"
   },
   {
-    "name": "embark",
+    "name": "embark-site",
     "folderName": "embark-site",
     "rootDomain": false,
     "subdomain": "embark"

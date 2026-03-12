@@ -6,9 +6,6 @@ import * as fs from "node:fs";
 import * as tty from "node:tty";
 
 const ROOT = join(import.meta.dirname, "..");
-const DEMO_PACKAGE = "embark";
-const DEMO_PACKAGE_DIR = join(ROOT, "packages", DEMO_PACKAGE);
-const DEMO_WORKFLOW = join(ROOT, ".github", "workflows", `${DEMO_PACKAGE}.yml`);
 const GIT_DIR = join(ROOT, ".git");
 const SEP = "─".repeat(50);
 
@@ -173,56 +170,93 @@ async function listPackages(): Promise<string[]> {
   return entries.filter((e) => e.isDirectory()).map((e) => e.name);
 }
 
-async function init(): Promise<void> {
+async function setup(): Promise<void> {
   initTty();
 
   write(`\n${COLOR.bold}🚀 Initialize repository for personal use${COLOR.reset}\n`);
   write(`${COLOR.dim}${SEP}${COLOR.reset}\n\n`);
 
-  // ── Step 0: strip embark-specific badges from README ────────
-  const readmePath = join(ROOT, "README.md");
-  if (await exists(readmePath)) {
-    const readmeContent = await readFile(readmePath, "utf-8");
-    // Remove the <p align="center"> block containing shields.io version badge
-    const badgeBlockRegex = /\n*<p\s+align="center">\s*\n(?:\s*<img[^>]*shields\.io[^>]*>\s*\n)+<\/p>\n*/g;
-    const cleaned = readmeContent.replace(badgeBlockRegex, "\n\n");
-    if (cleaned !== readmeContent) {
-      await writeFile(readmePath, cleaned, "utf-8");
-      write(`  ${COLOR.green}✓${COLOR.reset} Removed version badges from README.md\n`);
-      try {
-        execSync("git add README.md", { cwd: ROOT, stdio: "ignore" });
-      } catch {
-        // ignore git errors
+  // ── Step 1: configure releases ─────────────────────────
+  write(`\n${COLOR.dim}${SEP}${COLOR.reset}\n`);
+  write(`${COLOR.bold}📦 Release automation (Release Please)${COLOR.reset}\n`);
+  write(`${COLOR.dim}${SEP}${COLOR.reset}\n\n`);
+  write(`  ${COLOR.dim}Release Please creates automatic changelogs and version bumps\n`);
+  write(`  based on Conventional Commits (feat → minor, fix → patch).${COLOR.reset}\n\n`);
+
+  const releaseChoice = await selectMenu(
+    `${COLOR.cyan}Do you want automatic releases?${COLOR.reset}`,
+    ["Yes, configure releases (start at v0.1.0)", "No, remove release automation"],
+  );
+
+  const releaseManifestPath = join(ROOT, ".release-please-manifest.json");
+  const releaseConfigPath = join(ROOT, "release-please-config.json");
+  const releaseWorkflowPath = join(ROOT, ".github", "workflows", "release.yml");
+  const changelogPath = join(ROOT, "CHANGELOG.md");
+
+  if (releaseChoice === 0) {
+    // Reset manifest to 0.0.0 so the fork starts fresh
+    if (await exists(releaseManifestPath)) {
+      await writeFile(releaseManifestPath, '{\n  ".": "0.0.0"\n}\n', "utf-8");
+      write(`  ${COLOR.green}✓${COLOR.reset} Reset release manifest to v0.0.0\n`);
+    }
+    // Reset package.json version
+    const pkgJsonPath = join(ROOT, "package.json");
+    if (await exists(pkgJsonPath)) {
+      const pkgContent = await readFile(pkgJsonPath, "utf-8");
+      const updatedPkg = pkgContent.replace(/"version":\s*"[^"]*"/, '"version": "0.0.0"');
+      if (updatedPkg !== pkgContent) {
+        await writeFile(pkgJsonPath, updatedPkg, "utf-8");
+        write(`  ${COLOR.green}✓${COLOR.reset} Reset package.json version to 0.0.0\n`);
       }
+    }
+    // Clear changelog
+    if (await exists(changelogPath)) {
+      await writeFile(changelogPath, "# Changelog\n", "utf-8");
+      write(`  ${COLOR.green}✓${COLOR.reset} Reset CHANGELOG.md\n`);
+    }
+    try {
+      execSync("git add .release-please-manifest.json release-please-config.json CHANGELOG.md package.json 2>/dev/null || true", { cwd: ROOT, stdio: "ignore" });
+    } catch {
+      // ignore
+    }
+  } else {
+    // Remove all release-related files
+    const releaseFiles = [releaseManifestPath, releaseConfigPath, releaseWorkflowPath, changelogPath];
+    for (const file of releaseFiles) {
+      if (await exists(file)) {
+        await rm(file, { force: true });
+        const relative = file.replace(ROOT + "/", "");
+        write(`  ${COLOR.green}✓${COLOR.reset} Removed: ${relative}\n`);
+      }
+    }
+    try {
+      execSync("git rm --cached .release-please-manifest.json release-please-config.json .github/workflows/release.yml CHANGELOG.md 2>/dev/null || true", { cwd: ROOT, stdio: "ignore" });
+      execSync("git add -u", { cwd: ROOT, stdio: "ignore" });
+    } catch {
+      // ignore
     }
   }
 
-  // ── Step 1: remove demo package and workflow ──────────────
-  let hasChanges = false;
-
-  if (await exists(DEMO_PACKAGE_DIR)) {
-    await rm(DEMO_PACKAGE_DIR, { recursive: true, force: true });
-    write(`  ${COLOR.green}✓${COLOR.reset} Removed: packages/${DEMO_PACKAGE}\n`);
-    hasChanges = true;
-  } else {
-    write(`  ${COLOR.dim}ℹ packages/${DEMO_PACKAGE} not found, skipping${COLOR.reset}\n`);
-  }
-
-  if (await exists(DEMO_WORKFLOW)) {
-    await rm(DEMO_WORKFLOW, { force: true });
-    write(`  ${COLOR.green}✓${COLOR.reset} Removed: .github/workflows/${DEMO_PACKAGE}.yml\n`);
-    hasChanges = true;
-  } else {
-    write(`  ${COLOR.dim}ℹ .github/workflows/${DEMO_PACKAGE}.yml not found, skipping${COLOR.reset}\n`);
-  }
-
-  if (hasChanges) {
-    try {
-      execSync(`git rm -r --cached packages/${DEMO_PACKAGE} 2>/dev/null || true`, { cwd: ROOT, stdio: "ignore" });
-      execSync(`git rm --cached .github/workflows/${DEMO_PACKAGE}.yml 2>/dev/null || true`, { cwd: ROOT, stdio: "ignore" });
-      execSync("git add -u", { cwd: ROOT, stdio: "ignore" });
-    } catch {
-      // ignore git errors in environments without repository
+  // ── Protect release files from upstream sync ────────────
+  const gitattributesPath = join(ROOT, ".gitattributes");
+  if (await exists(gitattributesPath)) {
+    const attrContent = await readFile(gitattributesPath, "utf-8");
+    if (!attrContent.includes(".release-please-manifest.json")) {
+      const releaseAttrs = [
+        "",
+        "# Prevent upstream releases from overwriting fork releases during sync.",
+        ".release-please-manifest.json merge=ours",
+        "release-please-config.json merge=ours",
+        "CHANGELOG.md merge=ours",
+        "",
+      ].join("\n");
+      await writeFile(gitattributesPath, attrContent.trimEnd() + "\n" + releaseAttrs, "utf-8");
+      write(`  ${COLOR.green}✓${COLOR.reset} Added release files to .gitattributes ${COLOR.dim}(protected from upstream sync)${COLOR.reset}\n`);
+      try {
+        execSync("git add .gitattributes", { cwd: ROOT, stdio: "ignore" });
+      } catch {
+        // ignore
+      }
     }
   }
 
@@ -321,10 +355,10 @@ async function init(): Promise<void> {
       write(`  4. git push -u origin main\n\n`);
     } else {
       write(`\n  ${COLOR.dim}↩ Cancelled. .git kept.${COLOR.reset}\n`);
-      write(`\n${COLOR.green}✅ Demo package removed.${COLOR.reset} Repository ready for use.\n\n`);
+      write(`\n${COLOR.green}✅ Setup complete.${COLOR.reset} Repository ready for use.\n\n`);
     }
   } else {
-    write(`\n${COLOR.green}✅ Demo package removed.${COLOR.reset} Repository ready for use.\n`);
+    write(`\n${COLOR.green}✅ Setup complete.${COLOR.reset} Repository ready for use.\n`);
     write(`\n${COLOR.dim}Next steps:${COLOR.reset}\n`);
     write(`  1. ${COLOR.cyan}bun run new-package${COLOR.reset}   — create your first package\n`);
     write(`  2. git add . && git commit -m 'feat: initial'\n`);
@@ -332,4 +366,4 @@ async function init(): Promise<void> {
   }
 }
 
-await init();
+await setup();

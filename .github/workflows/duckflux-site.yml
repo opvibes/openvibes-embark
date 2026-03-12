@@ -31,7 +31,7 @@ jobs:
         env:
           CF_TOKEN: ${{ secrets.CF_TOKEN_PAGES }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          SUBDOMAIN: site.duckflux
+          SUBDOMAIN: duckflux
           ROOT_DOMAIN: false
           DOMAIN_SETUP: true
           DOMAIN: ${{ secrets.DOMAIN }}
@@ -93,7 +93,7 @@ jobs:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
           PROJECT_NAME: ${{ steps.project.outputs.project_name }}
-          SUBDOMAIN: site.duckflux
+          SUBDOMAIN: duckflux
           ROOT_DOMAIN: false
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |

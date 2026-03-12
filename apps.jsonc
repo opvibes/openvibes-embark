@@ -6,6 +6,12 @@
     "subdomain": "duckflux"
   },
   {
+    "name": "duckflux-docs",
+    "folderName": "duckflux-docs",
+    "rootDomain": false,
+    "subdomain": "docs.duckflux"
+  },
+  {
     "name": "duckflux-site",
     "rootDomain": false,
     "subdomain": "site.duckflux"
@@ -14,7 +20,7 @@
     "name": "duckflux-site",
     "folderName": "duckflux-site",
     "rootDomain": false,
-    "subdomain": "site.duckflux"
+    "subdomain": "duckflux"
   },
   {
     "name": "embark",

@@ -1,10 +1,10 @@
-name: embark
+name: embark-site
 
 on:
   push:
     branches: [main]
     paths:
-      - "packages/embark/**"
+      - "packages/embark-site/**"
   workflow_dispatch:
 
 env:
@@ -12,7 +12,7 @@ env:
   ROOT_DOMAIN: false
   DOMAIN_SETUP: true
   DOMAIN: ${{ secrets.DOMAIN }}
-  PACKAGE_NAME: embark
+  PACKAGE_NAME: embark-site
 
 jobs:
   build:
@@ -30,13 +30,13 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun run --cwd packages/embark build
+        run: bun run --cwd packages/embark-site build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-embark
-          path: packages/embark/dist
+          name: build-embark-site
+          path: packages/embark-site/dist
           retention-days: 1
 
   provision:
@@ -99,8 +99,8 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-embark
-          path: packages/embark/dist
+          name: build-embark-site
+          path: packages/embark-site/dist
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
@@ -108,7 +108,7 @@ jobs:
           apiToken: ${{ secrets.CF_TOKEN_PAGES }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages deploy dist --project-name=${{ needs.provision.outputs.project_name }} --commit-dirty=true
-          workingDirectory: packages/embark
+          workingDirectory: packages/embark-site
 
   dns:
     if: true

@@ -439,7 +439,7 @@ When changes are pushed to `main` **outside of `packages/`** (scripts, workflows
 |---------|-------------|
 | `duckflux-docs` | Duckflux documentation |
 | `duckflux-site` | Define complex multi-agent pipelines in YAML. Let LLMs do creative work. Let duckflux handle the plumbing. |
-| `embark` | Embark your vibe codes applications with a fast deploy and configurations |
+| `embark-site` | Embark your vibe codes applications with a fast deploy and configurations |
 <!-- PACKAGES:END -->
 
 ### Embark Website

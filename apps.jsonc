@@ -27,5 +27,11 @@
     "folderName": "embark",
     "rootDomain": false,
     "subdomain": "embark"
+  },
+  {
+    "name": "embark",
+    "folderName": "embark-site",
+    "rootDomain": false,
+    "subdomain": "embark"
   }
 ]

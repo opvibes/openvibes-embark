@@ -73,6 +73,8 @@ export function getMissingFields(config: Partial<EmbarkConfig> | null): (keyof E
     if (field === "subdomain" && config?.rootDomain === true) return false;
     if (field === "subdomain" && config?.deploy?.appDeployment === "cloudflare-pages" && config?.deploy?.cloudflareUse === false) return false;
     const value = config[field];
+    // useSubmodule is a boolean — false is a valid value, only undefined/null counts as missing
+    if (field === "useSubmodule") return value === undefined || value === null;
     if (value === undefined || value === null || value === "") return true;
     // For deploy, check if it's a complete DeployConfig object
     if (field === "deploy") {

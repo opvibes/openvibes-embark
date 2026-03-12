@@ -591,12 +591,6 @@ async function collectMissingFields(
           cloudflareUse = await askYesNo("Use Cloudflare for custom domain/DNS setup?");
         }
 
-        if (workflowGen) {
-          write(`\n${COLOR.bold}${COLOR.blue}? Git Submodules${COLOR.reset}\n`);
-          write(`  ${COLOR.dim}Does this package use Git submodules?${COLOR.reset}\n`);
-          config.useSubmodule = await askYesNo("Does this package use a Git submodule?");
-        }
-
         const deployConfig: DeployConfig = { appDeployment, workflowGen, cloudflareUse };
         config.deploy = deployConfig;
         break;
@@ -620,6 +614,12 @@ async function collectMissingFields(
       }
       case "description": {
         config.description = await askRequiredField("Description", "📄 Description");
+        break;
+      }
+      case "useSubmodule": {
+        write(`\n${COLOR.bold}${COLOR.blue}? Git Submodules${COLOR.reset}\n`);
+        write(`  ${COLOR.dim}Does this package use Git submodules?${COLOR.reset}\n`);
+        config.useSubmodule = await askYesNo("Does this package use a Git submodule?");
         break;
       }
     }

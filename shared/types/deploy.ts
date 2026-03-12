@@ -57,4 +57,5 @@ export const REQUIRED_EMBARK_FIELDS: (keyof EmbarkConfig)[] = [
   "title",
   "description",
   "subdomain",
+  "useSubmodule",
 ];

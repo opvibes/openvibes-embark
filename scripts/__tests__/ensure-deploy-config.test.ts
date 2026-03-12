@@ -221,7 +221,7 @@ describe("ensure-deploy-config", () => {
       expect(result).toHaveLength(1);
       expect(result[0]?.name).toBe("no-config");
       expect(result[0]?.hasConfig).toBe(false);
-      expect(result[0]?.missingFields).toHaveLength(5);
+      expect(result[0]?.missingFields).toHaveLength(6);
     });
 
     it("should return packages with incomplete config", async () => {
@@ -252,6 +252,7 @@ describe("ensure-deploy-config", () => {
           title: "Complete Package",
           subdomain: "complete",
           description: "A complete package",
+          useSubmodule: false,
         }),
       );
 
@@ -269,6 +270,7 @@ describe("ensure-deploy-config", () => {
           title: "Complete",
           subdomain: "complete",
           description: "Complete",
+          useSubmodule: false,
         }),
       );
 

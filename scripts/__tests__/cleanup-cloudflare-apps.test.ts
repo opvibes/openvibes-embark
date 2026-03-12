@@ -19,6 +19,7 @@ const completeConfig = {
   subdomain: "my-app",
   description: "A great app",
   rootDomain: false,
+  useSubmodule: false,
 };
 
 async function setup() {

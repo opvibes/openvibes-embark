@@ -175,7 +175,8 @@ describe("embark-config", () => {
       expect(missing).toContain("title");
       expect(missing).toContain("subdomain");
       expect(missing).toContain("description");
-      expect(missing).toHaveLength(5);
+      expect(missing).toContain("useSubmodule");
+      expect(missing).toHaveLength(6);
     });
 
     it("should return missing fields when config has only deploy", () => {
@@ -185,7 +186,8 @@ describe("embark-config", () => {
       expect(missing).toContain("title");
       expect(missing).toContain("subdomain");
       expect(missing).toContain("description");
-      expect(missing).toHaveLength(4);
+      expect(missing).toContain("useSubmodule");
+      expect(missing).toHaveLength(5);
     });
 
     it("should return empty array when config is complete", () => {
@@ -195,6 +197,7 @@ describe("embark-config", () => {
         title: "Showcase",
         subdomain: "showcase",
         description: "A showcase app",
+        useSubmodule: false,
       });
       expect(missing).toHaveLength(0);
     });
@@ -206,6 +209,7 @@ describe("embark-config", () => {
         title: "",
         subdomain: "showcase",
         description: "A showcase app",
+        useSubmodule: false,
       });
       expect(missing).toContain("title");
       expect(missing).toHaveLength(1);
@@ -218,8 +222,21 @@ describe("embark-config", () => {
         title: "Showcase",
         subdomain: "showcase",
         description: "A showcase app",
+        useSubmodule: false,
       });
       expect(missing).toContain("deploy");
+    });
+
+    it("should not flag useSubmodule=false as missing", () => {
+      const missing = getMissingFields({
+        deploy: makeDeployConfig(),
+        name: "showcase",
+        title: "Showcase",
+        subdomain: "showcase",
+        description: "A showcase app",
+        useSubmodule: false,
+      });
+      expect(missing).not.toContain("useSubmodule");
     });
   });
 
@@ -239,6 +256,7 @@ describe("embark-config", () => {
         title: "Showcase",
         subdomain: "showcase",
         description: "A showcase app",
+        useSubmodule: false,
       })).toBe(true);
     });
   });
@@ -267,6 +285,7 @@ describe("embark-config", () => {
           title: "Showcase",
           subdomain: "showcase",
           description: "A showcase app",
+          useSubmodule: false,
         }),
       );
       const result = await hasCompleteEmbarkConfig(TEST_DIR);

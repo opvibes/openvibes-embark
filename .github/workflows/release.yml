@@ -1,15 +1,15 @@
-name: Deploy __PACKAGE_NAME__
+name: Deploy release
 
 on:
   push:
     branches: [main]
     paths:
-      - "packages/__PACKAGE_NAME__/**"
+      - "packages/release/**"
   workflow_dispatch:
 
 env:
-  PACKAGE_PATH: packages/__PACKAGE_NAME__
-  SUBDOMAIN: __SUBDOMAIN__
+  PACKAGE_PATH: packages/release
+  SUBDOMAIN: release
   DOMAIN: ${{ secrets.DOMAIN }}
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4__SUBMODULES_WITH__
+        uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -33,8 +33,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-__PACKAGE_NAME__
-          path: packages/__PACKAGE_NAME__/dist
+          name: build-release
+          path: packages/release/dist
           retention-days: 1
 
   deploy:
@@ -47,8 +47,8 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-__PACKAGE_NAME__
-          path: packages/__PACKAGE_NAME__/dist
+          name: build-release
+          path: packages/release/dist
 
       - name: Install Netlify CLI
         run: bun add -g netlify-cli
@@ -97,7 +97,7 @@ jobs:
             --no-build
 
   dns:
-    if: __CLOUDFLARE_IF__
+    if: false
     needs: deploy
     runs-on: ubuntu-latest
     env:

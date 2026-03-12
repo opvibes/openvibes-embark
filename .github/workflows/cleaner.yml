@@ -33,6 +33,7 @@ jobs:
         id: orphans
         run: |
           ORPHANS=$(bun scripts/cleanup-cloudflare-apps.ts find-orphans 2>/dev/null | tail -n +2)
+
           echo "data=$ORPHANS" >> $GITHUB_OUTPUT
 
           COUNT=$(echo "$ORPHANS" | jq 'length')

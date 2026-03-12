@@ -1,4 +1,4 @@
-name: Cloudflare Apps Cleaner
+name: Orphan Apps Cleaner
 
 on:
   push:
@@ -49,13 +49,17 @@ jobs:
           echo "count=$COUNT" >> $GITHUB_OUTPUT
           echo "Found $COUNT orphaned app(s)"
 
-      - name: Clean Cloudflare for each orphan
+      - name: Clean cloud resources for each orphan
         if: steps.orphans.outputs.count != '0'
         env:
           CF_TOKEN: ${{ secrets.CF_TOKEN_PAGES }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
           DOMAIN: ${{ secrets.DOMAIN }}
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           ORPHANS: ${{ steps.orphans.outputs.data }}
         run: |
           DOMAIN_PREFIX="${DOMAIN%%.*}"
@@ -66,94 +70,161 @@ jobs:
             FOLDER_NAME=$(echo "$ENTRY" | jq -r '.folderName')
             SUBDOMAIN=$(echo "$ENTRY" | jq -r '.subdomain')
             ROOT_DOMAIN=$(echo "$ENTRY" | jq -r '.rootDomain')
+            APP_DEPLOYMENT=$(echo "$ENTRY" | jq -r '.appDeployment // "cloudflare-pages"')
+            CLOUDFLARE_USE=$(echo "$ENTRY" | jq -r '.cloudflareUse // "true"')
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Cleaning orphaned app: $FOLDER_NAME (subdomain: $SUBDOMAIN)"
+            echo "Cleaning orphaned app: $FOLDER_NAME"
+            echo "  Deploy target : $APP_DEPLOYMENT"
+            echo "  Cloudflare DNS: $CLOUDFLARE_USE"
+            echo "  Subdomain     : $SUBDOMAIN"
 
-            # Determine Cloudflare Pages project name (mirrors creation logic)
+            # Determine full domain
             if [ "$ROOT_DOMAIN" = "true" ]; then
-              PROJECT_NAME="${DOMAIN_PREFIX}"
               FULL_DOMAIN="${DOMAIN}"
-              CNAME_NAME="@"
             else
-              # Replace dots with hyphens — Cloudflare Pages project names cannot contain dots
-              PROJECT_NAME=$(echo "${DOMAIN_PREFIX}-${SUBDOMAIN}" | tr '.' '-')
               FULL_DOMAIN="${SUBDOMAIN}.${DOMAIN}"
-              CNAME_NAME="${SUBDOMAIN}"
             fi
 
             # Skip if no subdomain and not root domain
             if [ -z "$SUBDOMAIN" ] && [ "$ROOT_DOMAIN" != "true" ]; then
-              echo "⚠️  No subdomain configured, skipping Cloudflare cleanup for $FOLDER_NAME"
+              echo "⚠️  No subdomain configured, skipping cloud cleanup for $FOLDER_NAME"
               continue
             fi
 
-            echo "  Project name : $PROJECT_NAME"
-            echo "  Full domain  : $FULL_DOMAIN"
+            # ── Clean deploy target ──────────────────────────────
 
-            # 1. Remove custom domain from Pages project
-            echo ""
-            echo "→ Removing custom domain from Pages project..."
-            REMOVE_DOMAIN_RESP=$(curl -s -X DELETE \
-              "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}/domains/${FULL_DOMAIN}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
-              -H "Content-Type: application/json")
-
-            REMOVE_DOMAIN_SUCCESS=$(echo "$REMOVE_DOMAIN_RESP" | jq -r '.success')
-            if [ "$REMOVE_DOMAIN_SUCCESS" = "true" ]; then
-              echo "  ✓ Custom domain removed: $FULL_DOMAIN"
-            else
-              REMOVE_DOMAIN_ERR=$(echo "$REMOVE_DOMAIN_RESP" | jq -r '.errors[0].message // "Unknown"')
-              echo "  ⚠️  Could not remove custom domain: $REMOVE_DOMAIN_ERR (may not exist)"
-            fi
-
-            # 2. Delete Cloudflare Pages project
-            echo ""
-            echo "→ Deleting Cloudflare Pages project: $PROJECT_NAME..."
-            DELETE_PROJECT_RESP=$(curl -s -X DELETE \
-              "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
-              -H "Content-Type: application/json")
-
-            DELETE_PROJECT_SUCCESS=$(echo "$DELETE_PROJECT_RESP" | jq -r '.success')
-            if [ "$DELETE_PROJECT_SUCCESS" = "true" ]; then
-              echo "  ✓ Pages project deleted: $PROJECT_NAME"
-            else
-              DELETE_PROJECT_ERR=$(echo "$DELETE_PROJECT_RESP" | jq -r '.errors[0].message // "Unknown"')
-              DELETE_PROJECT_CODE=$(echo "$DELETE_PROJECT_RESP" | jq -r '.errors[0].code // 0')
-              if [ "$DELETE_PROJECT_CODE" = "8000007" ]; then
-                echo "  ✓ Pages project not found (already deleted): $PROJECT_NAME"
+            if [ "$APP_DEPLOYMENT" = "cloudflare-pages" ]; then
+              # Determine Cloudflare Pages project name
+              if [ "$ROOT_DOMAIN" = "true" ]; then
+                PROJECT_NAME="${DOMAIN_PREFIX}"
               else
-                echo "  ✗ Failed to delete Pages project: $DELETE_PROJECT_ERR"
-                echo "    Response: $DELETE_PROJECT_RESP"
-                echo "    ⚠️  Check that CF_TOKEN_PAGES has 'Cloudflare Pages:Edit' permission"
+                PROJECT_NAME=$(echo "${DOMAIN_PREFIX}-${SUBDOMAIN}" | tr '.' '-')
               fi
-            fi
 
-            # 3. Delete DNS record
-            echo ""
-            echo "→ Deleting DNS record: $FULL_DOMAIN..."
-            DNS_RECORDS_RESP=$(curl -s -X GET \
-              "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?name=${FULL_DOMAIN}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
-              -H "Content-Type: application/json")
-
-            DNS_RECORD_ID=$(echo "$DNS_RECORDS_RESP" | jq -r '.result[0].id // empty')
-            if [ -n "$DNS_RECORD_ID" ] && [ "$DNS_RECORD_ID" != "null" ]; then
-              DELETE_DNS_RESP=$(curl -s -X DELETE \
-                "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${DNS_RECORD_ID}" \
+              echo ""
+              echo "→ Removing custom domain from Pages project..."
+              REMOVE_DOMAIN_RESP=$(curl -s -X DELETE \
+                "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}/domains/${FULL_DOMAIN}" \
                 -H "Authorization: Bearer ${CF_TOKEN}" \
                 -H "Content-Type: application/json")
 
-              DELETE_DNS_SUCCESS=$(echo "$DELETE_DNS_RESP" | jq -r '.success')
-              if [ "$DELETE_DNS_SUCCESS" = "true" ]; then
-                echo "  ✓ DNS record deleted: $FULL_DOMAIN"
+              REMOVE_DOMAIN_SUCCESS=$(echo "$REMOVE_DOMAIN_RESP" | jq -r '.success')
+              if [ "$REMOVE_DOMAIN_SUCCESS" = "true" ]; then
+                echo "  ✓ Custom domain removed: $FULL_DOMAIN"
               else
-                DELETE_DNS_ERR=$(echo "$DELETE_DNS_RESP" | jq -r '.errors[0].message // "Unknown"')
-                echo "  ✗ Failed to delete DNS record: $DELETE_DNS_ERR"
+                REMOVE_DOMAIN_ERR=$(echo "$REMOVE_DOMAIN_RESP" | jq -r '.errors[0].message // "Unknown"')
+                echo "  ⚠️  Could not remove custom domain: $REMOVE_DOMAIN_ERR (may not exist)"
               fi
+
+              echo ""
+              echo "→ Deleting Cloudflare Pages project: $PROJECT_NAME..."
+              DELETE_PROJECT_RESP=$(curl -s -X DELETE \
+                "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}" \
+                -H "Authorization: Bearer ${CF_TOKEN}" \
+                -H "Content-Type: application/json")
+
+              DELETE_PROJECT_SUCCESS=$(echo "$DELETE_PROJECT_RESP" | jq -r '.success')
+              if [ "$DELETE_PROJECT_SUCCESS" = "true" ]; then
+                echo "  ✓ Pages project deleted: $PROJECT_NAME"
+              else
+                DELETE_PROJECT_ERR=$(echo "$DELETE_PROJECT_RESP" | jq -r '.errors[0].message // "Unknown"')
+                DELETE_PROJECT_CODE=$(echo "$DELETE_PROJECT_RESP" | jq -r '.errors[0].code // 0')
+                if [ "$DELETE_PROJECT_CODE" = "8000007" ]; then
+                  echo "  ✓ Pages project not found (already deleted): $PROJECT_NAME"
+                else
+                  echo "  ✗ Failed to delete Pages project: $DELETE_PROJECT_ERR"
+                  echo "    ⚠️  Check that CF_TOKEN_PAGES has 'Cloudflare Pages:Edit' permission"
+                fi
+              fi
+
+            elif [ "$APP_DEPLOYMENT" = "netlify" ]; then
+              SITE_NAME="${SUBDOMAIN}-embark"
+
+              echo ""
+              echo "→ Looking up Netlify site: $SITE_NAME..."
+              SITE_RESP=$(curl -s \
+                "https://api.netlify.com/api/v1/sites/${SITE_NAME}.netlify.app" \
+                -H "Authorization: Bearer ${NETLIFY_TOKEN}")
+
+              SITE_ID=$(echo "$SITE_RESP" | jq -r '.id // empty')
+
+              if [ -n "$SITE_ID" ] && [ "$SITE_ID" != "null" ]; then
+                echo ""
+                echo "→ Deleting Netlify site: $SITE_NAME (ID: $SITE_ID)..."
+                DELETE_SITE_RESP=$(curl -s -X DELETE \
+                  "https://api.netlify.com/api/v1/sites/${SITE_ID}" \
+                  -H "Authorization: Bearer ${NETLIFY_TOKEN}")
+
+                # Netlify returns 204 No Content on success (empty body)
+                if [ -z "$DELETE_SITE_RESP" ]; then
+                  echo "  ✓ Netlify site deleted: $SITE_NAME"
+                else
+                  DELETE_SITE_ERR=$(echo "$DELETE_SITE_RESP" | jq -r '.message // "Unknown"')
+                  echo "  ✗ Failed to delete Netlify site: $DELETE_SITE_ERR"
+                fi
+              else
+                echo "  ✓ Netlify site not found (already deleted): $SITE_NAME"
+              fi
+
+            elif [ "$APP_DEPLOYMENT" = "gcp" ]; then
+              SERVICE_NAME="$SUBDOMAIN"
+
+              if [ -n "$GCP_SA_KEY" ] && [ -n "$GCP_PROJECT_ID" ]; then
+                echo ""
+                echo "→ Authenticating with GCP..."
+                echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp-key.json 2>/dev/null || echo "$GCP_SA_KEY" > /tmp/gcp-key.json
+                gcloud auth activate-service-account --key-file=/tmp/gcp-key.json --quiet 2>/dev/null || true
+                gcloud config set project "$GCP_PROJECT_ID" --quiet 2>/dev/null || true
+                rm -f /tmp/gcp-key.json
+
+                REGION="${GCP_REGION:-us-central1}"
+
+                echo ""
+                echo "→ Deleting Cloud Run service: $SERVICE_NAME (region: $REGION)..."
+                if gcloud run services delete "$SERVICE_NAME" --region="$REGION" --quiet 2>/dev/null; then
+                  echo "  ✓ Cloud Run service deleted: $SERVICE_NAME"
+                else
+                  echo "  ⚠️  Cloud Run service not found or could not be deleted: $SERVICE_NAME"
+                fi
+              else
+                echo "  ⚠️  GCP credentials not configured, skipping Cloud Run cleanup for $FOLDER_NAME"
+              fi
+
+            elif [ "$APP_DEPLOYMENT" = "other" ]; then
+              echo "  ℹ️  Deploy target is 'other' — no cloud resources to clean"
+
             else
-              echo "  ✓ No DNS record found for $FULL_DOMAIN (already deleted or never created)"
+              echo "  ⚠️  Unknown deploy target: $APP_DEPLOYMENT — skipping cloud cleanup"
+            fi
+
+            # ── Clean Cloudflare DNS (if cloudflareUse is true) ──
+
+            if [ "$CLOUDFLARE_USE" = "true" ]; then
+              echo ""
+              echo "→ Deleting DNS record: $FULL_DOMAIN..."
+              DNS_RECORDS_RESP=$(curl -s -X GET \
+                "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?name=${FULL_DOMAIN}" \
+                -H "Authorization: Bearer ${CF_TOKEN}" \
+                -H "Content-Type: application/json")
+
+              DNS_RECORD_ID=$(echo "$DNS_RECORDS_RESP" | jq -r '.result[0].id // empty')
+              if [ -n "$DNS_RECORD_ID" ] && [ "$DNS_RECORD_ID" != "null" ]; then
+                DELETE_DNS_RESP=$(curl -s -X DELETE \
+                  "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${DNS_RECORD_ID}" \
+                  -H "Authorization: Bearer ${CF_TOKEN}" \
+                  -H "Content-Type: application/json")
+
+                DELETE_DNS_SUCCESS=$(echo "$DELETE_DNS_RESP" | jq -r '.success')
+                if [ "$DELETE_DNS_SUCCESS" = "true" ]; then
+                  echo "  ✓ DNS record deleted: $FULL_DOMAIN"
+                else
+                  DELETE_DNS_ERR=$(echo "$DELETE_DNS_RESP" | jq -r '.errors[0].message // "Unknown"')
+                  echo "  ✗ Failed to delete DNS record: $DELETE_DNS_ERR"
+                fi
+              else
+                echo "  ✓ No DNS record found for $FULL_DOMAIN (already deleted or never created)"
+              fi
             fi
           done
 

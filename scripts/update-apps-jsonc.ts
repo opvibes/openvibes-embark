@@ -2,6 +2,7 @@ import { readFile, writeFile, readdir, access } from "node:fs/promises";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
 import { readEmbarkConfig, hasCompleteEmbarkConfig } from "./embark-config";
+import type { AppDeployment } from "../shared/types/deploy";
 
 const ROOT = join(import.meta.dirname, "..");
 const PACKAGES_DIR = join(ROOT, "packages");
@@ -11,6 +12,8 @@ export interface AppEntry {
   folderName: string;
   rootDomain: boolean;
   subdomain: string;
+  appDeployment: AppDeployment;
+  cloudflareUse: boolean;
 }
 
 export async function buildAppsEntries(
@@ -38,6 +41,8 @@ export async function buildAppsEntries(
       folderName: String(entry.name),
       rootDomain: config.rootDomain ?? false,
       subdomain: config.subdomain ?? "",
+      appDeployment: config.deploy?.appDeployment ?? "gcp",
+      cloudflareUse: config.deploy?.cloudflareUse ?? false,
     });
   }
 

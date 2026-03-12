@@ -54,6 +54,8 @@ describe("buildAppsEntries", () => {
       folderName: "my-app",
       rootDomain: false,
       subdomain: "my-app",
+      appDeployment: "gcp",
+      cloudflareUse: false,
     });
   });
 
@@ -134,6 +136,8 @@ describe("updateAppsJsonc", () => {
       folderName: "my-app",
       rootDomain: false,
       subdomain: "my-app",
+      appDeployment: "gcp",
+      cloudflareUse: false,
     });
   });
 

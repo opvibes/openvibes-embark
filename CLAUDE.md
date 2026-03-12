@@ -423,9 +423,14 @@ Runs on every push to main:
 Runs on every push to main (independent of packages):
 1. Deletes orphan workflows (workflows without a corresponding package in `packages/`)
 2. Finds orphaned apps in `apps.jsonc` (entries whose folder no longer exists)
-3. Cleans Cloudflare resources (Pages projects, DNS records) for orphaned apps
-4. Removes orphan entries from `apps.jsonc`
-5. Commits all cleanup changes
+3. Cleans cloud resources based on `appDeployment` config:
+   - **cloudflare-pages**: Removes Pages project + custom domain
+   - **netlify**: Deletes Netlify site
+   - **gcp**: Deletes Cloud Run service
+   - **other**: No cloud cleanup
+4. Cleans Cloudflare DNS records (when `cloudflareUse: true`)
+5. Removes orphan entries from `apps.jsonc`
+6. Commits all cleanup changes
 
 #### Release (`release.yml`)
 

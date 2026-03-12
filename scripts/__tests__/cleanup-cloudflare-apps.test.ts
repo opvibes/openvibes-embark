@@ -86,7 +86,7 @@ describe("findOrphanedApps", () => {
   it("returns empty array when all folders still exist", async () => {
     await createPackage("my-app", completeConfig);
     await writeAppsJsonc([
-      { name: "myApp", folderName: "my-app", rootDomain: false, subdomain: "my-app" },
+      { name: "myApp", folderName: "my-app", rootDomain: false, subdomain: "my-app", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
 
     const result = await findOrphanedApps(PACKAGES_DIR, TEST_DIR);
@@ -96,7 +96,7 @@ describe("findOrphanedApps", () => {
   it("returns orphan when folder is deleted and subdomain not reused", async () => {
     // apps.jsonc has an entry for deleted-app
     await writeAppsJsonc([
-      { name: "deletedApp", folderName: "deleted-app", rootDomain: false, subdomain: "deleted" },
+      { name: "deletedApp", folderName: "deleted-app", rootDomain: false, subdomain: "deleted", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
     // packages/ is empty — folder doesn't exist
 
@@ -111,7 +111,7 @@ describe("findOrphanedApps", () => {
     await createPackage("new-app", { ...completeConfig, name: "newApp", subdomain: "my-app" });
     await writeAppsJsonc([
       // Entry for old folder with same subdomain
-      { name: "myApp", folderName: "my-app-old", rootDomain: false, subdomain: "my-app" },
+      { name: "myApp", folderName: "my-app-old", rootDomain: false, subdomain: "my-app", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
 
     const result = await findOrphanedApps(PACKAGES_DIR, TEST_DIR);
@@ -120,7 +120,7 @@ describe("findOrphanedApps", () => {
 
   it("handles entry with empty subdomain", async () => {
     await writeAppsJsonc([
-      { name: "rootApp", folderName: "root-app", rootDomain: true, subdomain: "" },
+      { name: "rootApp", folderName: "root-app", rootDomain: true, subdomain: "", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
 
     const result = await findOrphanedApps(PACKAGES_DIR, TEST_DIR);
@@ -140,8 +140,8 @@ describe("removeAppsEntries", () => {
 
   it("removes specified entries from apps.jsonc", async () => {
     await writeAppsJsonc([
-      { name: "myApp", folderName: "my-app", rootDomain: false, subdomain: "my-app" },
-      { name: "otherApp", folderName: "other-app", rootDomain: false, subdomain: "other" },
+      { name: "myApp", folderName: "my-app", rootDomain: false, subdomain: "my-app", appDeployment: "cloudflare-pages", cloudflareUse: true },
+      { name: "otherApp", folderName: "other-app", rootDomain: false, subdomain: "other", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
 
     const result = await removeAppsEntries(["my-app"], TEST_DIR);
@@ -155,7 +155,7 @@ describe("removeAppsEntries", () => {
 
   it("returns false when folderName not found in apps.jsonc", async () => {
     await writeAppsJsonc([
-      { name: "myApp", folderName: "my-app", rootDomain: false, subdomain: "my-app" },
+      { name: "myApp", folderName: "my-app", rootDomain: false, subdomain: "my-app", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
 
     const result = await removeAppsEntries(["nonexistent"], TEST_DIR);
@@ -169,9 +169,9 @@ describe("removeAppsEntries", () => {
 
   it("can remove multiple entries at once", async () => {
     await writeAppsJsonc([
-      { name: "appA", folderName: "app-a", rootDomain: false, subdomain: "a" },
-      { name: "appB", folderName: "app-b", rootDomain: false, subdomain: "b" },
-      { name: "appC", folderName: "app-c", rootDomain: false, subdomain: "c" },
+      { name: "appA", folderName: "app-a", rootDomain: false, subdomain: "a", appDeployment: "gcp", cloudflareUse: false },
+      { name: "appB", folderName: "app-b", rootDomain: false, subdomain: "b", appDeployment: "netlify", cloudflareUse: true },
+      { name: "appC", folderName: "app-c", rootDomain: false, subdomain: "c", appDeployment: "cloudflare-pages", cloudflareUse: true },
     ]);
 
     await removeAppsEntries(["app-a", "app-b"], TEST_DIR);

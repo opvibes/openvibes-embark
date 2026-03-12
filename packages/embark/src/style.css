@@ -419,6 +419,106 @@ code {
   transform: scaleX(0) !important;
 }
 
+/* Nav Dropdown Groups */
+.nav-has-dropdown {
+  position: relative;
+  list-style: none;
+}
+
+.nav-group-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.nav-group-label:hover,
+.nav-group-label.active {
+  color: var(--neon-cyan);
+}
+
+.nav-arrow {
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+.nav-has-dropdown:hover .nav-arrow,
+.nav-has-dropdown.open .nav-arrow {
+  transform: rotate(180deg);
+}
+
+.nav-submenu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 10, 15, 0.98);
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  border-radius: 12px;
+  padding: 0.5rem 0;
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(34, 211, 238, 0.05);
+  backdrop-filter: blur(20px);
+  z-index: 10001;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.nav-has-dropdown:hover .nav-submenu {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-submenu li {
+  list-style: none;
+}
+
+.nav-submenu a {
+  display: block;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary) !important;
+  letter-spacing: 0.02em;
+  transition: color 0.15s, background 0.15s, padding-left 0.15s;
+  white-space: nowrap;
+  border-radius: 0;
+}
+
+.nav-submenu a:hover {
+  color: var(--neon-cyan) !important;
+  background: rgba(34, 211, 238, 0.06);
+  padding-left: 1.5rem;
+}
+
+.nav-submenu a::before,
+.nav-submenu a::after {
+  display: none !important;
+}
+
+/* Version badge list item */
+.nav-version-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* Hamburger Menu */
 .nav-toggle {
   display: none;
@@ -499,7 +599,7 @@ code {
   }
 
   .nav-links.active {
-    max-height: 750px;
+    max-height: 1400px;
   }
 
   .nav-links a {
@@ -507,6 +607,57 @@ code {
     font-size: 1rem;
     border-bottom: 1px solid rgba(34, 211, 238, 0.05);
     border-radius: 0;
+  }
+
+  /* Mobile dropdown groups */
+  .nav-has-dropdown {
+    width: 100%;
+  }
+
+  .nav-group-label {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.05);
+    border-radius: 0;
+    justify-content: space-between;
+    color: var(--text-secondary);
+  }
+
+  .nav-has-dropdown:hover .nav-submenu {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-has-dropdown.open .nav-submenu {
+    display: block;
+    position: static;
+    transform: none;
+    background: rgba(34, 211, 238, 0.03);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0;
+    min-width: unset;
+  }
+
+  .nav-submenu a {
+    padding: 0.75rem 2rem 0.75rem 3rem !important;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.03);
+  }
+
+  .nav-submenu a:hover {
+    padding-left: 3.25rem !important;
+  }
+
+  .nav-version-item {
+    padding: 0.5rem 2rem;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.05);
   }
 
   .nav-links a::before {
@@ -1158,12 +1309,12 @@ code {
   text-shadow: 0 0 8px rgba(34, 211, 238, 0.4);
 }
 
-.terminal-line.output.option.focused span::before {
+.terminal-line.output.option.focused > span::before {
   content: "❯ ";
   margin-right: 0.3em;
 }
 
-.terminal-line.output.option.selected span::before {
+.terminal-line.output.option.selected > span::before {
   content: "✓ ";
   color: #28c840;
   margin-right: 0.3em;
@@ -2634,6 +2785,40 @@ code {
 
 .footer-made a:hover {
   text-decoration: underline;
+}
+
+.footer-sub {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+.footer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  color: var(--text-dim) !important;
+  background: rgba(34, 211, 238, 0.05);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.footer-badge:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+  color: var(--neon-cyan) !important;
 }
 
 /* Utils CLI Section */

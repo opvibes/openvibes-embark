@@ -46,8 +46,9 @@ export function initVersionBadge() {
 
   fetchLatestTag().then((tag) => {
     if (tag) {
-      badge.textContent = tag;
-      badge.title = `Latest release: ${tag}`;
+      const lowerTag = tag.toLowerCase();
+      badge.textContent = lowerTag;
+      badge.title = `Latest release: ${lowerTag}`;
     }
   });
 }

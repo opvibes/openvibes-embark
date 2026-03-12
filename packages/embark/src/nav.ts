@@ -1,16 +1,16 @@
 /**
  * Initialize main navigation menu with:
  * - Mobile hamburger toggle
+ * - Dropdown group toggle on mobile (click to expand)
  * - Active section highlighting on scroll
  * - Scroll effect styling
- * - Smooth scroll behavior
  */
 
 export function initNav(): void {
   const nav = document.getElementById("main-nav") as HTMLElement | null;
   const navToggle = document.getElementById("nav-toggle") as HTMLButtonElement | null;
   const navLinks = document.getElementById("nav-links") as HTMLElement | null;
-  const navItems = document.querySelectorAll(".nav-links a");
+  const navItems = document.querySelectorAll(".nav-links > li > a, .nav-submenu a");
 
   // Mobile hamburger toggle
   if (navToggle) {
@@ -20,11 +20,40 @@ export function initNav(): void {
     });
   }
 
-  // Close menu when link is clicked
-  navItems.forEach((item) => {
+  // Mobile dropdown group toggle (click on .nav-group-label)
+  const dropdownItems = document.querySelectorAll<HTMLElement>(".nav-has-dropdown");
+  dropdownItems.forEach((item) => {
+    const label = item.querySelector<HTMLElement>(".nav-group-label");
+    if (label) {
+      label.addEventListener("click", () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          item.classList.toggle("open");
+          // Close other open dropdowns
+          dropdownItems.forEach((other) => {
+            if (other !== item) other.classList.remove("open");
+          });
+        }
+      });
+    }
+  });
+
+  // Close menu when any nav link is clicked
+  document.querySelectorAll(".nav-links a, .nav-submenu a").forEach((item) => {
     item.addEventListener("click", () => {
       navToggle?.classList.remove("active");
       navLinks?.classList.remove("active");
+      dropdownItems.forEach((d) => d.classList.remove("open"));
+    });
+  });
+
+  // Close dropdowns on outside click (desktop)
+  document.addEventListener("click", (e) => {
+    const target = e.target as Node;
+    dropdownItems.forEach((item) => {
+      if (!item.contains(target)) {
+        item.classList.remove("open");
+      }
     });
   });
 
@@ -33,7 +62,6 @@ export function initNav(): void {
     let current = "";
     const sections = document.querySelectorAll("section[id]");
 
-    // Add scrolled class to nav
     if (nav) {
       if (window.scrollY > 10) {
         nav.classList.add("scrolled");
@@ -46,7 +74,6 @@ export function initNav(): void {
       const section = sections[i] as HTMLElement;
       const sectionTop = section.offsetTop;
 
-      // If scroll position is below section top, this is the current section
       if (window.scrollY >= sectionTop - 200) {
         current = section.getAttribute("id") || "";
         break;
@@ -59,8 +86,19 @@ export function initNav(): void {
         item.classList.add("active");
       }
     });
+
+    // Highlight parent group if a submenu link is active
+    dropdownItems.forEach((item) => {
+      const activeChild = item.querySelector(".nav-submenu a.active");
+      const label = item.querySelector(".nav-group-label");
+      if (activeChild) {
+        label?.classList.add("active");
+      } else {
+        label?.classList.remove("active");
+      }
+    });
   }
 
   window.addEventListener("scroll", updateActiveLink, { passive: true });
-  updateActiveLink(); // Call once on init
+  updateActiveLink();
 }

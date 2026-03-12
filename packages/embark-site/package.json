@@ -1,6 +1,6 @@
 {
   "name": "@embark/embark-site",
-  "description": "Embark your vibe codes applications with a fast deploy and configurations",
+  "description": "Embark",
   "version": "0.0.1",
   "private": true,
   "type": "module",

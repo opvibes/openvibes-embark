@@ -42,13 +42,18 @@ describe("buildAppsEntries", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("returns entry for package with complete config", async () => {
+  it("returns entry with folderName for package with complete config", async () => {
     await createPackage("my-app", completeConfig);
 
     const apps = await buildAppsEntries(PACKAGES_DIR);
 
     expect(apps).toHaveLength(1);
-    expect(apps[0]).toEqual({ name: "myApp", rootDomain: false, subdomain: "my-app" });
+    expect(apps[0]).toEqual({
+      name: "myApp",
+      folderName: "my-app",
+      rootDomain: false,
+      subdomain: "my-app",
+    });
   });
 
   it("returns empty array when no packages exist", async () => {
@@ -68,6 +73,7 @@ describe("buildAppsEntries", () => {
 
     expect(apps[0]?.rootDomain).toBe(true);
     expect(apps[0]?.name).toBe("rootApp");
+    expect(apps[0]?.folderName).toBe("root-app");
   });
 
   it("defaults rootDomain to false when not set", async () => {
@@ -122,7 +128,12 @@ describe("updateAppsJsonc", () => {
     const content = await readFile(join(TEST_DIR, "apps.jsonc"), "utf-8");
     const parsed = JSON.parse(content);
     expect(parsed).toHaveLength(1);
-    expect(parsed[0]).toEqual({ name: "myApp", rootDomain: false, subdomain: "my-app" });
+    expect(parsed[0]).toEqual({
+      name: "myApp",
+      folderName: "my-app",
+      rootDomain: false,
+      subdomain: "my-app",
+    });
   });
 
   it("returns false when apps.jsonc is already up to date", async () => {
@@ -134,10 +145,11 @@ describe("updateAppsJsonc", () => {
     expect(changed).toBe(false);
   });
 
-  it("updates apps.jsonc when packages change", async () => {
+  it("adds new packages without removing deleted ones", async () => {
     await createPackage("my-app", completeConfig);
     await updateAppsJsonc(PACKAGES_DIR, TEST_DIR);
 
+    // Add new package but keep old one in the filesystem first to simulate state
     await createPackage("other-app", { ...completeConfig, name: "otherApp", subdomain: "other" });
     const changed = await updateAppsJsonc(PACKAGES_DIR, TEST_DIR);
     expect(changed).toBe(true);
@@ -147,7 +159,26 @@ describe("updateAppsJsonc", () => {
     expect(parsed).toHaveLength(2);
   });
 
-  it("creates empty array when no packages exist", async () => {
+  it("preserves entries for deleted packages (merge behavior)", async () => {
+    // Start with two packages
+    await createPackage("my-app", completeConfig);
+    await createPackage("other-app", { ...completeConfig, name: "otherApp", subdomain: "other" });
+    await updateAppsJsonc(PACKAGES_DIR, TEST_DIR);
+
+    // Simulate deletion: remove other-app from filesystem but keep my-app
+    rmSync(join(PACKAGES_DIR, "other-app"), { recursive: true, force: true });
+
+    const changed = await updateAppsJsonc(PACKAGES_DIR, TEST_DIR);
+    expect(changed).toBe(false); // nothing changes since entry is preserved
+
+    const content = await readFile(join(TEST_DIR, "apps.jsonc"), "utf-8");
+    const parsed = JSON.parse(content);
+    // Both entries should still be present
+    expect(parsed).toHaveLength(2);
+    expect(parsed.some((e: { folderName: string }) => e.folderName === "other-app")).toBe(true);
+  });
+
+  it("creates empty array when no packages exist and no prior file", async () => {
     const changed = await updateAppsJsonc(PACKAGES_DIR, TEST_DIR);
     expect(changed).toBe(true);
 

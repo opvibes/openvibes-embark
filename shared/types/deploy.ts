@@ -41,6 +41,11 @@ export interface EmbarkConfig {
    * explicit confirmation and will unset the previous one.
    */
   rootDomain?: boolean;
+  /**
+   * Whether the package uses Git submodules.
+   * When true, the generated workflow will include `submodules: recursive` in the checkout step.
+   */
+  useSubmodule?: boolean;
 }
 
 /**

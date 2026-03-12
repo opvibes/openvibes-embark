@@ -271,6 +271,36 @@ describe("processPackageWorkflow - I/O integration", () => {
       Bun.spawnSync(["rm", "-rf", testDir]);
     }
   });
+
+  test("adds submodules: recursive to checkout when useSubmodule=true", async () => {
+    const testDir = join(tmpdir(), `test-workflow-submodules-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      const result = await processPackageWorkflow("my-app", "gcp", false, testDir, undefined, undefined, true);
+      expect(result).toBe(true);
+
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+      expect(content).toContain("submodules: recursive");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("does not include submodules when useSubmodule=false", async () => {
+    const testDir = join(tmpdir(), `test-workflow-no-submodules-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      const result = await processPackageWorkflow("my-app", "gcp", false, testDir, undefined, undefined, false);
+      expect(result).toBe(true);
+
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+      expect(content).not.toContain("submodules: recursive");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
 });
 
 describe("processPackagesWorkflows", () => {

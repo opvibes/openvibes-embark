@@ -1,11 +1,18 @@
 [
   {
     "name": "duckflux",
+    "folderName": "duckflux",
     "rootDomain": false,
     "subdomain": "duckflux"
   },
   {
     "name": "duckflux-site",
+    "rootDomain": false,
+    "subdomain": "site.duckflux"
+  },
+  {
+    "name": "duckflux-site",
+    "folderName": "duckflux-site",
     "rootDomain": false,
     "subdomain": "site.duckflux"
   }

@@ -8,6 +8,7 @@ const PACKAGES_DIR = join(ROOT, "packages");
 
 export interface AppEntry {
   name: string;
+  folderName: string;
   rootDomain: boolean;
   subdomain: string;
 }
@@ -15,7 +16,7 @@ export interface AppEntry {
 export async function buildAppsEntries(
   packagesDir = PACKAGES_DIR,
 ): Promise<AppEntry[]> {
-  let entries: Awaited<ReturnType<typeof readdir>>;
+  let entries: import("node:fs").Dirent[];
   try {
     entries = await readdir(packagesDir, { withFileTypes: true });
   } catch {
@@ -26,7 +27,7 @@ export async function buildAppsEntries(
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const pkgDir = join(packagesDir, entry.name);
+    const pkgDir = join(packagesDir, String(entry.name));
     if (!(await hasCompleteEmbarkConfig(pkgDir))) continue;
 
     const config = await readEmbarkConfig(pkgDir);
@@ -34,6 +35,7 @@ export async function buildAppsEntries(
 
     apps.push({
       name: config.name,
+      folderName: String(entry.name),
       rootDomain: config.rootDomain ?? false,
       subdomain: config.subdomain ?? "",
     });
@@ -47,16 +49,32 @@ export async function updateAppsJsonc(
   root = ROOT,
 ): Promise<boolean> {
   const appsPath = join(root, "apps.jsonc");
-  const apps = await buildAppsEntries(packagesDir);
-  const newContent = JSON.stringify(apps, null, 2) + "\n";
 
+  // Read existing entries (preserves entries for deleted packages)
+  let existingEntries: AppEntry[] = [];
   let existingContent = "";
   try {
     await access(appsPath);
     existingContent = await readFile(appsPath, "utf-8");
+    existingEntries = JSON.parse(existingContent) as AppEntry[];
   } catch {
     // File doesn't exist yet
   }
+
+  // Build fresh entries from current packages
+  const freshEntries = await buildAppsEntries(packagesDir);
+
+  // Merge: existing entries stay (for deleted packages), fresh entries overwrite/add by folderName
+  const merged = new Map<string, AppEntry>(existingEntries.map((e) => [e.folderName, e]));
+  for (const entry of freshEntries) {
+    merged.set(entry.folderName, entry);
+  }
+
+  const sortedEntries = Array.from(merged.values()).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  const newContent = JSON.stringify(sortedEntries, null, 2) + "\n";
 
   if (existingContent === newContent) {
     console.log("[update-apps-jsonc] apps.jsonc is already up to date");
@@ -71,7 +89,7 @@ export async function updateAppsJsonc(
     // May fail in test environments without git
   }
 
-  console.log(`[update-apps-jsonc] apps.jsonc updated with ${apps.length} package(s)`);
+  console.log(`[update-apps-jsonc] apps.jsonc updated with ${sortedEntries.length} entry/entries`);
   return true;
 }
 

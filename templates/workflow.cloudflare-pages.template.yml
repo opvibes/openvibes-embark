@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4__SUBMODULES_WITH__
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -44,7 +44,8 @@ jobs:
             if [ "$ROOT_DOMAIN" = "true" ]; then
               PROJECT_NAME="${DOMAIN_PREFIX}"
             else
-              PROJECT_NAME="${DOMAIN_PREFIX}-${SUBDOMAIN}"
+              # Replace dots with hyphens — Cloudflare Pages project names cannot contain dots
+              PROJECT_NAME=$(echo "${DOMAIN_PREFIX}-${SUBDOMAIN}" | tr '.' '-')
             fi
           else
             # No custom domain — use package name as project identifier

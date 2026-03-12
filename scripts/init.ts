@@ -214,7 +214,7 @@ async function init(): Promise<void> {
       // Check if upstream already exists
       const remotes = execSync("git remote", { cwd: ROOT }).toString().trim().split("\n");
       if (!remotes.includes("upstream")) {
-        execSync("git remote add upstream https://github.com/Open-Vibes/embark.git", { cwd: ROOT, stdio: "ignore" });
+        execSync("git remote add upstream https://github.com/opvibes/embark.git", { cwd: ROOT, stdio: "ignore" });
         execSync("git remote set-url --push upstream DISABLED", { cwd: ROOT, stdio: "ignore" });
         write(`  ${COLOR.green}✓${COLOR.reset} Upstream remote configured ${COLOR.dim}(pull-only — push disabled)${COLOR.reset}\n`);
         write(`  ${COLOR.dim}→ git fetch upstream && git merge upstream/main${COLOR.reset}\n`);
@@ -274,7 +274,7 @@ async function init(): Promise<void> {
 
       // Configure upstream remote for the fresh repo
       try {
-        execSync("git remote add upstream https://github.com/Open-Vibes/embark.git", { cwd: ROOT, stdio: "ignore" });
+        execSync("git remote add upstream https://github.com/opvibes/embark.git", { cwd: ROOT, stdio: "ignore" });
         execSync("git remote set-url --push upstream DISABLED", { cwd: ROOT, stdio: "ignore" });
         write(`  ${COLOR.green}✓${COLOR.reset} Upstream remote configured ${COLOR.dim}(pull-only — push disabled)${COLOR.reset}\n`);
       } catch {

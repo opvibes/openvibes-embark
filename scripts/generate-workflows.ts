@@ -13,6 +13,7 @@ const PLACEHOLDER_LOWERCASE = "__PACKAGE_NAME_LOWERCASE__";
 const PLACEHOLDER_SUBDOMAIN = "__SUBDOMAIN__";
 const PLACEHOLDER_ROOT_DOMAIN = "__ROOT_DOMAIN__";
 const PLACEHOLDER_DOMAIN_SETUP = "__DOMAIN_SETUP__";
+const PLACEHOLDER_SUBMODULES_WITH = "__SUBMODULES_WITH__";
 
 export async function exists(path: string): Promise<boolean> {
   try {
@@ -34,6 +35,7 @@ export async function buildWorkflowContent(
   cloudflareUse: boolean,
   subdomain?: string,
   rootDomain?: boolean,
+  useSubmodule?: boolean,
 ): Promise<string> {
   const templateFile =
     appDeployment === "netlify"
@@ -60,12 +62,17 @@ export async function buildWorkflowContent(
 
   const subdomainValue = subdomain ?? packageName.toLowerCase();
 
+  const submodulesWithValue = useSubmodule === true
+    ? "\n        with:\n          submodules: recursive"
+    : "";
+
   return content
     .replaceAll(PLACEHOLDER, packageName)
     .replaceAll(PLACEHOLDER_LOWERCASE, packageName.toLowerCase())
     .replaceAll(PLACEHOLDER_SUBDOMAIN, subdomainValue)
     .replaceAll(PLACEHOLDER_ROOT_DOMAIN, rootDomain === true ? "true" : "false")
-    .replaceAll(PLACEHOLDER_DOMAIN_SETUP, cloudflareUse === true ? "true" : "false");
+    .replaceAll(PLACEHOLDER_DOMAIN_SETUP, cloudflareUse === true ? "true" : "false")
+    .replaceAll(PLACEHOLDER_SUBMODULES_WITH, submodulesWithValue);
 }
 
 export async function processPackageWorkflow(
@@ -75,6 +82,7 @@ export async function processPackageWorkflow(
   workflowsDir: string,
   subdomain?: string,
   rootDomain?: boolean,
+  useSubmodule?: boolean,
 ): Promise<boolean> {
   const workflowPath = join(workflowsDir, `${packageName}.yml`);
 
@@ -83,7 +91,7 @@ export async function processPackageWorkflow(
     return false;
   }
 
-  const content = await buildWorkflowContent(packageName, appDeployment, cloudflareUse, subdomain, rootDomain);
+  const content = await buildWorkflowContent(packageName, appDeployment, cloudflareUse, subdomain, rootDomain, useSubmodule);
   await writeFile(workflowPath, content, "utf-8");
   console.log(`[generate-workflows] created: .github/workflows/${packageName}.yml`);
   return true;
@@ -95,6 +103,7 @@ export interface PackageWorkflowData {
   cloudflareUse: boolean;
   subdomain?: string;
   rootDomain?: boolean;
+  useSubmodule?: boolean;
 }
 
 export async function processPackagesWorkflows(
@@ -111,6 +120,7 @@ export async function processPackagesWorkflows(
       workflowsDir,
       pkg.subdomain,
       pkg.rootDomain,
+      pkg.useSubmodule,
     );
     if (changed) {
       hasChanges = true;
@@ -137,6 +147,7 @@ async function generateWorkflows() {
       cloudflareUse: config?.deploy?.cloudflareUse ?? false,
       subdomain: config?.subdomain,
       rootDomain: config?.rootDomain,
+      useSubmodule: config?.useSubmodule,
     });
   }
 

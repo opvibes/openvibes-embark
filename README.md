@@ -14,7 +14,6 @@
   <img src="https://img.shields.io/badge/tests-151%20passing-brightgreen?style=for-the-badge" alt="Tests pass" />
   <img src="https://img.shields.io/badge/coverage-77%25-yellow?style=for-the-badge" alt="Coverage" />
 </p>
----
 
 ## What is Embark?
 
@@ -46,7 +45,7 @@ A monorepo framework that automates everything between **code** and **production
 
 ```bash
 # clone & install
-git clone https://github.com/Open-Vibes/embark.git
+git clone https://github.com/opvibes/embark.git
 cd embark
 bun install
 

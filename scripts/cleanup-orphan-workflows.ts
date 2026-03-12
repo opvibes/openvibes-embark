@@ -8,7 +8,7 @@ const PACKAGES_DIR = join(ROOT, "packages");
 const WORKFLOWS_DIR = join(ROOT, ".github", "workflows");
 
 // Workflows do sistema que não correspondem a pacotes e nunca devem ser removidos
-const SYSTEM_WORKFLOWS = new Set(["bootstrap"]);
+const SYSTEM_WORKFLOWS = new Set(["bootstrap", "cleaner"]);
 
 export async function exists(path: string): Promise<boolean> {
   try {

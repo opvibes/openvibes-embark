@@ -2,3 +2,6 @@
 	path = packages/duckflux-site
 	url = git@github.com:duckflux/site.git
 	fetchRecurseSubmodules = true
+[submodule "packages/duckflux-docs"]
+	path = packages/duckflux-docs
+	url = git@github.com:duckflux/docs.git

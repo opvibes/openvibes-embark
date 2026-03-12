@@ -437,7 +437,7 @@ When changes are pushed to `main` **outside of `packages/`** (scripts, workflows
 <!-- PACKAGES:START -->
 | Package | Description |
 |---------|-------------|
-| `duckflux-site` | Define complex multi-agent pipelines in YAML. Let LLMs do creative work. Let duckflux handle the plumbing. |
+| `duckflux-site` | test |
 <!-- PACKAGES:END -->
 
 ### Embark Website

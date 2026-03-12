@@ -20,7 +20,7 @@
     "name": "duckflux-site",
     "folderName": "duckflux-site",
     "rootDomain": false,
-    "subdomain": "site.duckflux"
+    "subdomain": "duckflux"
   },
   {
     "name": "embark",

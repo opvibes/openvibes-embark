@@ -343,7 +343,7 @@ When changes are pushed to `main` **outside of `packages/`** (scripts, workflows
 | Package | Description |
 |---------|-------------|
 | `duckflux` | Define complex multi-agent pipelines in YAML. Let LLMs do creative work. Let duckflux handle the plumbing. |
-| `duckflux-site` | Define complex multi-agent pipelines in YAML. Let LLMs do creative work. Let duckflux handle the plumbing. |
+| `duckflux-site` | teste |
 <!-- PACKAGES:END -->
 
 ### Embark Website

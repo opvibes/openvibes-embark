@@ -5,8 +5,8 @@
     "subdomain": "duckflux"
   },
   {
-    "name": "duckflux",
+    "name": "duckflux-site",
     "rootDomain": false,
-    "subdomain": "duckflux"
+    "subdomain": "site.duckflux"
   }
 ]

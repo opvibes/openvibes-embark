@@ -1,25 +1,17 @@
-name: Deploy release
+name: Release Please
 
 on:
   push:
     branches: [main]
-    paths:
-      - "packages/release/**"
-  workflow_dispatch:
 
-env:
-  PACKAGE_PATH: packages/release
-  SUBDOMAIN: release
-  DOMAIN: ${{ secrets.DOMAIN }}
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  build:
+  release-please:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: googleapis/release-please-action@v4
         with:
           release-type: node

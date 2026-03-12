@@ -316,12 +316,29 @@ export async function syncWorkflows(
 ): Promise<{ updated: number; skipped: number }> {
   const workflows = await getWorkflowNames(workflowsDir);
 
+  // Workflows newly added to git staging (just created this commit cycle) should
+  // not be synced — they were generated moments ago with the correct content.
+  const newlyCreated = new Set<string>();
+  try {
+    const staged = execSync("git diff --name-only --cached --diff-filter=A", {
+      cwd: ROOT,
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "ignore"],
+    });
+    for (const line of staged.split("\n")) {
+      const match = line.trim().match(/^\.github\/workflows\/(.+)\.yml$/);
+      if (match?.[1]) newlyCreated.add(match[1]);
+    }
+  } catch {
+    // ignore — git may not be available or no staged files
+  }
+
   let updated = 0;
   let skipped = 0;
   const customized: string[] = [];
 
-  // First pass: detect customizations
-  for (const workflow of workflows.filter((w) => !SYSTEM_WORKFLOWS.has(w))) {
+  // First pass: detect customizations (skip newly created workflows)
+  for (const workflow of workflows.filter((w) => !SYSTEM_WORKFLOWS.has(w) && !newlyCreated.has(w))) {
     const workflowPath = join(workflowsDir, `${workflow}.yml`);
     const currentContent = await readFile(workflowPath, "utf-8");
     const expectedContent = await getExpectedContentForPackage(workflow, packagesDir);

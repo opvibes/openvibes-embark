@@ -303,7 +303,7 @@ async function getExpectedContentForPackage(
 
 export type ApproveCallback = (workflow: string, current: string, expected: string) => Promise<boolean>;
 
-export type SelectModeFn = () => Promise<"all" | "one_by_one">;
+export type SelectModeFn = () => Promise<"all" | "one_by_one" | "skip_all">;
 
 export async function syncWorkflows(
   workflowsDir: string = WORKFLOWS_DIR,
@@ -355,7 +355,7 @@ export async function syncWorkflows(
   }
 
   // If acceptAll was passed explicitly, use it directly
-  let mode: "all" | "one_by_one" = "one_by_one";
+  let mode: "all" | "one_by_one" | "skip_all" = "one_by_one";
 
   if (acceptAll !== undefined) {
     mode = acceptAll ? "all" : "one_by_one";
@@ -363,12 +363,17 @@ export async function syncWorkflows(
     mode = await selectModeFn();
   } else {
     const modeIndex = await selectOption(
-      ["Overwrite all", "Overwrite one by one"],
+      ["Merge all without conflicts", "Merge one by one", "Skip all"],
       "Customized workflows found",
       true,
       inputStream,
     );
-    mode = modeIndex === 0 ? "all" : "one_by_one";
+    mode = modeIndex === 0 ? "all" : modeIndex === 1 ? "one_by_one" : "skip_all";
+  }
+
+  if (mode === "skip_all") {
+    console.log(`${colors.gray}⏭️  Skipped all ${customized.length} workflow(s)${colors.reset}`);
+    return { updated: 0, skipped: customized.length };
   }
 
   // If chose "overwrite one by one", show list of customized
@@ -383,6 +388,7 @@ export async function syncWorkflows(
   }
 
   // Second pass: update
+  let skipAllRemaining = false;
   for (const workflow of workflows.filter((w) => !SYSTEM_WORKFLOWS.has(w))) {
     const workflowPath = join(workflowsDir, `${workflow}.yml`);
     const currentContent = await readFile(workflowPath, "utf-8");
@@ -392,6 +398,12 @@ export async function syncWorkflows(
     const customBlocks = extractCustomBlocks(currentContent);
 
     if (normalizeForComparison(strippedCurrent) !== normalizeForComparison(expectedContent)) {
+      if (skipAllRemaining) {
+        console.log(`${colors.gray}⏭️  ${workflow}.yml skipped${colors.reset}`);
+        skipped++;
+        continue;
+      }
+
       let approve = mode === "all";
 
       if (mode === "one_by_one") {
@@ -401,11 +413,21 @@ export async function syncWorkflows(
           console.log(`\n${colors.blue}📄 ${workflow}.yml${colors.reset}`);
           displayDiff(strippedCurrent, expectedContent);
           const index = await selectOption(
-            [`${colors.green}✓ Approve${colors.reset}`, `${colors.red}✗ Reject${colors.reset}`],
-            `Overwrite ${colors.blue}${workflow}.yml${colors.reset}?`,
+            [
+              `${colors.green}✓ Merge${colors.reset}`,
+              `${colors.yellow}⏭ Skip${colors.reset}`,
+              `${colors.gray}⏭ Skip all${colors.reset}`,
+            ],
+            `Merge ${colors.blue}${workflow}.yml${colors.reset}?`,
             false,
             inputStream,
           );
+          if (index === 2) {
+            skipAllRemaining = true;
+            console.log(`${colors.gray}⏭️  ${workflow}.yml skipped${colors.reset}`);
+            skipped++;
+            continue;
+          }
           approve = index === 0;
         }
       }

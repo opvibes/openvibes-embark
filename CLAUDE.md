@@ -23,7 +23,7 @@ Monorepo framework for shipping vibe-coded apps with zero-config CI/CD, Docker, 
 ```
 embark/
 ├── packages/                  # Each subfolder is an independent app
-│   └── showcase/              # Showcase website
+│   └── embark/                # Embark website
 │
 ├── scripts/                   # Monorepo automations
 │   ├── create-package.ts      # CLI to create a new package
@@ -44,6 +44,7 @@ embark/
 │
 ├── .husky/pre-commit          # Hooks executed before each commit
 │
+├── apps.jsonc                 # Registry of deployed apps (auto-maintained)
 ├── bunfig.toml               # Bun config (coverage threshold)
 ├── tsconfig.json             # TypeScript config (strict)
 └── package.json              # Root scripts
@@ -75,8 +76,8 @@ After running init, you can create your own packages and connect to your own Git
 ### Run scripts for a specific package
 
 ```bash
-bun run --filter @embark/showcase dev
-bun run --filter @embark/showcase test
+bun run --filter @embark/embark dev
+bun run --filter @embark/embark test
 ```
 
 ### Run root scripts
@@ -298,7 +299,7 @@ Each workflow has a `paths` filter:
 on:
   push:
     paths:
-      - "packages/showcase/**"  # only triggers if this folder changes
+      - "packages/my-app/**"  # only triggers if this folder changes
 ```
 
 ## Git Hooks (Husky)
@@ -322,7 +323,10 @@ Scans `packages/` and generates workflows for new packages in `.github/workflows
 
 ### 3. `sync-workflows.ts`
 
-Syncs existing workflows with the template. Offers options to overwrite all or review one by one.
+Syncs existing workflows with the template. Offers three options:
+- **Merge all without conflicts** (default) — applies template updates preserving EMBARK:CUSTOM blocks
+- **Merge one by one** — review each workflow individually (with Merge / Skip / Skip all per workflow)
+- **Skip all** — skip all workflow updates
 
 ### 4. `cleanup-orphan-workflows.ts`
 
@@ -402,6 +406,28 @@ bun run test
 | `CF_TOKEN` | Cloudflare API token |
 | `CF_ZONE_ID` | Cloudflare zone ID for your domain |
 | `DOMAIN` | Base domain (e.g. `embark.dev`) |
+
+### System Workflows
+
+#### Bootstrap (`bootstrap.yml`)
+
+Runs on every push to main:
+1. Updates `apps.jsonc` with current package info
+2. Generates missing workflows for new packages
+3. Commits and pushes changes
+
+#### Cleaner (`cleaner.yml`)
+
+Runs on every push to main (independent of packages):
+1. Deletes orphan workflows (workflows without a corresponding package in `packages/`)
+2. Finds orphaned apps in `apps.jsonc` (entries whose folder no longer exists)
+3. Cleans Cloudflare resources (Pages projects, DNS records) for orphaned apps
+4. Removes orphan entries from `apps.jsonc`
+5. Commits all cleanup changes
+
+#### Release (`release.yml`)
+
+Handles semantic versioning via Release Please.
 
 ### Deploy flow
 

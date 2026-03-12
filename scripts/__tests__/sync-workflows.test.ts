@@ -220,6 +220,24 @@ describe("sync-workflows", () => {
       expect(result.skipped).toBe(0);
     });
 
+    it("skips all via inputStream when user picks option 3 (Skip all)", async () => {
+      await writeFile(join(TEST_WORKFLOWS_DIR, "my-app.yml"), "name: custom\ncustom: true");
+
+      const input = Readable.from(["3\n"]);
+      const result = await syncWorkflows(
+        TEST_WORKFLOWS_DIR,
+        TEST_TEMPLATE,
+        undefined,
+        join(TEST_DIR, "packages"),
+        undefined,
+        undefined,
+        input,
+      );
+
+      expect(result.updated).toBe(0);
+      expect(result.skipped).toBe(1);
+    });
+
     it("rejects workflow via inputStream when acceptAll=false and no approveCallback", async () => {
       await writeFile(join(TEST_WORKFLOWS_DIR, "my-app.yml"), "name: custom\ncustom: true");
 
@@ -272,6 +290,23 @@ describe("sync-workflows", () => {
       );
 
       expect(result.skipped).toBe(1);
+    });
+
+    it("selectModeFn returning skip_all skips all workflows", async () => {
+      await writeFile(join(TEST_WORKFLOWS_DIR, "app1.yml"), "name: custom1\ncustom: 1");
+      await writeFile(join(TEST_WORKFLOWS_DIR, "app2.yml"), "name: custom2\ncustom: 2");
+
+      const result = await syncWorkflows(
+        TEST_WORKFLOWS_DIR,
+        TEST_TEMPLATE,
+        undefined,
+        join(TEST_DIR, "packages"),
+        undefined,
+        async () => "skip_all",
+      );
+
+      expect(result.updated).toBe(0);
+      expect(result.skipped).toBe(2);
     });
 
     it("returns 0/0 when acceptAll is undefined and no customizations exist", async () => {
@@ -430,6 +465,27 @@ describe("sync-workflows", () => {
 
       expect(result.updated).toBe(1);
       expect(result.skipped).toBe(1);
+    });
+
+    it("one_by_one mode: skip all remaining via inputStream option 3", async () => {
+      await writeFile(join(TEST_WORKFLOWS_DIR, "app1.yml"), "name: app1\ncustom: 1");
+      await writeFile(join(TEST_WORKFLOWS_DIR, "app2.yml"), "name: app2\ncustom: 2");
+      await writeFile(join(TEST_WORKFLOWS_DIR, "app3.yml"), "name: app3\ncustom: 3");
+
+      // one_by_one mode; first workflow: merge (1), second: skip all (3)
+      const input = Readable.from(["1\n", "3\n"]);
+      const result = await syncWorkflows(
+        TEST_WORKFLOWS_DIR,
+        TEST_TEMPLATE,
+        false,
+        join(TEST_DIR, "packages"),
+        undefined,
+        undefined,
+        input,
+      );
+
+      expect(result.updated).toBe(1);
+      expect(result.skipped).toBe(2);
     });
 
     it("one_by_one mode: skips workflows already matching expected content", async () => {

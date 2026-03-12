@@ -15,5 +15,11 @@
     "folderName": "duckflux-site",
     "rootDomain": false,
     "subdomain": "site.duckflux"
+  },
+  {
+    "name": "embark",
+    "folderName": "embark",
+    "rootDomain": false,
+    "subdomain": "embark"
   }
 ]

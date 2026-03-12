@@ -12,7 +12,8 @@
     "test": "bun test --coverage scripts/__tests__",
     "utils": "bun scripts/utils.ts",
     "init": "bun scripts/init.ts",
-    "duckflux-site": "bun run --filter @embark/duckflux-site dev"
+    "duckflux-site": "bun run --filter @embark/duckflux-site dev",
+    "embark": "bun run --filter @embark/embark dev"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",

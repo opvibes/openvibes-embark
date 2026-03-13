@@ -6,6 +6,7 @@
   bun run scripts/update-root-scripts.ts
   bun run scripts/update-apps-jsonc.ts
   bun run scripts/generate-workflows.ts
+  bun run scripts/sync-changed-configs.ts
   bun run scripts/sync-workflows-cli.ts
   bun run scripts/cleanup-orphan-workflows.ts
   bun run scripts/generate-dockerfiles-ai.ts
@@ -17,6 +18,7 @@
   bun run scripts/update-root-scripts.ts
   bun run scripts/update-apps-jsonc.ts
   bun run scripts/generate-workflows.ts
+  bun run scripts/sync-changed-configs.ts
   bun run scripts/sync-workflows-cli.ts
   bun run scripts/cleanup-orphan-workflows.ts
   bun run scripts/generate-dockerfiles-ai.ts

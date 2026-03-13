@@ -1,37 +1,26 @@
 [
   {
-    "name": "duckflux",
-    "folderName": "duckflux",
-    "rootDomain": false,
-    "subdomain": "duckflux"
-  },
-  {
     "name": "duckflux-docs",
     "folderName": "duckflux-docs",
     "rootDomain": false,
-    "subdomain": "docs.duckflux"
-  },
-  {
-    "name": "duckflux-site",
-    "rootDomain": false,
-    "subdomain": "site.duckflux"
+    "subdomain": "docs.duckflux",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
   },
   {
     "name": "duckflux-site",
     "folderName": "duckflux-site",
     "rootDomain": false,
-    "subdomain": "duckflux"
-  },
-  {
-    "name": "embark",
-    "folderName": "embark",
-    "rootDomain": false,
-    "subdomain": "embark"
+    "subdomain": "duckflux",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
   },
   {
     "name": "embark-site",
     "folderName": "embark-site",
     "rootDomain": false,
-    "subdomain": "embark"
+    "subdomain": "embark",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
   }
 ]

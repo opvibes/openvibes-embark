@@ -2,6 +2,7 @@ import { readFile, writeFile, readdir, access } from "node:fs/promises";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
 import { readEmbarkConfig, hasCompleteEmbarkConfig } from "./embark-config";
+import type { AppDeployment } from "../shared/types/deploy";
 
 const ROOT = join(import.meta.dirname, "..");
 const PACKAGES_DIR = join(ROOT, "packages");
@@ -11,6 +12,8 @@ export interface AppEntry {
   folderName: string;
   rootDomain: boolean;
   subdomain: string;
+  appDeployment: AppDeployment;
+  cloudflareUse: boolean;
 }
 
 export async function buildAppsEntries(
@@ -38,6 +41,8 @@ export async function buildAppsEntries(
       folderName: String(entry.name),
       rootDomain: config.rootDomain ?? false,
       subdomain: config.subdomain ?? "",
+      appDeployment: config.deploy?.appDeployment ?? "gcp",
+      cloudflareUse: config.deploy?.cloudflareUse ?? false,
     });
   }
 
@@ -50,29 +55,16 @@ export async function updateAppsJsonc(
 ): Promise<boolean> {
   const appsPath = join(root, "apps.jsonc");
 
-  // Read existing entries (preserves entries for deleted packages)
-  let existingEntries: AppEntry[] = [];
   let existingContent = "";
   try {
     await access(appsPath);
     existingContent = await readFile(appsPath, "utf-8");
-    existingEntries = JSON.parse(existingContent) as AppEntry[];
   } catch {
     // File doesn't exist yet
   }
 
-  // Build fresh entries from current packages
-  const freshEntries = await buildAppsEntries(packagesDir);
-
-  // Merge: existing entries stay (for deleted packages), fresh entries overwrite/add by folderName
-  const merged = new Map<string, AppEntry>(existingEntries.map((e) => [e.folderName, e]));
-  for (const entry of freshEntries) {
-    merged.set(entry.folderName, entry);
-  }
-
-  const sortedEntries = Array.from(merged.values()).sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
+  // Build entries only from packages that currently exist
+  const sortedEntries = await buildAppsEntries(packagesDir);
 
   const newContent = JSON.stringify(sortedEntries, null, 2) + "\n";
 

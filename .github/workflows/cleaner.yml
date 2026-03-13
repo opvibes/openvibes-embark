@@ -1,4 +1,4 @@
-name: Cloudflare Apps Cleaner
+name: Orphan Apps Cleaner
 
 on:
   push:
@@ -29,142 +29,20 @@ jobs:
       - name: Cleanup orphan workflows
         run: bun scripts/cleanup-orphan-workflows.ts
 
-      - name: Find orphaned apps
-        id: orphans
-        run: |
-          ORPHANS=$(bun scripts/cleanup-cloudflare-apps.ts find-orphans 2>/dev/null | tail -n +2)
-
-          echo "data=$ORPHANS" >> $GITHUB_OUTPUT
-          # Fallback to empty array if output is empty or not valid JSON
-          if [ -z "$ORPHANS" ] || ! echo "$ORPHANS" | jq 'length' >/dev/null 2>&1; then
-            ORPHANS="[]"
-          fi
-
-          # Use multiline delimiter for GITHUB_OUTPUT (JSON can span multiple lines)
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "data<<$EOF" >> $GITHUB_OUTPUT
-          echo "$ORPHANS" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-
-          COUNT=$(echo "$ORPHANS" | jq 'length')
-          echo "count=$COUNT" >> $GITHUB_OUTPUT
-          echo "Found $COUNT orphaned app(s)"
-
-      - name: Clean Cloudflare for each orphan
-        if: steps.orphans.outputs.count != '0'
+      - name: Cleanup orphan cloud resources
         env:
           CF_TOKEN: ${{ secrets.CF_TOKEN_PAGES }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
           DOMAIN: ${{ secrets.DOMAIN }}
-          ORPHANS: ${{ steps.orphans.outputs.data }}
-        run: |
-          DOMAIN_PREFIX="${DOMAIN%%.*}"
-          ORPHAN_COUNT=$(echo "$ORPHANS" | jq 'length')
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: bun scripts/cleanup-orphan-apps.ts
 
-          for i in $(seq 0 $((ORPHAN_COUNT - 1))); do
-            ENTRY=$(echo "$ORPHANS" | jq ".[$i]")
-            FOLDER_NAME=$(echo "$ENTRY" | jq -r '.folderName')
-            SUBDOMAIN=$(echo "$ENTRY" | jq -r '.subdomain')
-            ROOT_DOMAIN=$(echo "$ENTRY" | jq -r '.rootDomain')
-
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Cleaning orphaned app: $FOLDER_NAME (subdomain: $SUBDOMAIN)"
-
-            # Determine Cloudflare Pages project name (mirrors creation logic)
-            if [ "$ROOT_DOMAIN" = "true" ]; then
-              PROJECT_NAME="${DOMAIN_PREFIX}"
-              FULL_DOMAIN="${DOMAIN}"
-              CNAME_NAME="@"
-            else
-              # Replace dots with hyphens — Cloudflare Pages project names cannot contain dots
-              PROJECT_NAME=$(echo "${DOMAIN_PREFIX}-${SUBDOMAIN}" | tr '.' '-')
-              FULL_DOMAIN="${SUBDOMAIN}.${DOMAIN}"
-              CNAME_NAME="${SUBDOMAIN}"
-            fi
-
-            # Skip if no subdomain and not root domain
-            if [ -z "$SUBDOMAIN" ] && [ "$ROOT_DOMAIN" != "true" ]; then
-              echo "⚠️  No subdomain configured, skipping Cloudflare cleanup for $FOLDER_NAME"
-              continue
-            fi
-
-            echo "  Project name : $PROJECT_NAME"
-            echo "  Full domain  : $FULL_DOMAIN"
-
-            # 1. Remove custom domain from Pages project
-            echo ""
-            echo "→ Removing custom domain from Pages project..."
-            REMOVE_DOMAIN_RESP=$(curl -s -X DELETE \
-              "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}/domains/${FULL_DOMAIN}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
-              -H "Content-Type: application/json")
-
-            REMOVE_DOMAIN_SUCCESS=$(echo "$REMOVE_DOMAIN_RESP" | jq -r '.success')
-            if [ "$REMOVE_DOMAIN_SUCCESS" = "true" ]; then
-              echo "  ✓ Custom domain removed: $FULL_DOMAIN"
-            else
-              REMOVE_DOMAIN_ERR=$(echo "$REMOVE_DOMAIN_RESP" | jq -r '.errors[0].message // "Unknown"')
-              echo "  ⚠️  Could not remove custom domain: $REMOVE_DOMAIN_ERR (may not exist)"
-            fi
-
-            # 2. Delete Cloudflare Pages project
-            echo ""
-            echo "→ Deleting Cloudflare Pages project: $PROJECT_NAME..."
-            DELETE_PROJECT_RESP=$(curl -s -X DELETE \
-              "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT_NAME}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
-              -H "Content-Type: application/json")
-
-            DELETE_PROJECT_SUCCESS=$(echo "$DELETE_PROJECT_RESP" | jq -r '.success')
-            if [ "$DELETE_PROJECT_SUCCESS" = "true" ]; then
-              echo "  ✓ Pages project deleted: $PROJECT_NAME"
-            else
-              DELETE_PROJECT_ERR=$(echo "$DELETE_PROJECT_RESP" | jq -r '.errors[0].message // "Unknown"')
-              DELETE_PROJECT_CODE=$(echo "$DELETE_PROJECT_RESP" | jq -r '.errors[0].code // 0')
-              if [ "$DELETE_PROJECT_CODE" = "8000007" ]; then
-                echo "  ✓ Pages project not found (already deleted): $PROJECT_NAME"
-              else
-                echo "  ✗ Failed to delete Pages project: $DELETE_PROJECT_ERR"
-                echo "    Response: $DELETE_PROJECT_RESP"
-                echo "    ⚠️  Check that CF_TOKEN_PAGES has 'Cloudflare Pages:Edit' permission"
-              fi
-            fi
-
-            # 3. Delete DNS record
-            echo ""
-            echo "→ Deleting DNS record: $FULL_DOMAIN..."
-            DNS_RECORDS_RESP=$(curl -s -X GET \
-              "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?name=${FULL_DOMAIN}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
-              -H "Content-Type: application/json")
-
-            DNS_RECORD_ID=$(echo "$DNS_RECORDS_RESP" | jq -r '.result[0].id // empty')
-            if [ -n "$DNS_RECORD_ID" ] && [ "$DNS_RECORD_ID" != "null" ]; then
-              DELETE_DNS_RESP=$(curl -s -X DELETE \
-                "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${DNS_RECORD_ID}" \
-                -H "Authorization: Bearer ${CF_TOKEN}" \
-                -H "Content-Type: application/json")
-
-              DELETE_DNS_SUCCESS=$(echo "$DELETE_DNS_RESP" | jq -r '.success')
-              if [ "$DELETE_DNS_SUCCESS" = "true" ]; then
-                echo "  ✓ DNS record deleted: $FULL_DOMAIN"
-              else
-                DELETE_DNS_ERR=$(echo "$DELETE_DNS_RESP" | jq -r '.errors[0].message // "Unknown"')
-                echo "  ✗ Failed to delete DNS record: $DELETE_DNS_ERR"
-              fi
-            else
-              echo "  ✓ No DNS record found for $FULL_DOMAIN (already deleted or never created)"
-            fi
-          done
-
-      - name: Remove orphan entries from apps.jsonc
-        if: steps.orphans.outputs.count != '0'
-        env:
-          ORPHAN_DATA: ${{ steps.orphans.outputs.data }}
-        run: |
-          COMPACT=$(echo "$ORPHAN_DATA" | jq -c '.')
-          bun scripts/cleanup-cloudflare-apps.ts remove-entries "--data=$COMPACT"
+      - name: Update apps.jsonc
+        run: bun scripts/update-apps-jsonc.ts
 
       - name: Commit cleanup changes
         run: |

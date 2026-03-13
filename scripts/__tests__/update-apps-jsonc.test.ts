@@ -54,6 +54,8 @@ describe("buildAppsEntries", () => {
       folderName: "my-app",
       rootDomain: false,
       subdomain: "my-app",
+      appDeployment: "gcp",
+      cloudflareUse: false,
     });
   });
 
@@ -134,6 +136,8 @@ describe("updateAppsJsonc", () => {
       folderName: "my-app",
       rootDomain: false,
       subdomain: "my-app",
+      appDeployment: "gcp",
+      cloudflareUse: false,
     });
   });
 
@@ -160,7 +164,7 @@ describe("updateAppsJsonc", () => {
     expect(parsed).toHaveLength(2);
   });
 
-  it("preserves entries for deleted packages (merge behavior)", async () => {
+  it("removes entries for deleted packages", async () => {
     // Start with two packages
     await createPackage("my-app", completeConfig);
     await createPackage("other-app", { ...completeConfig, name: "otherApp", subdomain: "other" });
@@ -170,13 +174,13 @@ describe("updateAppsJsonc", () => {
     rmSync(join(PACKAGES_DIR, "other-app"), { recursive: true, force: true });
 
     const changed = await updateAppsJsonc(PACKAGES_DIR, TEST_DIR);
-    expect(changed).toBe(false); // nothing changes since entry is preserved
+    expect(changed).toBe(true);
 
     const content = await readFile(join(TEST_DIR, "apps.jsonc"), "utf-8");
     const parsed = JSON.parse(content);
-    // Both entries should still be present
-    expect(parsed).toHaveLength(2);
-    expect(parsed.some((e: { folderName: string }) => e.folderName === "other-app")).toBe(true);
+    // Only the remaining package should be present
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].folderName).toBe("my-app");
   });
 
   it("creates empty array when no packages exist and no prior file", async () => {

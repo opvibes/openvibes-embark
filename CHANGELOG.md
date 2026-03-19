@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0](https://github.com/opvibes/openvibes-embark/compare/v1.4.0...v1.5.0) (2026-03-19)
+
+
+### Features
+
+* change url from https to ssh ([e886f40](https://github.com/opvibes/openvibes-embark/commit/e886f40d231d188432aff7600f386750a16b4497))
+* new submodule ([94f1f94](https://github.com/opvibes/openvibes-embark/commit/94f1f9494f7f192c83ca0ac74e13d46d41dc5167))
+* new submodule ([d016c7d](https://github.com/opvibes/openvibes-embark/commit/d016c7d800e6e0ff59eb95aa3ff555e3351fb00b))
+
 ## [1.4.0](https://github.com/opvibes/openvibes-embark/compare/v1.3.0...v1.4.0) (2026-03-13)
 
 

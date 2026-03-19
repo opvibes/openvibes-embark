@@ -7,4 +7,4 @@
 	url = git@github.com:duckflux/docs.git
 [submodule "packages/duckflux-editor"]
 	path = packages/duckflux-editor
-	url = https://github.com/duckflux/editor
+	url = git@github.com:duckflux/editor.git

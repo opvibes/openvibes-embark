@@ -8,6 +8,14 @@
     "cloudflareUse": true
   },
   {
+    "name": "duckflux-editor",
+    "folderName": "duckflux-editor",
+    "rootDomain": false,
+    "subdomain": "editor.duckflux",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
+  },
+  {
     "name": "duckflux-site",
     "folderName": "duckflux-site",
     "rootDomain": false,

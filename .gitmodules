@@ -5,3 +5,6 @@
 [submodule "packages/duckflux-docs"]
 	path = packages/duckflux-docs
 	url = git@github.com:duckflux/docs.git
+[submodule "packages/duckflux-editor"]
+	path = packages/duckflux-editor
+	url = https://github.com/duckflux/editor

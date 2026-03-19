@@ -373,6 +373,55 @@ describe("processPackageWorkflow - I/O integration", () => {
       Bun.spawnSync(["rm", "-rf", testDir]);
     }
   });
+
+  test("adds gitlink path entry to paths filter when useSubmodule=true", async () => {
+    const testDir = join(tmpdir(), `test-workflow-submodule-path-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      const result = await processPackageWorkflow("my-app", "gcp", false, testDir, undefined, undefined, true);
+      expect(result).toBe(true);
+
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+      // Must have both the glob path (for file changes) and the gitlink path (for submodule ref updates)
+      expect(content).toContain('- "packages/my-app/**"');
+      expect(content).toContain('- "packages/my-app"');
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("does not add gitlink path entry when useSubmodule=false", async () => {
+    const testDir = join(tmpdir(), `test-workflow-no-submodule-path-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      const result = await processPackageWorkflow("my-app", "gcp", false, testDir, undefined, undefined, false);
+      expect(result).toBe(true);
+
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+      expect(content).toContain('- "packages/my-app/**"');
+      // Gitlink entry should not appear — only the glob path
+      expect(content).not.toContain('- "packages/my-app"\n');
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("submodule path filter works for cloudflare-pages template", async () => {
+    const testDir = join(tmpdir(), `test-workflow-submodule-cfpages-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-pages", "cloudflare-pages", true, testDir, undefined, undefined, true);
+      const content = readFileSync(join(testDir, "my-pages.yml"), "utf-8");
+
+      expect(content).toContain('- "packages/my-pages/**"');
+      expect(content).toContain('- "packages/my-pages"');
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
 });
 
 describe("processPackagesWorkflows", () => {

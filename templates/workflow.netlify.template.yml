@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "packages/__PACKAGE_NAME__/**"
+__SUBMODULE_PATH__
   workflow_dispatch:
 
 env:

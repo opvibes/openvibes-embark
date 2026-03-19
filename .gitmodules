@@ -5,6 +5,8 @@
 [submodule "packages/duckflux-docs"]
 	path = packages/duckflux-docs
 	url = git@github.com:duckflux/docs.git
+	fetchRecurseSubmodules = true
 [submodule "packages/duckflux-editor"]
 	path = packages/duckflux-editor
 	url = git@github.com:duckflux/editor.git
+	fetchRecurseSubmodules = true

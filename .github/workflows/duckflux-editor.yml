@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "packages/duckflux-editor/**"
+      - "packages/duckflux-editor"
   workflow_dispatch:
 
 env:

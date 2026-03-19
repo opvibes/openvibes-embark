@@ -14,6 +14,7 @@ const PLACEHOLDER_SUBDOMAIN = "__SUBDOMAIN__";
 const PLACEHOLDER_ROOT_DOMAIN = "__ROOT_DOMAIN__";
 const PLACEHOLDER_DOMAIN_SETUP = "__DOMAIN_SETUP__";
 const PLACEHOLDER_SUBMODULES_WITH = "__SUBMODULES_WITH__";
+const PLACEHOLDER_SUBMODULE_PATH = "__SUBMODULE_PATH__";
 const PLACEHOLDER_CLOUDFLARE_IF = "__CLOUDFLARE_IF__";
 
 export async function exists(path: string): Promise<boolean> {
@@ -55,6 +56,10 @@ export async function buildWorkflowContent(
     ? "\n        with:\n          submodules: recursive"
     : "";
 
+  const submodulePathValue = useSubmodule === true
+    ? `      - "packages/${packageName}"`
+    : "";
+
   return baseTemplate
     .replaceAll(PLACEHOLDER, packageName)
     .replaceAll(PLACEHOLDER_LOWERCASE, packageName.toLowerCase())
@@ -62,6 +67,7 @@ export async function buildWorkflowContent(
     .replaceAll(PLACEHOLDER_ROOT_DOMAIN, rootDomain === true ? "true" : "false")
     .replaceAll(PLACEHOLDER_DOMAIN_SETUP, cloudflareUse === true ? "true" : "false")
     .replaceAll(PLACEHOLDER_SUBMODULES_WITH, submodulesWithValue)
+    .replaceAll(PLACEHOLDER_SUBMODULE_PATH, submodulePathValue)
     .replaceAll(PLACEHOLDER_CLOUDFLARE_IF, cloudflareUse === true ? "true" : "false");
 }
 

@@ -19,7 +19,7 @@
     "name": "duckflux-site",
     "folderName": "duckflux-site",
     "rootDomain": false,
-    "subdomain": "duckflux",
+    "subdomain": "site.duckflux",
     "appDeployment": "cloudflare-pages",
     "cloudflareUse": true
   },

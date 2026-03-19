@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "packages/embark-site/**"
+      - "packages/embark-site"
   workflow_dispatch:
 
 env:

@@ -28,6 +28,12 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      # EMBARK:CUSTOM
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+      # END EMBARK:CUSTOM
 
       - name: Install dependencies
         run: bun install

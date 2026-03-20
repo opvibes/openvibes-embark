@@ -1,6 +1,6 @@
 # Embark
 
-Monorepo framework for shipping vibe-coded apps with zero-config CI/CD, Docker, and Cloud Run deployment.
+Monorepo framework for shipping vibe-coded apps with zero-config CI/CD, Docker, and Cloud Run, Cloudflare Workers deployment.
 
 ## Project Principles
 
@@ -14,7 +14,7 @@ Monorepo framework for shipping vibe-coded apps with zero-config CI/CD, Docker, 
 - **Runtime:** [Bun](https://bun.sh)
 - **Language:** TypeScript (strict mode, no `any`)
 - **Workspaces:** Bun workspaces (`packages/*`)
-- **CI/CD:** GitHub Actions + Docker + Google Cloud Run
+- **CI/CD:** GitHub Actions + Docker + Google Cloud Run + Cloudflare Workers
 - **Hooks:** Husky (pre-commit for automations)
 - **Tests:** Bun test with coverage
 
@@ -108,7 +108,7 @@ The script will ask for the following **required fields**:
 2. **title** — human-readable title (e.g. "My Awesome App")
 3. **subdomain** — subdomain for deployment (e.g. `my-app` → my-app.embark.dev)
 4. **description** — package description
-5. **deploy target** — Cloud Run, Netlify, or Other
+5. **deploy target** — Cloud Run, Netlify, Cloudflare Workers, or Other
 
 Then creates the complete structure with:
 - `packages/<package>` folder
@@ -125,7 +125,7 @@ Every package **must** have a `.embark.jsonc` with these required fields:
 
 ```jsonc
 {
-  "deploy": "cloud-run",  // "cloud-run" | "netlify" | "other"
+  "deploy": "cloud-run",  // "cloud-run" | "netlify" | "cloudflare-workers" | "other"
   "name": "myPackage",
   "title": "My Package Title",
   "subdomain": "my-package",
@@ -311,7 +311,7 @@ On commit, these scripts run automatically in order:
 ### 1. `ensure-deploy-config.ts`
 
 Scans `packages/` for any package missing `.embark.jsonc` or with incomplete configuration. Interactively prompts for all required fields:
-- **deploy** — Cloud Run, Netlify, or Other
+- **deploy** — Cloud Run, Netlify, Cloudflare Workers, or Other
 - **name** — package name
 - **title** — human-readable title
 - **subdomain** — subdomain for deployment
@@ -408,6 +408,15 @@ bun run test
 | `CF_TOKEN` | Cloudflare API token |
 | `CF_ZONE_ID` | Cloudflare zone ID for your domain |
 | `DOMAIN` | Base domain (e.g. `embark.dev`) |
+
+#### Cloudflare Workers
+
+| Secret | Description |
+|--------|-------------|
+| `CF_WORKER_TOKEN` | Cloudflare API token (Workers Scripts edit) |
+| `CF_ACCOUNT_ID` | Cloudflare Account ID |
+| `CF_ZONE_ID` | Zone ID of your domain (only if `cloudflareUse: true`) |
+| `DOMAIN` | Base domain (only if `cloudflareUse: true`) |
 
 ### System Workflows
 

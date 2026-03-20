@@ -359,6 +359,47 @@ describe("processPackageWorkflow - I/O integration", () => {
     }
   });
 
+  test("generates cloudflare-workers workflow with DNS setup", async () => {
+    const testDir = join(tmpdir(), `test-workflow-cf-workers-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      const result = await processPackageWorkflow("my-worker", "cloudflare-workers", true, testDir);
+      expect(result).toBe(true);
+
+      const content = readFileSync(join(testDir, "my-worker.yml"), "utf-8");
+      expect(content).toContain("Deploy to Cloudflare Workers");
+      expect(content).toContain("CF_WORKER_TOKEN");
+      expect(content).toContain("CF_ACCOUNT_ID");
+      expect(content).toContain("Configure Custom Domain");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("cloudflare-workers workflow has build and deploy jobs", async () => {
+    const testDir = join(tmpdir(), `test-workflow-cfworkers-multijob-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-api", "cloudflare-workers", true, testDir);
+      const content = readFileSync(join(testDir, "my-api.yml"), "utf-8");
+
+      // Build job uploads artifact
+      expect(content).toContain("actions/upload-artifact@v4");
+      expect(content).toContain("name: build-my-api");
+
+      // Deploy job uses wrangler
+      expect(content).toContain("cloudflare/wrangler-action@v3");
+      expect(content).toContain("command: deploy");
+
+      // DNS job depends on deploy
+      expect(content).toContain("needs: deploy");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
   test("does not include submodules when useSubmodule=false", async () => {
     const testDir = join(tmpdir(), `test-workflow-no-submodules-${Date.now()}`);
     mkdirSync(testDir, { recursive: true });

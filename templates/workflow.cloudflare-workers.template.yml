@@ -1,0 +1,134 @@
+name: __PACKAGE_NAME__
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/__PACKAGE_NAME__/**"
+__SUBMODULE_PATH__
+  workflow_dispatch:
+
+env:
+  SUBDOMAIN: __SUBDOMAIN__
+  ROOT_DOMAIN: __ROOT_DOMAIN__
+  DOMAIN_SETUP: __DOMAIN_SETUP__
+  DOMAIN: ${{ secrets.DOMAIN }}
+  PACKAGE_NAME: __PACKAGE_NAME__
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4__SUBMODULES_WITH__
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run --cwd packages/__PACKAGE_NAME__ build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-__PACKAGE_NAME__
+          path: packages/__PACKAGE_NAME__/dist
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4__SUBMODULES_WITH__
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-__PACKAGE_NAME__
+          path: packages/__PACKAGE_NAME__/dist
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_WORKER_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: deploy
+          workingDirectory: packages/__PACKAGE_NAME__
+
+  dns:
+    if: __DOMAIN_SETUP__
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Custom Domain
+        env:
+          CF_TOKEN: ${{ secrets.CF_WORKER_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+        run: |
+          if [ "$ROOT_DOMAIN" = "true" ]; then
+            FULL_DOMAIN="${DOMAIN}"
+            CNAME_NAME="@"
+          else
+            FULL_DOMAIN="${SUBDOMAIN}.${DOMAIN}"
+            CNAME_NAME="${SUBDOMAIN}"
+          fi
+
+          WORKER_NAME="${PACKAGE_NAME}"
+
+          echo "Checking for existing DNS records..."
+          EXISTING_RECORDS=$(curl -s -X GET \
+            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?name=${FULL_DOMAIN}" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json")
+
+          RECORD_ID=$(echo "$EXISTING_RECORDS" | jq -r '.result[0].id // empty')
+          if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ]; then
+            echo "Deleting existing DNS record: $RECORD_ID"
+            curl -s -X DELETE \
+              "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${RECORD_ID}" \
+              -H "Authorization: Bearer ${CF_TOKEN}" \
+              -H "Content-Type: application/json"
+            echo "✓ Old DNS record deleted"
+            sleep 2
+          fi
+
+          echo "Creating CNAME record: ${FULL_DOMAIN} -> ${WORKER_NAME}.workers.dev"
+          CNAME_RESPONSE=$(curl -s -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "{\"type\":\"CNAME\",\"name\":\"${CNAME_NAME}\",\"content\":\"${WORKER_NAME}.workers.dev\",\"proxied\":true}")
+
+          CNAME_SUCCESS=$(echo "$CNAME_RESPONSE" | jq -r '.success')
+          if [ "$CNAME_SUCCESS" = "true" ]; then
+            echo "✓ CNAME created: ${FULL_DOMAIN} -> ${WORKER_NAME}.workers.dev"
+          else
+            CNAME_ERROR=$(echo "$CNAME_RESPONSE" | jq -r '.errors[0].message // "Unknown"')
+            echo "⚠️ CNAME setup: $CNAME_ERROR (may already exist)"
+          fi
+
+          sleep 3
+
+          echo "Adding custom domain route to Worker..."
+          RESPONSE=$(curl -s -X PUT \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/domains" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "[{\"hostname\":\"${FULL_DOMAIN}\",\"zone_id\":\"${CF_ZONE_ID}\"}]")
+
+          echo "Response: $RESPONSE"
+
+          SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
+          if [ "$SUCCESS" = "true" ]; then
+            echo "✓ Custom domain configured: https://${FULL_DOMAIN}"
+          else
+            ERROR=$(echo "$RESPONSE" | jq -r '.errors[0].message // "Unknown"')
+            echo "⚠️ Custom domain setup: $ERROR (may already be configured)"
+          fi

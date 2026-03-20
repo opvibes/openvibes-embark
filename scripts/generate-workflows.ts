@@ -46,7 +46,9 @@ export async function buildWorkflowContent(
         ? "workflow.gcp.template.yml"
         : appDeployment === "cloudflare-pages"
           ? "workflow.cloudflare-pages.template.yml"
-          : "workflow.template.yml";
+          : appDeployment === "cloudflare-workers"
+            ? "workflow.cloudflare-workers.template.yml"
+            : "workflow.template.yml";
 
   const baseTemplate = await readFile(join(TEMPLATES_DIR, templateFile), "utf-8");
 

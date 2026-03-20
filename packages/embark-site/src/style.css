@@ -2096,6 +2096,10 @@ code {
   border-color: rgba(251, 191, 36, 0.3);
 }
 
+.deploy-package.workers-pkg {
+  border-color: rgba(246, 130, 31, 0.3);
+}
+
 .control-info h3 {
   font-size: 1.15rem;
   font-weight: 700;
@@ -2591,6 +2595,11 @@ code {
   background: rgba(251, 146, 60, 0.06);
 }
 
+.secrets-card--workers {
+  border-color: rgba(246, 130, 31, 0.3);
+  background: rgba(246, 130, 31, 0.04);
+}
+
 .secrets-permissions {
   margin-top: 0.75rem;
   padding-top: 0.75rem;
@@ -2682,6 +2691,11 @@ code {
 .deploy-badge.cf-pages {
   background: rgba(251, 146, 60, 0.25);
   color: #fb923c;
+}
+
+.deploy-badge.workers {
+  background: rgba(246, 130, 31, 0.2);
+  color: #f6821f;
 }
 
 /* ── Footer ── */

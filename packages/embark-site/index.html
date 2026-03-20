@@ -325,6 +325,11 @@
             <p data-i18n="features.netlify.desc">Choose Netlify at setup — no Docker, no workflow. Just a netlify.toml and push. The framework skips what you don't need.</p>
           </div>
           <div class="feature-card carousel-slide">
+            <div class="feature-icon">⚡</div>
+            <h3 data-i18n="features.workers.title">Workers Ready</h3>
+            <p data-i18n="features.workers.desc">Choose Workers for serverless backends — no Docker, no containers. Just deploy your code at the edge via <code>wrangler deploy</code>.</p>
+          </div>
+          <div class="feature-card carousel-slide">
             <div class="feature-icon">🔌</div>
             <h3 data-i18n="features.other.title">Bring Your Own Infra</h3>
             <p data-i18n="features.other.desc">Deploy to Vercel, Fly.io, AWS, or anywhere else. Set deploy to "other" and Embark skips workflows and Dockerfiles — you handle the rest.</p>
@@ -725,6 +730,23 @@
 
         </div>
 
+        <!-- Cloudflare Workers -->
+        <div class="secrets-card secrets-card--workers">
+          <div class="secrets-card-header">
+            <span class="deploy-badge workers">Workers</span>
+            <h3 data-i18n="secrets.workers.title">Cloudflare Workers</h3>
+          </div>
+          <p class="secrets-when" data-i18n="secrets.workers.when">Required when <code>appDeployment: "cloudflare-workers"</code></p>
+          <table class="secrets-table">
+            <tbody>
+              <tr><td><code>CF_WORKER_TOKEN</code></td><td data-i18n="secrets.workers.token">Cloudflare API token — use the pre-built "Edit Cloudflare Workers" template when creating the token</td></tr>
+              <tr><td><code>CF_ACCOUNT_ID</code></td><td data-i18n="secrets.workers.account">Cloudflare Account ID</td></tr>
+              <tr><td><code>CF_ZONE_ID</code></td><td data-i18n="secrets.workers.zone">Zone ID of your domain (only if custom domain)</td></tr>
+              <tr><td><code>DOMAIN</code></td><td data-i18n="secrets.workers.domain">Base domain (only if custom domain)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
         <!-- Cloudflare -->
         <div class="secrets-card secrets-card--cf">
           <div class="secrets-card-header">
@@ -866,7 +888,8 @@
             <div class="deploy-diagram">
               <div class="deploy-package cloud-run">auth-api <span class="deploy-badge cr">Cloud Run</span></div>
               <div class="deploy-package netlify-pkg">landing <span class="deploy-badge net">Netlify</span></div>
-              <div class="deploy-package other-pkg" data-i18n="control.diagram.other">worker <span class="deploy-badge other">Other</span></div>
+              <div class="deploy-package workers-pkg" data-i18n="control.diagram.workers">notifications <span class="deploy-badge workers">Workers</span></div>
+              <div class="deploy-package other-pkg" data-i18n="control.diagram.other">analytics <span class="deploy-badge other">Other</span></div>
             </div>
           </div>
           <div class="control-info">

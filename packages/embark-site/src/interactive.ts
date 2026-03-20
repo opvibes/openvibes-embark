@@ -269,6 +269,13 @@ async function startSimulation() {
         addLine({ type: "info", content: "  • CF_ZONE_ID       — Cloudflare Zone ID", class: "info" });
         addLine({ type: "info", content: "  • DOMAIN           — Base domain (e.g. embark.dev)", class: "info" });
       }
+    } else if (deploy === "cloudflare-workers") {
+      addLine({ type: "info", content: "  • CF_WORKER_TOKEN  — Cloudflare API token (Workers edit)", class: "info" });
+      addLine({ type: "info", content: "  • CF_ACCOUNT_ID    — Cloudflare Account ID", class: "info" });
+      if (cloudflareUse) {
+        addLine({ type: "info", content: "  • CF_ZONE_ID       — Cloudflare Zone ID", class: "info" });
+        addLine({ type: "info", content: "  • DOMAIN           — Base domain (e.g. embark.dev)", class: "info" });
+      }
     }
 
     // Cloudflare DNS secrets (only for gcp/netlify)
@@ -354,11 +361,12 @@ async function startSimulation() {
     "GCP - Google Cloud Run (generates workflow + Dockerfile)",
     "Netlify (generates workflow)",
     "Cloudflare Pages (generates workflow with DNS setup)",
+    "Cloudflare Workers (generates workflow for serverless backend)",
     "Other (custom deploy — you must create the workflow manually)",
   ]);
   await new Promise((r) => setTimeout(r, 600));
 
-  const targets = ["gcp", "netlify", "cloudflare-pages", "other"] as const;
+  const targets = ["gcp", "netlify", "cloudflare-pages", "cloudflare-workers", "other"] as const;
   selectedDeploy = targets[deployIndex] ?? "gcp";
 
   // Step 6: workflowGen — Yes is default (index 0)
@@ -388,6 +396,10 @@ async function startSimulation() {
     const cfPagesIndex = await showMenu("🌐 Publish under a custom domain (e.g. app.yourdomain.com)?", ["Yes", "No"]);
     await new Promise((r) => setTimeout(r, 600));
     cloudflareUse = cfPagesIndex === 0;
+  } else if (selectedDeploy === "cloudflare-workers") {
+    const cfWorkersIndex = await showMenu("🌐 Publish under a custom domain (e.g. api.yourdomain.com)?", ["Yes", "No"]);
+    await new Promise((r) => setTimeout(r, 600));
+    cloudflareUse = cfWorkersIndex === 0;
   } else if (selectedDeploy !== "other") {
     const cfIndex = await showMenu("☁️  Use Cloudflare for custom domain/DNS setup?", ["Yes", "No"]);
     await new Promise((r) => setTimeout(r, 600));
@@ -418,6 +430,8 @@ async function startSimulation() {
     addLine({ type: "output", content: `  → yourdomain.com (root domain)`, class: "info" });
   } else if (selectedDeploy === "cloudflare-pages" && !cloudflareUse) {
     addLine({ type: "output", content: `  → ${camelName.toLowerCase()}.pages.dev`, class: "info" });
+  } else if (selectedDeploy === "cloudflare-workers" && !cloudflareUse) {
+    addLine({ type: "output", content: `  → ${camelName.toLowerCase()}.workers.dev`, class: "info" });
   } else {
     addLine({ type: "output", content: `  → ${finalSubdomain}.yourdomain.com`, class: "info" });
   }

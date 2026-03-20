@@ -26,7 +26,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Hero
     "hero.tagline": "Ship vibe-coded apps with zero config.",
-    "hero.sub": "Auto CI/CD &middot; Auto Docker &middot; AI-powered &middot; Cloud Run &middot; Netlify",
+    "hero.sub": "Auto CI/CD &middot; Auto Docker &middot; AI-powered &middot; Cloud Run &middot; Netlify &middot; Workers",
     "hero.cta": "Get Started",
     "hero.scroll": "Scroll to explore",
 
@@ -76,7 +76,7 @@ const translations: Record<Language, Record<string, string>> = {
     "commit.title": "What Happens on Commit",
     "commit.subtitle": "Every <code>git commit</code> triggers a pipeline of automations. No config required.",
     "commit.step0.title": "Ensure Deploy Config",
-    "commit.step0.desc": "Detects packages without <code>.embark.json</code> and asks you to choose a deploy target: Cloud Run, Netlify, or Other.",
+    "commit.step0.desc": "Detects packages without <code>.embark.json</code> and asks you to choose a deploy target: Cloud Run, Netlify, Workers, or Other.",
     "commit.step1.title": "Generate Workflows",
     "commit.step1.desc": "Scans <code>packages/</code> and creates a GitHub Actions workflow for each new package using the template.",
     "commit.step2.title": "Sync Workflows",
@@ -126,6 +126,12 @@ const translations: Record<Language, Record<string, string>> = {
     "secrets.cf.token": "Cloudflare API token with DNS edit permissions",
     "secrets.cf.zone": "Zone ID of your domain in Cloudflare",
     "secrets.cf.domain": "Base domain — must match your Cloudflare zone",
+    "secrets.workers.title": "Cloudflare Workers",
+    "secrets.workers.when": "Required when <code>appDeployment: \"cloudflare-workers\"</code>",
+    "secrets.workers.token": "Cloudflare API token — use the pre-built \"Edit Cloudflare Workers\" template when creating the token",
+    "secrets.workers.account": "Cloudflare Account ID",
+    "secrets.workers.zone": "Zone ID of your domain (only if custom domain)",
+    "secrets.workers.domain": "Base domain (only if custom domain)",
 
     // Try It
     "tryit.title": "Try It Yourself",
@@ -146,6 +152,8 @@ const translations: Record<Language, Record<string, string>> = {
     "features.scaffold.desc": "One command, two questions, done. The CLI creates the full package structure with config, types, and entrypoint.",
     "features.netlify.title": "Netlify Ready",
     "features.netlify.desc": "Choose Netlify at setup — no Docker, no workflow. Just a netlify.toml and push. The framework skips what you don't need.",
+    "features.workers.title": "Workers Ready",
+    "features.workers.desc": "Choose Workers for serverless backends — no Docker, no containers. Just deploy your code at the edge via <code>wrangler deploy</code>.",
     "features.other.title": "Bring Your Own Infra",
     "features.other.desc": 'Deploy to Vercel, Fly.io, AWS, or anywhere else. Set deploy to "other" and Embark skips workflows and Dockerfiles — you handle the rest.',
     "features.rootdomain.title": "Root Domain Deploy",
@@ -153,7 +161,7 @@ const translations: Record<Language, Record<string, string>> = {
     "features.submodule.title": "Git Submodule Support",
     "features.submodule.desc": "Answer one question during package setup and Embark automatically adds <code>submodules: recursive</code> to the checkout step. Your workflows just work, even with nested repos.",
     "features.cleaner.title": "Auto Cloudflare Cleanup",
-    "features.cleaner.desc": "Delete a package and Embark detects the orphan via <code>apps.jsonc</code>. A scheduled workflow automatically removes the Cloudflare Pages project, custom domain, and DNS record.",
+    "features.cleaner.desc": "Delete a package and Embark detects the orphan via <code>apps.jsonc</code>. A scheduled workflow automatically removes the Cloudflare Pages project, Worker script, custom domain, and DNS record.",
 
     // Live Example
     "liveExample.title": "Embark, Deployed with Embark",
@@ -174,9 +182,10 @@ const translations: Record<Language, Record<string, string>> = {
     "control.diagram.unchanged2": 'landing <span class="deploy-badge skip">skip</span>',
     "control.selective.title": "Only What Changed Gets Deployed",
     "control.selective.desc": "Each package in the monorepo has its own CI/CD pipeline with path filters. When you push, only packages with actual changes are built and deployed. The rest stay untouched. No accidental deploys, no wasted resources.",
-    "control.diagram.other": 'worker <span class="deploy-badge other">Other</span>',
+    "control.diagram.workers": 'notifications <span class="deploy-badge workers">Workers</span>',
+    "control.diagram.other": 'analytics <span class="deploy-badge other">Other</span>',
     "control.mixed.title": "Mix Deploy Targets",
-    "control.mixed.desc": "Each package chooses where it deploys. APIs on Cloud Run, frontends on Netlify, custom infra elsewhere — all in the same monorepo. Set the target in <code>.embark.json</code> and the framework adapts per package.",
+    "control.mixed.desc": "Each package chooses where it deploys. APIs on Cloud Run or Workers, frontends on Netlify, custom infra elsewhere — all in the same monorepo. Set the target in <code>.embark.json</code> and the framework adapts per package.",
     "control.override.title": "Override Anything",
     "control.override.desc": 'Manually edited a Dockerfile? Embark won\'t touch it. Custom workflow? Preserved. Every automation respects existing files. You can also set your own deploy target in <code>.embark.json</code> — the framework follows your lead.',
 
@@ -207,7 +216,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     "footer.tagline": "Ship vibe-coded apps with zero config.",
-    "footer.sub": "Zero-config CI/CD, Docker, and Cloud Run or Netlify deployment for monorepos.",
+    "footer.sub": "Zero-config CI/CD, Docker, and Cloud Run, Netlify or Workers deployment for monorepos.",
     "footer.latestRelease": "Latest Release",
     "footer.nav": "Navigate",
     "footer.project": "Project",
@@ -248,7 +257,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Hero
     "hero.tagline": "Publique apps vibe-coded com zero config.",
-    "hero.sub": "CI/CD auto &middot; Docker auto &middot; IA integrada &middot; Cloud Run &middot; Netlify",
+    "hero.sub": "CI/CD auto &middot; Docker auto &middot; IA integrada &middot; Cloud Run &middot; Netlify &middot; Workers",
     "hero.cta": "Começar",
     "hero.scroll": "Role para explorar",
 
@@ -298,7 +307,7 @@ const translations: Record<Language, Record<string, string>> = {
     "commit.title": "O Que Acontece no Commit",
     "commit.subtitle": "Cada <code>git commit</code> dispara um pipeline de automações. Nenhuma config necessária.",
     "commit.step0.title": "Garantir Config de Deploy",
-    "commit.step0.desc": "Detecta pacotes sem <code>.embark.json</code> e pergunta o alvo de deploy: Cloud Run, Netlify ou Other.",
+    "commit.step0.desc": "Detecta pacotes sem <code>.embark.json</code> e pergunta o alvo de deploy: Cloud Run, Netlify, Workers ou Other.",
     "commit.step1.title": "Gerar Workflows",
     "commit.step1.desc": "Escaneia <code>packages/</code> e cria um workflow do GitHub Actions para cada novo pacote usando o template.",
     "commit.step2.title": "Sincronizar Workflows",
@@ -348,6 +357,12 @@ const translations: Record<Language, Record<string, string>> = {
     "secrets.cf.token": "Token de API do Cloudflare com permissão de editar DNS",
     "secrets.cf.zone": "Zone ID do seu domínio no Cloudflare",
     "secrets.cf.domain": "Domínio base — deve coincidir com a zone do Cloudflare",
+    "secrets.workers.title": "Cloudflare Workers",
+    "secrets.workers.when": "Obrigatório quando <code>appDeployment: \"cloudflare-workers\"</code>",
+    "secrets.workers.token": "Token de API do Cloudflare — use o template pronto \"Edit Cloudflare Workers\" na hora de criar o token",
+    "secrets.workers.account": "Cloudflare Account ID",
+    "secrets.workers.zone": "Zone ID do seu domínio (apenas se usar domínio customizado)",
+    "secrets.workers.domain": "Domínio base (apenas se usar domínio customizado)",
 
     // Try It
     "tryit.title": "Teste Você Mesmo",
@@ -368,6 +383,8 @@ const translations: Record<Language, Record<string, string>> = {
     "features.scaffold.desc": "Um comando, duas perguntas, pronto. A CLI cria a estrutura completa do pacote com config, tipos e entrypoint.",
     "features.netlify.title": "Pronto pro Netlify",
     "features.netlify.desc": "Escolha Netlify na criação — sem Docker, sem workflow. Só um netlify.toml e push. O framework pula o que não precisa.",
+    "features.workers.title": "Pronto pro Workers",
+    "features.workers.desc": "Escolha Workers para backends serverless — sem Docker, sem containers. Publique seu código no edge via <code>wrangler deploy</code>.",
     "features.other.title": "Traga Sua Infra",
     "features.other.desc": 'Deploy no Vercel, Fly.io, AWS ou qualquer outro lugar. Defina deploy como "other" e o Embark pula workflows e Dockerfiles — você cuida do resto.',
     "features.rootdomain.title": "Deploy no Domínio Raiz",
@@ -375,7 +392,7 @@ const translations: Record<Language, Record<string, string>> = {
     "features.submodule.title": "Suporte a Git Submodule",
     "features.submodule.desc": "Responda uma pergunta durante a configuração do pacote e o Embark adiciona automaticamente <code>submodules: recursive</code> no step de checkout. Seus workflows funcionam, mesmo com repositórios aninhados.",
     "features.cleaner.title": "Limpeza Automática do Cloudflare",
-    "features.cleaner.desc": "Exclua um pacote e o Embark detecta o órfão via <code>apps.jsonc</code>. Um workflow agendado remove automaticamente o projeto no Cloudflare Pages, o domínio customizado e o registro DNS.",
+    "features.cleaner.desc": "Exclua um pacote e o Embark detecta o órfão via <code>apps.jsonc</code>. Um workflow agendado remove automaticamente o projeto no Cloudflare Pages, Worker script, o domínio customizado e o registro DNS.",
 
     // Live Example
     "liveExample.title": "Embark, Publicado com Embark",
@@ -396,9 +413,10 @@ const translations: Record<Language, Record<string, string>> = {
     "control.diagram.unchanged2": 'landing <span class="deploy-badge skip">pular</span>',
     "control.selective.title": "Só o Que Mudou é Publicado",
     "control.selective.desc": "Cada pacote no monorepo tem seu próprio pipeline CI/CD com filtros de path. Quando você dá push, só pacotes com mudanças reais são buildados e publicados. O resto fica intocado. Sem deploys acidentais, sem recursos desperdiçados.",
-    "control.diagram.other": 'worker <span class="deploy-badge other">Other</span>',
+    "control.diagram.workers": 'notifications <span class="deploy-badge workers">Workers</span>',
+    "control.diagram.other": 'analytics <span class="deploy-badge other">Other</span>',
     "control.mixed.title": "Misture Alvos de Deploy",
-    "control.mixed.desc": "Cada pacote escolhe onde faz deploy. APIs no Cloud Run, frontends no Netlify, infra custom em outro lugar — tudo no mesmo monorepo. Defina o alvo no <code>.embark.json</code> e o framework se adapta por pacote.",
+    "control.mixed.desc": "Cada pacote escolhe onde faz deploy. APIs no Cloud Run ou Workers, frontends no Netlify, infra custom em outro lugar — tudo no mesmo monorepo. Defina o alvo no <code>.embark.json</code> e o framework se adapta por pacote.",
     "control.override.title": "Sobrescreva Qualquer Coisa",
     "control.override.desc": 'Editou um Dockerfile manualmente? Embark não encosta. Workflow customizado? Preservado. Toda automação respeita arquivos existentes. Você também pode definir seu próprio alvo de deploy no <code>.embark.json</code> — o framework segue sua decisão.',
 
@@ -431,7 +449,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     "footer.tagline": "Publique apps vibe-coded com zero config.",
-    "footer.sub": "CI/CD, Docker e deploy para Cloud Run ou Netlify sem configuração, para monorepos.",
+    "footer.sub": "CI/CD, Docker e deploy para Cloud Run, Netlify ou Workers sem configuração, para monorepos.",
     "footer.latestRelease": "Último Release",
     "footer.nav": "Navegar",
     "footer.project": "Projeto",

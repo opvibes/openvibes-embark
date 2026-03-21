@@ -95,10 +95,10 @@ jobs:
 
           echo "Adding custom domain route to Worker..."
           RESPONSE=$(curl -s -X PUT \
-            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/domains" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/domains" \
             -H "Authorization: Bearer ${CF_TOKEN}" \
             -H "Content-Type: application/json" \
-            --data "[{\"hostname\":\"${FULL_DOMAIN}\",\"zone_id\":\"${CF_ZONE_ID}\"}]")
+            --data "{\"hostname\":\"${FULL_DOMAIN}\",\"service\":\"${WORKER_NAME}\",\"environment\":\"production\",\"zone_id\":\"${CF_ZONE_ID}\",\"zone_name\":\"${DOMAIN}\"}")
 
           echo "Response: $RESPONSE"
 

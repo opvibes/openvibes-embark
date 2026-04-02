@@ -6,16 +6,16 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "git submodule update --init --recursive && git config submodule.recurse true",
+    "preinstall": "git submodule foreach --recursive git checkout -- . && git submodule update --init --recursive --remote && git config submodule.recurse true",
     "prepare": "husky",
     "postinstall": "husky",
     "test": "bun test --coverage scripts/__tests__",
     "utils": "bun scripts/utils.ts",
     "init": "bun scripts/init.ts",
     "setup": "bun scripts/setup.ts",
+    "duckflux-docs": "bun run --filter @embark/duckflux-docs dev",
     "duckflux-site": "bun run --filter @embark/duckflux-site dev",
     "duckflux-editor": "bun run --filter @embark/duckflux-editor dev",
-    "duckflux-docs": "bun run --filter @embark/duckflux-docs dev",
     "embark-site": "bun run --filter @embark/embark-site dev"
   },
   "devDependencies": {

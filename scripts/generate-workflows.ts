@@ -15,6 +15,7 @@ const PLACEHOLDER_ROOT_DOMAIN = "__ROOT_DOMAIN__";
 const PLACEHOLDER_DOMAIN_SETUP = "__DOMAIN_SETUP__";
 const PLACEHOLDER_SUBMODULES_WITH = "__SUBMODULES_WITH__";
 const PLACEHOLDER_SUBMODULE_PATH = "__SUBMODULE_PATH__";
+const PLACEHOLDER_BUN_INSTALL = "__BUN_INSTALL__";
 const PLACEHOLDER_CLOUDFLARE_IF = "__CLOUDFLARE_IF__";
 
 export async function exists(path: string): Promise<boolean> {
@@ -62,6 +63,13 @@ export async function buildWorkflowContent(
     ? `      - "packages/${packageName}"`
     : "";
 
+  // When the package is not a submodule, skip the root preinstall script which
+  // runs `git submodule update --init --recursive` and requires SSH access to
+  // potentially private sibling submodule repos not checked out in this workflow.
+  const bunInstallCmd = useSubmodule === true
+    ? "bun install"
+    : "bun install --ignore-scripts";
+
   return baseTemplate
     .replaceAll(PLACEHOLDER, packageName)
     .replaceAll(PLACEHOLDER_LOWERCASE, packageName.toLowerCase())
@@ -70,6 +78,7 @@ export async function buildWorkflowContent(
     .replaceAll(PLACEHOLDER_DOMAIN_SETUP, cloudflareUse === true ? "true" : "false")
     .replaceAll(PLACEHOLDER_SUBMODULES_WITH, submodulesWithValue)
     .replaceAll(PLACEHOLDER_SUBMODULE_PATH, submodulePathValue)
+    .replaceAll(PLACEHOLDER_BUN_INSTALL, bunInstallCmd)
     .replaceAll(PLACEHOLDER_CLOUDFLARE_IF, cloudflareUse === true ? "true" : "false");
 }
 

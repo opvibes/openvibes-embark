@@ -464,6 +464,52 @@ describe("processPackageWorkflow - I/O integration", () => {
       Bun.spawnSync(["rm", "-rf", testDir]);
     }
   });
+
+  test("uses plain bun install when useSubmodule=true", async () => {
+    const testDir = join(tmpdir(), `test-workflow-install-submodule-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-app", "cloudflare-pages", true, testDir, undefined, undefined, true);
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+
+      // Submodule packages check out all repos first, so preinstall can run safely
+      expect(content).toContain("run: bun install\n");
+      expect(content).not.toContain("--ignore-scripts");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("uses bun install --ignore-scripts when useSubmodule=false", async () => {
+    const testDir = join(tmpdir(), `test-workflow-install-no-submodule-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-app", "cloudflare-pages", true, testDir, undefined, undefined, false);
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+
+      // Non-submodule packages skip preinstall to avoid SSH failures cloning sibling submodule repos
+      expect(content).toContain("run: bun install --ignore-scripts");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("uses bun install --ignore-scripts when useSubmodule is undefined", async () => {
+    const testDir = join(tmpdir(), `test-workflow-install-undefined-submodule-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      // No useSubmodule arg passed — defaults to undefined, same as false
+      await processPackageWorkflow("my-app", "cloudflare-pages", true, testDir);
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+
+      expect(content).toContain("run: bun install --ignore-scripts");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
 });
 
 describe("processPackagesWorkflows", () => {

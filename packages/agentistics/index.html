@@ -112,12 +112,13 @@
 
         <div class="preview-tabs-wrap" data-reveal>
           <div class="preview-tabs">
-            <button class="preview-tab active" data-tab="0" data-i18n="preview.tab.overview">Overview</button>
-            <button class="preview-tab" data-tab="1" data-i18n="preview.tab.activity">Activity</button>
-            <button class="preview-tab" data-tab="2" data-i18n="preview.tab.models">Models</button>
-            <button class="preview-tab" data-tab="3" data-i18n="preview.tab.projects">Projects</button>
-            <button class="preview-tab" data-tab="4" data-i18n="preview.tab.agents">Agents</button>
-            <button class="preview-tab" data-tab="5" data-i18n="preview.tab.sessions">Sessions</button>
+            <button class="preview-tab active" data-tab="0" data-i18n="preview.tab.demo">Demo</button>
+            <button class="preview-tab" data-tab="1" data-i18n="preview.tab.overview">Overview</button>
+            <button class="preview-tab" data-tab="2" data-i18n="preview.tab.activity">Activity</button>
+            <button class="preview-tab" data-tab="3" data-i18n="preview.tab.models">Models</button>
+            <button class="preview-tab" data-tab="4" data-i18n="preview.tab.projects">Projects</button>
+            <button class="preview-tab" data-tab="5" data-i18n="preview.tab.agents">Agents</button>
+            <button class="preview-tab" data-tab="6" data-i18n="preview.tab.sessions">Sessions</button>
           </div>
         </div>
 
@@ -134,7 +135,14 @@
             </span>
           </div>
           <div class="preview-content">
-            <img src="/screenshots/section1.png" alt="Dashboard Overview"    class="preview-img active" />
+            <video
+              class="preview-video active"
+              src="https://github.com/blpsoares/agentistics/releases/download/v1.1.0/presentation.mp4"
+              muted
+              playsinline
+              preload="metadata"
+            ></video>
+            <img src="/screenshots/section1.png" alt="Dashboard Overview"    class="preview-img" />
             <img src="/screenshots/section2.png" alt="Activity"              class="preview-img" />
             <img src="/screenshots/section3.png" alt="Model Usage"           class="preview-img" />
             <img src="/screenshots/section4.png" alt="Projects &amp; Tools"  class="preview-img" />
@@ -277,23 +285,10 @@
               <span class="feat-acc-num">01</span>
               <i data-lucide="zap" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.1.title">Token tracking — per model, per session, per type</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag">input</span>
-                <span class="feat-tag">output</span>
-                <span class="feat-tag">cache</span>
-                <span class="feat-tag feat-tag--green">SSE</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.1.desc">Input, output, cache read and cache write tokens broken down separately for every session and every model. Understand exactly where your token budget goes and which cache strategies save you the most.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag">input tokens</span>
-                <span class="feat-tag">output tokens</span>
-                <span class="feat-tag">cache read</span>
-                <span class="feat-tag">cache write</span>
-                <span class="feat-tag feat-tag--green">real-time SSE</span>
-              </div>
             </div>
           </div>
 
@@ -302,20 +297,10 @@
               <span class="feat-acc-num">02</span>
               <i data-lucide="dollar-sign" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.2.title">Cost analysis in USD &amp; BRL</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag">USD + BRL</span>
-                <span class="feat-tag feat-tag--green">live rates</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.2.desc">Real costs in USD and BRL with live exchange rates. Blended cost-per-token across your entire model mix. Per-model breakdown with exact Anthropic pricing so you know which model is costing what.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag">USD + BRL</span>
-                <span class="feat-tag feat-tag--green">live exchange rate</span>
-                <span class="feat-tag">blended CPT</span>
-                <span class="feat-tag">per-model cost</span>
-              </div>
             </div>
           </div>
 
@@ -324,22 +309,10 @@
               <span class="feat-acc-num">03</span>
               <i data-lucide="bot" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.3.title">Agent metrics — deep per-invocation data</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag">per-invocation</span>
-                <span class="feat-tag feat-tag--blue">tool stats</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.3.desc">Every Agent tool call is tracked individually: duration, token usage, cost, and detailed tool stats including file reads, edits, bash executions, and searches. Compare success rates per agent type across your sessions.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag">duration</span>
-                <span class="feat-tag">token cost</span>
-                <span class="feat-tag feat-tag--blue">file reads</span>
-                <span class="feat-tag feat-tag--blue">bash runs</span>
-                <span class="feat-tag feat-tag--blue">edits</span>
-                <span class="feat-tag feat-tag--green">success rate</span>
-              </div>
             </div>
           </div>
 
@@ -348,19 +321,10 @@
               <span class="feat-acc-num">04</span>
               <i data-lucide="calendar-days" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.4.title">Activity heatmap &amp; streak tracking</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag">52 weeks</span>
-                <span class="feat-tag feat-tag--green">streaks</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.4.desc">GitHub-style contribution heatmap of your AI coding activity across 52 weeks. Streak counter that tracks consecutive active days — without penalizing you for not having worked yet today. Intensity reflects token volume per day.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag">52-week heatmap</span>
-                <span class="feat-tag feat-tag--green">streak counter</span>
-                <span class="feat-tag">daily intensity</span>
-              </div>
             </div>
           </div>
 
@@ -369,21 +333,10 @@
               <span class="feat-acc-num">05</span>
               <i data-lucide="bar-chart-3" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.5.title">Model breakdown by project</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag">Opus 4.6</span>
-                <span class="feat-tag">Sonnet 4.6</span>
-                <span class="feat-tag">Haiku 4.5</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.5.desc">Token and cost distribution across every Claude model in your usage history. Filter by project to identify which workstreams lean most heavily on expensive models. Donut chart and per-model table with share percentages.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag">Opus 4.6</span>
-                <span class="feat-tag">Sonnet 4.6</span>
-                <span class="feat-tag">Haiku 4.5</span>
-                <span class="feat-tag feat-tag--blue">project filter</span>
-              </div>
             </div>
           </div>
 
@@ -392,19 +345,10 @@
               <span class="feat-acc-num">06</span>
               <i data-lucide="shield-check" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.6.title">100% local — zero cloud, zero telemetry</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag feat-tag--green">offline</span>
-                <span class="feat-tag feat-tag--green">private</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.6.desc">Reads directly from ~/.claude/ on your filesystem. No cloud sync, no account creation, no analytics, no telemetry. A single binary that parses JSONL files locally and serves everything from your machine.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag feat-tag--green">no account needed</span>
-                <span class="feat-tag feat-tag--green">offline-first</span>
-                <span class="feat-tag feat-tag--green">zero telemetry</span>
-              </div>
             </div>
           </div>
 
@@ -413,20 +357,10 @@
               <span class="feat-acc-num">07</span>
               <i data-lucide="telescope" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.7.title">OpenTelemetry export</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag feat-tag--blue">OTLP/HTTP</span>
-                <span class="feat-tag feat-tag--blue">Prometheus</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.7.desc">Export your AI usage metrics to any OTel-compatible backend. Token counters, cost gauge, session count, streak days, git line stats, and per-tool-type call counts. Works with Prometheus, Grafana, Datadog, and any OTLP endpoint.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag feat-tag--blue">OTLP/HTTP</span>
-                <span class="feat-tag feat-tag--blue">Prometheus</span>
-                <span class="feat-tag feat-tag--blue">Grafana</span>
-                <span class="feat-tag feat-tag--blue">Datadog</span>
-              </div>
             </div>
           </div>
 
@@ -435,20 +369,10 @@
               <span class="feat-acc-num">08</span>
               <i data-lucide="file-text" class="feat-acc-icon"></i>
               <span class="feat-acc-title" data-i18n="feat.8.title">PDF export — dark &amp; light themes</span>
-              <div class="feat-acc-inline-tags">
-                <span class="feat-tag">one-click</span>
-                <span class="feat-tag feat-tag--green">shareable</span>
-              </div>
               <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
             </button>
             <div class="feat-acc-body">
               <p data-i18n="feat.8.desc">One-click export of your full analytics report as a PDF. Includes token usage, cost breakdown, session history, model distribution, and agent metrics. Choose between dark and light themes — perfect for sharing with your team.</p>
-              <div class="feat-tags" style="margin-top:0.875rem">
-                <span class="feat-tag">token summary</span>
-                <span class="feat-tag">cost breakdown</span>
-                <span class="feat-tag">agent metrics</span>
-                <span class="feat-tag feat-tag--green">dark + light themes</span>
-              </div>
             </div>
           </div>
 
@@ -541,13 +465,6 @@ releases/latest/download/agentop-linux \
             <p class="section-sub" style="margin-bottom: 2rem;" data-i18n="arch.sub">
               Every session is a JSONL file. Agentistics parses them locally, aggregates stats-cache, extracts agent metrics, and streams live updates via SSE — all without ever touching a remote server.
             </p>
-            <div class="feat-tags" style="margin-top: 0;">
-              <span class="feat-tag">JSONL parsing</span>
-              <span class="feat-tag">stats-cache.json</span>
-              <span class="feat-tag feat-tag--blue">chokidar watcher</span>
-              <span class="feat-tag feat-tag--green">SSE streaming</span>
-              <span class="feat-tag feat-tag--blue">OTel export</span>
-            </div>
           </div>
           <div class="arch-canvas-wrap" data-reveal>
             <canvas id="arch-canvas"></canvas>

@@ -1,12 +1,12 @@
-// Dashboard screenshot showcase — tabbed browser mockup
+// Dashboard preview — tab 0: demo video, tabs 1-6: screenshots
 
-const TABS = [
-  { key: "overview",  src: "/screenshots/section1.png" },
-  { key: "activity",  src: "/screenshots/section2.png" },
-  { key: "models",    src: "/screenshots/section3.png" },
-  { key: "projects",  src: "/screenshots/section4.png" },
-  { key: "agents",    src: "/screenshots/section5.png" },
-  { key: "sessions",  src: "/screenshots/section6.png" },
+const SCREENSHOT_SRCS = [
+  "/screenshots/section1.png",
+  "/screenshots/section2.png",
+  "/screenshots/section3.png",
+  "/screenshots/section4.png",
+  "/screenshots/section5.png",
+  "/screenshots/section6.png",
 ];
 
 let autoTimer: ReturnType<typeof setInterval> | null = null;
@@ -17,17 +17,30 @@ export function initPreview(): void {
   if (!section) return;
 
   const tabBtns = section.querySelectorAll<HTMLButtonElement>(".preview-tab");
+  const video   = section.querySelector<HTMLVideoElement>(".preview-video");
   const imgs    = section.querySelectorAll<HTMLImageElement>(".preview-img");
   const frame   = section.querySelector<HTMLElement>(".preview-frame");
 
-  if (!tabBtns.length || !imgs.length) return;
+  if (!tabBtns.length) return;
+
+  const total = tabBtns.length; // 7: 1 video + 6 screenshots
 
   function activate(idx: number): void {
     tabBtns.forEach((b, i) => b.classList.toggle("active", i === idx));
-    imgs.forEach((img, i) => img.classList.toggle("active", i === idx));
-    // slide indicator
-    const indicator = section!.querySelector<HTMLElement>(".preview-indicator");
-    if (indicator) indicator.style.transform = `translateX(${idx * 100}%)`;
+
+    // tab 0 = video
+    if (video) {
+      video.classList.toggle("active", idx === 0);
+      if (idx === 0) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    }
+
+    // tabs 1-6 = screenshots (imgs index 0-5)
+    imgs.forEach((img, i) => img.classList.toggle("active", i + 1 === idx));
   }
 
   tabBtns.forEach((btn, i) => {
@@ -38,17 +51,22 @@ export function initPreview(): void {
     });
   });
 
-  // Fade-in the frame when it enters viewport
+  // After video ends, advance to first screenshot and start auto-cycle
+  if (video) {
+    video.addEventListener("ended", () => {
+      activate(1);
+      if (!userInteracted) startAuto(activate, total);
+    });
+  }
+
   if (frame) {
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
             frame.classList.add("visible");
-            // Start auto-cycle after 1.5s
-            if (!userInteracted) {
-              setTimeout(() => startAuto(activate, tabBtns.length), 1500);
-            }
+            // tab 0 (video) starts playing — auto-cycle starts only after video ends
+            if (video && !userInteracted) video.play().catch(() => {});
             obs.disconnect();
           }
         });
@@ -58,18 +76,18 @@ export function initPreview(): void {
     obs.observe(frame);
   }
 
-  // Preload all images
-  TABS.forEach(({ src }) => {
+  // Preload screenshots
+  SCREENSHOT_SRCS.forEach((src) => {
     const img = new Image();
     img.src = src;
   });
 }
 
 function startAuto(activate: (i: number) => void, total: number): void {
-  let current = 0;
+  let current = 1; // start from first screenshot, never loop back to video
   autoTimer = setInterval(() => {
     if (userInteracted) { if (autoTimer) clearInterval(autoTimer); return; }
-    current = (current + 1) % total;
+    current = current >= total - 1 ? 1 : current + 1;
     activate(current);
   }, 3200);
 }

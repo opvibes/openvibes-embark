@@ -464,6 +464,15 @@ section { padding: 6rem 0; }
 /* Non-active images stack on top when fading */
 .preview-img:not(.active) { position: absolute; }
 
+/* Demo video tab */
+.preview-video {
+  width: 100%; display: block;
+  position: absolute; top: 0; left: 0;
+  opacity: 0; transition: opacity 0.45s ease;
+  background: #000;
+}
+.preview-video.active { opacity: 1; position: relative; }
+
 /* PDF export showcase */
 .preview-pdf {
   margin-top: 3rem; padding-top: 2.5rem;
@@ -843,17 +852,11 @@ i.feat-acc-icon { width: 1.2rem; height: 1.2rem; }
 footer {
   border-top: 1px solid var(--border);
   padding: 4rem 0 2.5rem;
-  /*
-    backdrop-filter on a non-fixed footer only blurs what's behind it
-    in the compositing stack. We use a semi-transparent bg + dot grid
-    to create the frosted-glass feel without relying on fixed positioning.
-  */
   background:
     radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(14,14,22,0.96) 0%, rgba(10,10,15,0.99) 100%);
-  background-size: 28px 28px, 100% 100%;
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    linear-gradient(180deg, rgba(22,22,32,0.06) 0%, transparent 100%),
+    #0a0a0f;  /* solid base — fully opaque, prevents canvas bleed-through */
+  background-size: 28px 28px, 100% 100%, auto;
   position: relative;
 }
 .footer-top {

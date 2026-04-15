@@ -1,0 +1,90 @@
+name: __PACKAGE_NAME__
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/__PACKAGE_NAME__/**"
+__SUBMODULE_PATH__
+  workflow_dispatch:
+
+env:
+  SUBDOMAIN: __SUBDOMAIN__
+  ROOT_DOMAIN: __ROOT_DOMAIN__
+  DOMAIN_SETUP: __DOMAIN_SETUP__
+  DOMAIN: ${{ secrets.DOMAIN }}
+  PACKAGE_NAME: __PACKAGE_NAME__
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4__SUBMODULES_WITH__
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: __BUN_INSTALL__
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_WORKER_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: deploy
+          workingDirectory: packages/__PACKAGE_NAME__
+
+  dns:
+    if: __DOMAIN_SETUP__
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Custom Domain
+        env:
+          CF_TOKEN: ${{ secrets.CF_WORKER_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+        run: |
+          if [ "$ROOT_DOMAIN" = "true" ]; then
+            FULL_DOMAIN="${DOMAIN}"
+            CNAME_NAME="@"
+          else
+            FULL_DOMAIN="${SUBDOMAIN}.${DOMAIN}"
+            CNAME_NAME="${SUBDOMAIN}"
+          fi
+
+          WORKER_NAME="${PACKAGE_NAME}"
+
+          # Check if custom domain already exists for this worker
+          echo "Checking if custom domain ${FULL_DOMAIN} is already configured..."
+          EXISTING=$(curl -s -X GET \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/domains" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json")
+
+          DOMAIN_EXISTS=$(echo "$EXISTING" | jq -r --arg h "${FULL_DOMAIN}" '.result[]? | select(.hostname == $h) | .id // empty')
+
+          if [ -n "$DOMAIN_EXISTS" ]; then
+            echo "✓ Custom domain already configured: https://${FULL_DOMAIN}"
+          else
+            echo "Creating custom domain: ${FULL_DOMAIN} -> ${WORKER_NAME}"
+            RESPONSE=$(curl -s -X PUT \
+              "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/domains" \
+              -H "Authorization: Bearer ${CF_TOKEN}" \
+              -H "Content-Type: application/json" \
+              --data "{\"hostname\":\"${FULL_DOMAIN}\",\"service\":\"${WORKER_NAME}\",\"environment\":\"production\",\"zone_id\":\"${CF_ZONE_ID}\",\"zone_name\":\"${DOMAIN}\",\"override_existing_dns_record\":true,\"override_existing_origin\":true}")
+
+            echo "Response: $RESPONSE"
+
+            SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
+            if [ "$SUCCESS" = "true" ]; then
+              echo "✓ Custom domain configured: https://${FULL_DOMAIN}"
+            else
+              ERROR=$(echo "$RESPONSE" | jq -r '.errors[0].message // "Unknown"')
+              echo "⚠️ Custom domain setup: $ERROR"
+            fi
+          fi

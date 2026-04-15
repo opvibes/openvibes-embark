@@ -3,7 +3,7 @@
  * Used across all packages in the monorepo
  */
 
-export type AppDeployment = "gcp" | "netlify" | "cloudflare-pages" | "other";
+export type AppDeployment = "gcp" | "netlify" | "cloudflare-pages" | "cloudflare-workers" | "other";
 
 /**
  * Deploy configuration object stored inside .embark.jsonc

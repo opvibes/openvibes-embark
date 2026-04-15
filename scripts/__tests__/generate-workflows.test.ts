@@ -359,6 +359,48 @@ describe("processPackageWorkflow - I/O integration", () => {
     }
   });
 
+  test("generates cloudflare-workers workflow with DNS setup", async () => {
+    const testDir = join(tmpdir(), `test-workflow-cf-workers-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      const result = await processPackageWorkflow("my-worker", "cloudflare-workers", true, testDir);
+      expect(result).toBe(true);
+
+      const content = readFileSync(join(testDir, "my-worker.yml"), "utf-8");
+      expect(content).toContain("Deploy to Cloudflare Workers");
+      expect(content).toContain("CF_WORKER_TOKEN");
+      expect(content).toContain("CF_ACCOUNT_ID");
+      expect(content).toContain("Configure Custom Domain");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("cloudflare-workers workflow deploys directly without build/artifact", async () => {
+    const testDir = join(tmpdir(), `test-workflow-cfworkers-multijob-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-api", "cloudflare-workers", true, testDir);
+      const content = readFileSync(join(testDir, "my-api.yml"), "utf-8");
+
+      // No build/artifact — wrangler handles everything
+      expect(content).not.toContain("actions/upload-artifact@v4");
+      expect(content).not.toContain("actions/download-artifact@v4");
+
+      // Deploy job uses wrangler directly
+      expect(content).toContain("cloudflare/wrangler-action@v3");
+      expect(content).toContain("command: deploy");
+      expect(content).toContain("bun install");
+
+      // DNS job depends on deploy
+      expect(content).toContain("needs: deploy");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
   test("does not include submodules when useSubmodule=false", async () => {
     const testDir = join(tmpdir(), `test-workflow-no-submodules-${Date.now()}`);
     mkdirSync(testDir, { recursive: true });
@@ -418,6 +460,52 @@ describe("processPackageWorkflow - I/O integration", () => {
 
       expect(content).toContain('- "packages/my-pages/**"');
       expect(content).toContain('- "packages/my-pages"');
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("uses plain bun install when useSubmodule=true", async () => {
+    const testDir = join(tmpdir(), `test-workflow-install-submodule-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-app", "cloudflare-pages", true, testDir, undefined, undefined, true);
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+
+      // Submodule packages check out all repos first, so preinstall can run safely
+      expect(content).toContain("run: bun install\n");
+      expect(content).not.toContain("--ignore-scripts");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("uses bun install --ignore-scripts when useSubmodule=false", async () => {
+    const testDir = join(tmpdir(), `test-workflow-install-no-submodule-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      await processPackageWorkflow("my-app", "cloudflare-pages", true, testDir, undefined, undefined, false);
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+
+      // Non-submodule packages skip preinstall to avoid SSH failures cloning sibling submodule repos
+      expect(content).toContain("run: bun install --ignore-scripts");
+    } finally {
+      Bun.spawnSync(["rm", "-rf", testDir]);
+    }
+  });
+
+  test("uses bun install --ignore-scripts when useSubmodule is undefined", async () => {
+    const testDir = join(tmpdir(), `test-workflow-install-undefined-submodule-${Date.now()}`);
+    mkdirSync(testDir, { recursive: true });
+
+    try {
+      // No useSubmodule arg passed — defaults to undefined, same as false
+      await processPackageWorkflow("my-app", "cloudflare-pages", true, testDir);
+      const content = readFileSync(join(testDir, "my-app.yml"), "utf-8");
+
+      expect(content).toContain("run: bun install --ignore-scripts");
     } finally {
       Bun.spawnSync(["rm", "-rf", testDir]);
     }

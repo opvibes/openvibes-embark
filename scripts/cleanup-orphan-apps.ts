@@ -19,7 +19,7 @@ export interface ActivePackage {
 
 export interface CloudResource {
   name: string;
-  type: "cloudflare-pages" | "netlify" | "gcp";
+  type: "cloudflare-pages" | "cloudflare-workers" | "netlify" | "gcp";
 }
 
 export interface OrphanResource {
@@ -88,6 +88,18 @@ export function netlifyProjectName(subdomain: string): string {
 
 export function gcpServiceName(packageName: string): string {
   return packageName.toLowerCase();
+}
+
+export function workerScriptName(
+  subdomain: string,
+  rootDomain: boolean,
+  domainPrefix: string,
+  hasDomainSetup: boolean,
+  packageName?: string,
+): string {
+  if (!hasDomainSetup && packageName) return packageName;
+  if (rootDomain) return domainPrefix;
+  return `${domainPrefix}-${subdomain}`.replace(/\./g, "-");
 }
 
 // ── Cloud API: Cloudflare Pages ──────────────────────────────
@@ -298,6 +310,65 @@ export async function deleteCloudRunService(
   }
 }
 
+// ── Cloud API: Cloudflare Workers ────────────────────────────
+
+export async function listCloudflareWorkers(
+  accountId: string,
+  token: string,
+): Promise<string[]> {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/workers/scripts`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const data = (await response.json()) as {
+    success: boolean;
+    result: { id: string }[];
+  };
+
+  if (!data.success || !data.result?.length) return [];
+
+  return data.result.map((w) => w.id);
+}
+
+export async function deleteCloudflareWorker(
+  accountId: string,
+  token: string,
+  scriptName: string,
+): Promise<boolean> {
+  console.log(`  -> Deleting Worker script: ${scriptName}`);
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/workers/scripts/${scriptName}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const data = (await response.json()) as { success: boolean; errors?: { message: string; code: number }[] };
+  if (data.success) {
+    console.log(`  ✓ Worker script deleted: ${scriptName}`);
+    return true;
+  }
+
+  const code = data.errors?.[0]?.code ?? 0;
+  if (code === 10007) {
+    console.log(`  ✓ Worker script not found (already deleted): ${scriptName}`);
+    return true;
+  }
+
+  console.log(`  ✗ Failed to delete Worker script: ${data.errors?.[0]?.message ?? "Unknown"}`);
+  return false;
+}
+
 // ── Cloud API: Cloudflare DNS ────────────────────────────────
 
 export async function deleteDnsRecord(
@@ -459,10 +530,53 @@ export function findOrphanCloudRunServices(
   return orphans;
 }
 
+export function findOrphanCloudflareWorkers(
+  allWorkers: string[],
+  activePackages: Map<string, ActivePackage>,
+  domainPrefix: string,
+): OrphanResource[] {
+  const orphans: OrphanResource[] = [];
+
+  const expectedNames = new Set<string>();
+  for (const [, pkg] of activePackages) {
+    if (pkg.deploy === "cloudflare-workers") {
+      const name = workerScriptName(
+        pkg.subdomain,
+        pkg.rootDomain,
+        domainPrefix,
+        pkg.cloudflareUse,
+        pkg.folderName,
+      );
+      expectedNames.add(name);
+    }
+  }
+
+  for (const worker of allWorkers) {
+    const matchesPrefix = worker.startsWith(`${domainPrefix}-`) || worker === domainPrefix;
+    if (!matchesPrefix) continue;
+    if (expectedNames.has(worker)) continue;
+
+    let subdomain = "";
+    if (worker !== domainPrefix) {
+      subdomain = worker.slice(domainPrefix.length + 1);
+    }
+
+    orphans.push({
+      resource: { name: worker, type: "cloudflare-workers" },
+      subdomain,
+      fullDomain: subdomain ? `${subdomain}.${domainPrefix}` : domainPrefix,
+      hasCloudflare: true,
+    });
+  }
+
+  return orphans;
+}
+
 // ── Main execution ───────────────────────────────────────────
 
 interface CleanupConfig {
   cfToken?: string;
+  cfWorkerToken?: string;
   cfAccountId?: string;
   cfZoneId?: string;
   domain?: string;
@@ -570,6 +684,37 @@ export async function cleanupOrphanApps(config: CleanupConfig): Promise<number> 
     totalOrphans += orphans.length;
   }
 
+  // ── Cloudflare Workers ──────────────────────────────────
+  if (config.cfWorkerToken && config.cfAccountId && domainPrefix) {
+    console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("⚡ Checking Cloudflare Workers...");
+
+    const allWorkers = await listCloudflareWorkers(config.cfAccountId, config.cfWorkerToken);
+    console.log(`   Found ${allWorkers.length} total worker(s)`);
+
+    const orphans = findOrphanCloudflareWorkers(allWorkers, activePackages, domainPrefix);
+    console.log(`   Found ${orphans.length} orphan(s)`);
+
+    for (const orphan of orphans) {
+      console.log(`\n   Cleaning: ${orphan.resource.name}`);
+      await deleteCloudflareWorker(
+        config.cfAccountId,
+        config.cfWorkerToken,
+        orphan.resource.name,
+      );
+
+      // Clean DNS
+      if (config.cfZoneId && config.cfWorkerToken) {
+        const fullDomain = orphan.subdomain
+          ? `${orphan.subdomain}.${domain}`
+          : domain;
+        await deleteDnsRecord(config.cfZoneId, config.cfWorkerToken, fullDomain);
+      }
+    }
+
+    totalOrphans += orphans.length;
+  }
+
   console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   if (totalOrphans === 0) {
     console.log("✅ No orphan resources found");
@@ -583,6 +728,7 @@ export async function cleanupOrphanApps(config: CleanupConfig): Promise<number> 
 if (import.meta.main) {
   const config: CleanupConfig = {
     cfToken: process.env["CF_TOKEN"],
+    cfWorkerToken: process.env["CF_WORKER_TOKEN"],
     cfAccountId: process.env["CF_ACCOUNT_ID"],
     cfZoneId: process.env["CF_ZONE_ID"],
     domain: process.env["DOMAIN"],

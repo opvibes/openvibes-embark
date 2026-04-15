@@ -137,7 +137,7 @@
           <div class="preview-content">
             <video
               class="preview-video active"
-              src="https://github.com/blpsoares/agentistics/releases/download/v1.1.0/presentation.mp4"
+              src="https://github.com/user-attachments/assets/e3f5cf44-f745-4540-9f5d-99192c755263"
               muted
               playsinline
               preload="metadata"
@@ -205,48 +205,28 @@
           </p>
         </div>
 
-        <div class="terminals-grid">
-
-          <!-- agentop tui — full width, shows full setup flow -->
-          <div class="term-card term-card--full" data-reveal>
-            <div class="term-card-chrome">
-              <div class="term-dots">
-                <span class="term-dot term-dot-r"></span>
-                <span class="term-dot term-dot-y"></span>
-                <span class="term-dot term-dot-g"></span>
-              </div>
-              <span class="term-cmd-label">
+        <div class="term-showcase" data-reveal>
+          <div class="term-tabs-wrap">
+            <div class="term-tabs">
+              <button class="term-tab active" data-term="0">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
                 <span class="cmd-arg"> tui</span>
-              </span>
-            </div>
-            <div class="term-card-body term-card-body--tui" id="tui-term-body">
-              <!-- filled by terminal.ts -->
-            </div>
-          </div>
-
-          <!-- agentop watch -->
-          <div class="term-card" data-reveal>
-            <div class="term-card-chrome">
-              <div class="term-dots">
-                <span class="term-dot term-dot-r"></span>
-                <span class="term-dot term-dot-y"></span>
-                <span class="term-dot term-dot-g"></span>
-              </div>
-              <span class="term-cmd-label">
+              </button>
+              <button class="term-tab" data-term="1">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
                 <span class="cmd-arg"> watch</span>
-              </span>
-            </div>
-            <div class="term-card-body term-card-body--daemon" id="watch-term-body">
-              <!-- filled by terminal.ts -->
+              </button>
+              <button class="term-tab" data-term="2">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> server</span>
+              </button>
             </div>
           </div>
 
-          <!-- agentop server -->
-          <div class="term-card" data-reveal>
+          <div class="term-frame">
             <div class="term-card-chrome">
               <div class="term-dots">
                 <span class="term-dot term-dot-r"></span>
@@ -256,14 +236,15 @@
               <span class="term-cmd-label">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
-                <span class="cmd-arg"> server</span>
+                <span class="cmd-arg" id="term-active-arg"> tui</span>
               </span>
             </div>
-            <div class="term-card-body term-card-body--daemon" id="server-term-body">
-              <!-- filled by terminal.ts -->
+            <div class="term-frame-body">
+              <div class="term-pane active" id="tui-term-body"></div>
+              <div class="term-pane" id="watch-term-body"></div>
+              <div class="term-pane" id="server-term-body"></div>
             </div>
           </div>
-
         </div>
       </div>
     </section>

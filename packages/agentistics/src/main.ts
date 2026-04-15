@@ -1,7 +1,7 @@
 import "./style.css";
 import { initIcons } from "./icons";
 import { initHeroCanvas } from "./hero";
-import { initHeroTerm, initTuiTermCard, initWatchTerm, initServerTerm } from "./terminal";
+import { initHeroTerm, initTuiTermCard, initWatchTerm, initServerTerm, initTerminalTabs } from "./terminal";
 import { initArchCanvas } from "./arch";
 import { initNav } from "./nav";
 import { initReveal } from "./reveal";
@@ -45,6 +45,9 @@ function boot() {
 
   // Scroll-reveal for section elements
   initReveal();
+
+  // Terminal tab switching (immediate — tabs exist in DOM)
+  initTerminalTabs();
 
   // Terminal cards — lazy init when section enters viewport
   lazyInit("terminals", () => {

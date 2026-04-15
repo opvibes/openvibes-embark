@@ -53,6 +53,21 @@
 }
 
 html { scroll-behavior: smooth; }
+
+/* ── Scrollbars ──────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+::-webkit-scrollbar-corner { background: transparent; }
+
 body {
   background: var(--bg-base);
   color: var(--text);
@@ -544,7 +559,7 @@ section { padding: 6rem 0; }
 #terminals { background: var(--bg-surface); }
 .terminals-header { margin-bottom: 3rem; }
 /* ── Terminal showcase (tabbed) ─────────────── */
-.term-showcase { max-width: 900px; margin: 0 auto; }
+.term-showcase { width: 100%; }
 
 .term-tabs-wrap { /* no margin-bottom — tabs connect flush to frame */ }
 .term-tabs {

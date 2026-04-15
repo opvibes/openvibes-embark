@@ -39,6 +39,12 @@ const T: Record<Lang, Record<string, string>> = {
     "preview.cta.label": "Ready to see your own data?",
     "preview.cta.github": "Get started on GitHub",
 
+    // Demo video section
+    "demo.tag": "Demo",
+    "demo.title.1": "Watch it live.",
+    "demo.title.2": "46 seconds.",
+    "demo.sub": "Filters, live mode, agent metrics, PDF export — all in a real session.",
+
     // Terminals section
     "terminals.tag": "CLI",
     "terminals.title.1": "Three commands.",
@@ -142,6 +148,12 @@ const T: Record<Lang, Record<string, string>> = {
     "preview.pdf.sub": "Relatório em um clique — temas dark & light, fácil de compartilhar",
     "preview.cta.label": "Pronto para ver seus próprios dados?",
     "preview.cta.github": "Começar no GitHub",
+
+    // Demo video section
+    "demo.tag": "Demo",
+    "demo.title.1": "Veja ao vivo.",
+    "demo.title.2": "46 segundos.",
+    "demo.sub": "Filtros, modo ao vivo, métricas de agentes, exportação PDF — tudo em uma sessão real.",
 
     // Terminals section
     "terminals.tag": "CLI",

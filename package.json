@@ -13,10 +13,11 @@
     "utils": "bun scripts/utils.ts",
     "init": "bun scripts/init.ts",
     "setup": "bun scripts/setup.ts",
-    "duckflux-docs": "bun run --filter @embark/duckflux-docs dev",
     "duckflux-site": "bun run --filter @embark/duckflux-site dev",
     "duckflux-editor": "bun run --filter @embark/duckflux-editor dev",
-    "embark-site": "bun run --filter @embark/embark-site dev"
+    "duckflux-docs": "bun run --filter @embark/duckflux-docs dev",
+    "embark-site": "bun run --filter @embark/embark-site dev",
+    "agentistics": "bun run --filter @embark/agentistics dev"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",

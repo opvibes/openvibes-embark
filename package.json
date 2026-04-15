@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "git submodule update --init --recursive && git config submodule.recurse true",
+    "preinstall": "git submodule foreach --recursive git checkout -- . && git submodule update --init --recursive --remote && git config submodule.recurse true",
     "prepare": "husky",
     "postinstall": "husky",
     "test": "bun test --coverage scripts/__tests__",

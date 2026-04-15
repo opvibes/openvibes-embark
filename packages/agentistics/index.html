@@ -135,16 +135,20 @@
             </span>
           </div>
           <div class="preview-content">
-            <video
-              class="preview-video active"
-              src="https://github.com/user-attachments/assets/e3f5cf44-f745-4540-9f5d-99192c755263"
-              autoplay
-              muted
-              playsinline
-              controls
-              preload="auto"
-              poster="/screenshots/section1.png"
-            ></video>
+            <div class="preview-video-wrap">
+              <video
+                class="preview-video active"
+                src="https://github.com/user-attachments/assets/e3f5cf44-f745-4540-9f5d-99192c755263"
+                autoplay
+                muted
+                playsinline
+                preload="auto"
+                poster="/screenshots/section1.png"
+              ></video>
+              <button class="preview-video-play" aria-label="Play video">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
             <img src="/screenshots/section1.png" alt="Dashboard Overview"    class="preview-img" />
             <img src="/screenshots/section2.png" alt="Activity"              class="preview-img" />
             <img src="/screenshots/section3.png" alt="Model Usage"           class="preview-img" />

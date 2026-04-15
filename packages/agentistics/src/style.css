@@ -480,6 +480,12 @@ section { padding: 6rem 0; }
 .preview-img:not(.active) { position: absolute; }
 
 /* Demo video tab */
+.preview-video-wrap {
+  position: relative;
+  background: #000;
+  line-height: 0;
+  /* inherits active/inactive from .preview-video inside */
+}
 .preview-video {
   width: 100%; display: block;
   position: absolute; top: 0; left: 0;
@@ -487,6 +493,25 @@ section { padding: 6rem 0; }
   background: #000;
 }
 .preview-video.active { opacity: 1; position: relative; }
+
+/* Play overlay — shown when video is paused/blocked */
+.preview-video-play {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.45);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.preview-video-play svg {
+  color: #fff;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6));
+  transition: transform 0.2s;
+}
+.preview-video-play:hover svg { transform: scale(1.1); }
+.preview-video-wrap.paused .preview-video-play {
+  opacity: 1; pointer-events: auto;
+}
 
 /* PDF export showcase */
 .preview-pdf {

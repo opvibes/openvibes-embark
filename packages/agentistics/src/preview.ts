@@ -16,30 +16,52 @@ export function initPreview(): void {
   const section = document.getElementById("preview");
   if (!section) return;
 
-  const tabBtns = section.querySelectorAll<HTMLButtonElement>(".preview-tab");
-  const video   = section.querySelector<HTMLVideoElement>(".preview-video");
-  const imgs    = section.querySelectorAll<HTMLImageElement>(".preview-img");
-  const frame   = section.querySelector<HTMLElement>(".preview-frame");
+  const tabBtns  = section.querySelectorAll<HTMLButtonElement>(".preview-tab");
+  const video    = section.querySelector<HTMLVideoElement>(".preview-video");
+  const videoWrap = section.querySelector<HTMLElement>(".preview-video-wrap");
+  const playBtn  = section.querySelector<HTMLButtonElement>(".preview-video-play");
+  const imgs     = section.querySelectorAll<HTMLImageElement>(".preview-img");
+  const frame    = section.querySelector<HTMLElement>(".preview-frame");
 
   if (!tabBtns.length) return;
 
   const total = tabBtns.length; // 7: 1 video + 6 screenshots
 
+  // Show/hide play overlay based on video state
+  function setPaused(paused: boolean): void {
+    videoWrap?.classList.toggle("paused", paused);
+  }
+
+  if (video) {
+    video.addEventListener("playing", () => setPaused(false));
+    video.addEventListener("pause",   () => setPaused(true));
+    video.addEventListener("waiting", () => setPaused(false)); // buffering, not paused
+    // If autoplay blocked, show play button immediately
+    video.addEventListener("loadedmetadata", () => {
+      if (video.paused) setPaused(true);
+    });
+  }
+
+  // Click on overlay plays the video
+  playBtn?.addEventListener("click", () => {
+    video?.play().catch(() => {});
+  });
+
   function activate(idx: number): void {
     tabBtns.forEach((b, i) => b.classList.toggle("active", i === idx));
 
-    // tab 0 = video
     if (video) {
       video.classList.toggle("active", idx === 0);
+      if (videoWrap) videoWrap.style.display = idx === 0 ? "" : "none";
       if (idx === 0) {
         video.currentTime = 0;
-        video.play().catch(() => {});
+        video.play().catch(() => setPaused(true));
       } else {
         video.pause();
+        setPaused(false); // hide overlay when not on video tab
       }
     }
 
-    // tabs 1-6 = screenshots (imgs index 0-5)
     imgs.forEach((img, i) => img.classList.toggle("active", i + 1 === idx));
   }
 
@@ -65,8 +87,9 @@ export function initPreview(): void {
         entries.forEach((e) => {
           if (e.isIntersecting) {
             frame.classList.add("visible");
-            // tab 0 (video) starts playing — auto-cycle starts only after video ends
-            if (video && !userInteracted) video.play().catch(() => {});
+            if (video && !userInteracted) {
+              video.play().catch(() => setPaused(true));
+            }
             obs.disconnect();
           }
         });
@@ -84,7 +107,7 @@ export function initPreview(): void {
 }
 
 function startAuto(activate: (i: number) => void, total: number): void {
-  let current = 1; // start from first screenshot, never loop back to video
+  let current = 1;
   autoTimer = setInterval(() => {
     if (userInteracted) { if (autoTimer) clearInterval(autoTimer); return; }
     current = current >= total - 1 ? 1 : current + 1;

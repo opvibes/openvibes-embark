@@ -1,5 +1,13 @@
 [
   {
+    "name": "agentistics",
+    "folderName": "agentistics",
+    "rootDomain": false,
+    "subdomain": "agentistics",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
+  },
+  {
     "name": "duckflux-docs",
     "folderName": "duckflux-docs",
     "rootDomain": false,

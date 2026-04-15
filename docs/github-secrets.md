@@ -67,6 +67,43 @@ When creating the token in **My Profile → API Tokens → Create Token → Crea
 
 ---
 
+## Cloudflare Workers
+
+Serverless backend deployment to Cloudflare Workers.
+
+| Secret | Description | Where to find |
+|--------|-------------|----------------|
+| `CF_WORKER_TOKEN` | API Token with Workers + DNS permissions | Cloudflare → My Profile → API Tokens |
+| `CF_ACCOUNT_ID` | Cloudflare Account ID | Cloudflare Dashboard → Overview (right side) |
+| `CF_ZONE_ID` | Domain Zone ID (only if custom domain) | Cloudflare → Your domain → Overview (right side) |
+| `DOMAIN` | Base domain (only if custom domain) | e.g. `embark.dev` |
+
+### CF_WORKER_TOKEN Permissions
+
+When creating the token in **My Profile → API Tokens → Create Token → Create Custom Token**:
+
+#### Basic Deploy (without custom domain)
+
+| Scope | Resource | Permission |
+|-------|----------|------------|
+| Account | Worker Scripts | **Edit** |
+
+#### Deploy with Custom Domain
+
+| Scope | Resource | Permission |
+|-------|----------|------------|
+| Account | Worker Scripts | **Edit** |
+| Account | Account Settings | **Read** |
+| Zone | DNS | **Edit** |
+| Zone | Workers Routes | **Edit** |
+
+**Account Resources:** Include → Your account
+**Zone Resources:** Include → Specific zone → Your domain (or All zones)
+
+> **Note:** If you only give Workers Scripts (Edit) permission, the Worker will deploy fine but the custom domain setup in the DNS job will fail with "Authentication error".
+
+---
+
 ## Cloudflare DNS Manager
 
 Used to configure custom subdomains for Netlify or GCP deploys.
@@ -98,6 +135,8 @@ When creating the token in **My Profile → API Tokens → Create Token → Crea
 | Netlify basic | `NETLIFY_TOKEN`, `DOMAIN` |
 | Netlify + Cloudflare DNS | Netlify basic + `CF_TOKEN`, `CF_ZONE_ID` |
 | Cloudflare Pages | `CF_TOKEN_PAGES`, `CF_ACCOUNT_ID`, `CF_ZONE_ID`, `DOMAIN` |
+| CF Workers basic | `CF_WORKER_TOKEN`, `CF_ACCOUNT_ID` |
+| CF Workers + custom domain | CF Workers basic + `CF_ZONE_ID`, `DOMAIN` |
 
 ---
 

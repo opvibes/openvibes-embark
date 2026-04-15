@@ -42,6 +42,11 @@ export async function isExternalDeploy(packageDir: string): Promise<boolean> {
   return target === "other";
 }
 
+export async function needsDockerfile(packageDir: string): Promise<boolean> {
+  const target = await getAppDeployment(packageDir);
+  return target !== "other" && target !== "cloudflare-workers";
+}
+
 /**
  * Determines if a workflow should be generated for this package.
  * All targets (gcp, netlify, other) generate a workflow when workflowGen === true.
@@ -72,6 +77,7 @@ export function getMissingFields(config: Partial<EmbarkConfig> | null): (keyof E
     // subdomain is not required when deploying to root domain or CF Pages without custom domain
     if (field === "subdomain" && config?.rootDomain === true) return false;
     if (field === "subdomain" && config?.deploy?.appDeployment === "cloudflare-pages" && config?.deploy?.cloudflareUse === false) return false;
+    if (field === "subdomain" && config?.deploy?.appDeployment === "cloudflare-workers" && config?.deploy?.cloudflareUse === false) return false;
     const value = config[field];
     // useSubmodule is a boolean — false is a valid value, only undefined/null counts as missing
     if (field === "useSubmodule") return value === undefined || value === null;

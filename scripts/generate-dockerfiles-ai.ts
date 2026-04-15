@@ -1,7 +1,7 @@
 import { readdir, readFile, writeFile, access } from "node:fs/promises";
 import { execSync, spawn } from "node:child_process";
 import { join } from "node:path";
-import { isExternalDeploy } from "./embark-config";
+import { needsDockerfile } from "./embark-config";
 import * as readline from "node:readline";
 import * as fs from "node:fs";
 import * as tty from "node:tty";
@@ -308,7 +308,7 @@ async function getPackagesWithoutDockerfile(): Promise<PackageInfo[]> {
 
     if (await exists(dockerfilePath)) continue;
     if (!(await exists(pkgJsonPath))) continue;
-    if (await isExternalDeploy(packageDir)) continue;
+    if (!(await needsDockerfile(packageDir))) continue;
 
     const pkgContent = await readFile(pkgJsonPath, "utf-8");
     const files = await listFiles(packageDir);
@@ -332,7 +332,7 @@ async function checkAllPackagesHaveDockerfile(): Promise<string[]> {
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     const packageDir = join(PACKAGES_DIR, entry.name);
-    if (await isExternalDeploy(packageDir)) continue;
+    if (!(await needsDockerfile(packageDir))) continue;
     const dockerfilePath = join(packageDir, "Dockerfile");
     if (!(await exists(dockerfilePath))) {
       withoutDockerfile.push(entry.name);

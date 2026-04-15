@@ -7,9 +7,11 @@ import {
   cloudflareProjectName,
   netlifyProjectName,
   gcpServiceName,
+  workerScriptName,
   findOrphanCloudflareProjects,
   findOrphanNetlifySites,
   findOrphanCloudRunServices,
+  findOrphanCloudflareWorkers,
 } from "../cleanup-orphan-apps";
 import type { ActivePackage } from "../cleanup-orphan-apps";
 
@@ -278,6 +280,100 @@ describe("findOrphanCloudRunServices", () => {
   it("returns empty for empty service list", () => {
     const active = buildActiveMap([]);
     const orphans = findOrphanCloudRunServices([], active);
+    expect(orphans).toHaveLength(0);
+  });
+});
+
+// ── workerScriptName ────────────────────────────────────────
+
+describe("workerScriptName", () => {
+  it("returns domainPrefix-subdomain for standard workers", () => {
+    expect(workerScriptName("my-api", false, "embark", true)).toBe("embark-my-api");
+  });
+
+  it("returns domainPrefix for root domain", () => {
+    expect(workerScriptName("", true, "embark", true)).toBe("embark");
+  });
+
+  it("returns packageName when no domain setup", () => {
+    expect(workerScriptName("my-api", false, "embark", false, "my-api")).toBe("my-api");
+  });
+
+  it("replaces dots with dashes", () => {
+    expect(workerScriptName("api.v2", false, "embark", true)).toBe("embark-api-v2");
+  });
+});
+
+// ── findOrphanCloudflareWorkers ─────────────────────────────
+
+describe("findOrphanCloudflareWorkers", () => {
+  it("returns empty when all workers have active packages", () => {
+    const active = buildActiveMap([
+      { folderName: "my-api", subdomain: "my-api", rootDomain: false, deploy: "cloudflare-workers", cloudflareUse: true },
+    ]);
+
+    const orphans = findOrphanCloudflareWorkers(
+      ["embark-my-api", "unrelated-worker"],
+      active,
+      "embark",
+    );
+
+    expect(orphans).toHaveLength(0);
+  });
+
+  it("identifies orphan workers matching domain prefix", () => {
+    const active = buildActiveMap([
+      { folderName: "my-api", subdomain: "my-api", rootDomain: false, deploy: "cloudflare-workers", cloudflareUse: true },
+    ]);
+
+    const orphans = findOrphanCloudflareWorkers(
+      ["embark-my-api", "embark-deleted-api"],
+      active,
+      "embark",
+    );
+
+    expect(orphans).toHaveLength(1);
+    expect(orphans[0]?.resource.name).toBe("embark-deleted-api");
+    expect(orphans[0]?.resource.type).toBe("cloudflare-workers");
+    expect(orphans[0]?.subdomain).toBe("deleted-api");
+  });
+
+  it("ignores workers not matching domain prefix", () => {
+    const active = buildActiveMap([]);
+
+    const orphans = findOrphanCloudflareWorkers(
+      ["some-other-worker", "unrelated"],
+      active,
+      "embark",
+    );
+
+    expect(orphans).toHaveLength(0);
+  });
+
+  it("handles root domain worker as orphan", () => {
+    const active = buildActiveMap([]);
+
+    const orphans = findOrphanCloudflareWorkers(
+      ["embark"],
+      active,
+      "embark",
+    );
+
+    expect(orphans).toHaveLength(1);
+    expect(orphans[0]?.subdomain).toBe("");
+  });
+
+  it("does not flag root domain worker when active", () => {
+    const active = buildActiveMap([
+      { folderName: "main-api", subdomain: "", rootDomain: true, deploy: "cloudflare-workers", cloudflareUse: true },
+    ]);
+
+    const orphans = findOrphanCloudflareWorkers(
+      ["embark"],
+      active,
+      "embark",
+    );
+
     expect(orphans).toHaveLength(0);
   });
 });

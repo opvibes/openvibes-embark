@@ -153,7 +153,7 @@ async function createPackage() {
 
   // Ask for deploy target
   const deployAnswer = await getInput(
-    "\n🚀 Deploy target:\n  1. GCP - Google Cloud Run (generates workflow + Dockerfile)\n  2. Netlify (generates workflow)\n  3. Cloudflare Pages (generates workflow with DNS setup)\n  4. Other (custom deploy — you must create the workflow manually)\n  Choose [1/2/3/4]: ",
+    "\n🚀 Deploy target:\n  1. GCP - Google Cloud Run (generates workflow + Dockerfile)\n  2. Netlify (generates workflow)\n  3. Cloudflare Pages (generates workflow with DNS setup)\n  4. Cloudflare Workers (generates workflow for serverless backend)\n  5. Other (custom deploy — you must create the workflow manually)\n  Choose [1/2/3/4/5]: ",
   );
 
   let appDeployment: AppDeployment = "gcp";
@@ -162,6 +162,8 @@ async function createPackage() {
   } else if (deployAnswer === "3") {
     appDeployment = "cloudflare-pages";
   } else if (deployAnswer === "4") {
+    appDeployment = "cloudflare-workers";
+  } else if (deployAnswer === "5") {
     appDeployment = "other";
   }
 
@@ -184,6 +186,11 @@ async function createPackage() {
   if (appDeployment === "cloudflare-pages") {
     const domainAnswer = await getInput(
       "\n🌐 Publish under a custom domain (e.g. app.yourdomain.com)? [Y/n]: ",
+    );
+    cloudflareUse = domainAnswer.toLowerCase() !== "n";
+  } else if (appDeployment === "cloudflare-workers") {
+    const domainAnswer = await getInput(
+      "\n🌐 Publish under a custom domain (e.g. api.yourdomain.com)? [Y/n]: ",
     );
     cloudflareUse = domainAnswer.toLowerCase() !== "n";
   } else if (appDeployment !== "other") {

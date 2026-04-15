@@ -3,7 +3,7 @@
 </p>
 
 <p  align="center">
-  Ship <strong>vibe-coded apps</strong> with zero-config CI/CD, Docker, and Cloud Run, Netlify or another of your choice deployment.
+  Ship <strong>vibe-coded apps</strong> with zero-config CI/CD, Docker, and Cloud Run, Netlify, Cloudflare Workers or another of your choice deployment.
 </p>
 
 
@@ -23,7 +23,7 @@ A monorepo framework that automates everything between **code** and **production
 
 - **One push ≠ deploy everything** — Only packages with actual changes are built and deployed. The rest stay untouched.
 - **Each package = its own pipeline** — Every package gets a dedicated GitHub Actions workflow with path filters.
-- **Choose your infra** — Cloud Run with auto-generated Docker + CI/CD, Netlify with just a config file, or bring your own. Per package.
+- **Choose your infra** — Cloud Run with auto-generated Docker + CI/CD, Netlify with just a config file, Cloudflare Workers for serverless backends, or bring your own. Per package.
 - **Zero config** — Workflows, Dockerfiles, and README are auto-generated on commit. You just write code.
 - **AI-Powered setup** — Connect your favorite AI (Claude, Gemini, Copilot) to auto-generate Dockerfiles tailored to your stack.
 - **Embed anywhere** — Deploy frontend packages to Netlify or static hosts and embed them via `<iframe>` in any system, site, or dashboard.
@@ -39,6 +39,7 @@ A monorepo framework that automates everything between **code** and **production
 | Docker | Auto-generated Dockerfiles (AI or default) |
 | Cloud Run | Serverless container deploy |
 | Netlify | Static/JAMstack deploy (no Docker needed) |
+| Cloudflare Workers | Serverless backend deploy (no Docker needed) |
 | Husky | Git hooks (pre-commit & pre-push) |
 
 ## Getting Started
@@ -75,7 +76,7 @@ The CLI will ask for **required fields**:
 2. **title** — human-readable title (e.g. "My Awesome App")
 3. **subdomain** — subdomain for deployment (e.g. `my-app` → my-app.embark.dev)
 4. **description** — package description
-5. **deploy target** — Cloud Run, Netlify, or Other
+5. **deploy target** — Cloud Run, Netlify, Cloudflare Workers, or Other
 
 Then creates the complete structure:
 - `packages/<name>/` with `src/index.ts`, `package.json`, `tsconfig.json`
@@ -171,6 +172,32 @@ When configuring packages via `bun run new-package` or during the pre-commit hoo
 3. If another package already has root domain, show **two confirmation prompts** before replacing it
 4. Automatically update the previous package's `.embark.jsonc` to remove its root domain status
 
+### Cloudflare Workers
+
+For serverless backends. Auto-generates a GitHub Actions workflow that deploys via `wrangler deploy`. No Docker needed — Workers runs your code at the edge.
+
+```jsonc
+// .embark.jsonc
+{
+  "deploy": {
+    "appDeployment": "cloudflare-workers",
+    "workflowGen": true,
+    "cloudflareUse": true
+  },
+  "name": "myApi",
+  "title": "My API",
+  "subdomain": "api",
+  "description": "My serverless API"
+}
+```
+
+With `cloudflareUse: true`, the workflow will:
+- Build and deploy via `wrangler deploy`
+- Create CNAME record on Cloudflare DNS
+- Configure custom domain on the Worker
+
+Without custom domain (`cloudflareUse: false`), the worker is available at `name.workers.dev`.
+
 ### Other (custom)
 
 For packages deployed elsewhere (Vercel, Fly.io, AWS, etc.). No workflow, no Dockerfile — you manage your own pipeline.
@@ -186,7 +213,7 @@ For packages deployed elsewhere (Vercel, Fly.io, AWS, etc.). No workflow, no Doc
 }
 ```
 
-You can **mix all three** in the same monorepo — APIs on Cloud Run, frontends on Netlify, custom infra elsewhere.
+You can **mix all targets** in the same monorepo — APIs on Cloud Run or Workers, frontends on Netlify or Cloudflare Pages, custom infra elsewhere.
 
 ## AI CLIs for Dockerfile Generation
 
@@ -339,6 +366,28 @@ Required when `appDeployment: "netlify"`.
 |--------|-------------|
 | `NETLIFY_TOKEN` | Netlify personal access token |
 | `DOMAIN` | Base domain (e.g. `embark.dev`) |
+
+#### Cloudflare Workers
+
+Required when `appDeployment: "cloudflare-workers"`.
+
+| Secret | Description |
+|--------|-------------|
+| `CF_WORKER_TOKEN` | Cloudflare API token (see permissions below) |
+| `CF_ACCOUNT_ID` | Cloudflare Account ID |
+| `CF_ZONE_ID` | Zone ID of your domain (only if `cloudflareUse: true`) |
+| `DOMAIN` | Base domain (only if `cloudflareUse: true`) |
+
+**`CF_WORKER_TOKEN` permissions** (My Profile → API Tokens → Create Custom Token):
+
+| Scope | Resource | Permission |
+|-------|----------|------------|
+| Account | Worker Scripts | **Edit** |
+| Account | Account Settings | **Read** |
+| Zone | DNS | **Edit** (only if custom domain) |
+| Zone | Workers Routes | **Edit** (only if custom domain) |
+
+> Without DNS/Routes permissions, the Worker deploys fine but the custom domain setup fails. See [docs/github-secrets.md](docs/github-secrets.md) for details.
 
 #### Cloudflare (optional, when `cloudflareUse: true`)
 

@@ -27,8 +27,12 @@ jobs:
         with:
           bun-version: latest
 
+      # EMBARK:CUSTOM
+      # --ignore-scripts skips the root preinstall (git submodule update)
+      # which requires SSH access to private submodule repos not needed here
       - name: Install dependencies
-        run: bun install
+        run: bun install --ignore-scripts
+      # END EMBARK:CUSTOM
 
       - name: Build
         run: bun run --cwd packages/agentistics build

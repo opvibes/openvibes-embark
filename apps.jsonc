@@ -1,5 +1,13 @@
 [
   {
+    "name": "autoducks-docs",
+    "folderName": "autoducks-docs",
+    "rootDomain": false,
+    "subdomain": "autoducks",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
+  },
+  {
     "name": "duckflux-docs",
     "folderName": "duckflux-docs",
     "rootDomain": false,

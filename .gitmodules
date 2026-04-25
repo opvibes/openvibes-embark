@@ -10,3 +10,7 @@
 	path = packages/duckflux-editor
 	url = git@github.com:duckflux/editor.git
 	fetchRecurseSubmodules = true
+[submodule "packages/autoducks-docs"]
+	path = packages/autoducks-docs
+	url = git@github.com:deepducks/autoducks.git
+	fetchRecurseSubmodules = true

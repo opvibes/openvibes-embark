@@ -385,6 +385,13 @@ function printRequiredSecrets(appDeployment: AppDeployment, cloudflareUse: boole
     write(`  ${COLOR.cyan}CF_ACCOUNT_ID${COLOR.reset}    ${COLOR.dim}Cloudflare Account ID${COLOR.reset}\n`);
     write(`  ${COLOR.cyan}CF_ZONE_ID${COLOR.reset}       ${COLOR.dim}Zone ID of your domain${COLOR.reset}\n`);
     write(`  ${COLOR.cyan}DOMAIN${COLOR.reset}           ${COLOR.dim}Base domain (project name derived from it)${COLOR.reset}\n`);
+  } else if (appDeployment === "cloudflare-workers") {
+    write(`  ${COLOR.cyan}CF_WORKER_TOKEN${COLOR.reset}  ${COLOR.dim}Cloudflare API token (Workers Scripts edit)${COLOR.reset}\n`);
+    write(`  ${COLOR.cyan}CF_ACCOUNT_ID${COLOR.reset}    ${COLOR.dim}Cloudflare Account ID${COLOR.reset}\n`);
+    if (cloudflareUse) {
+      write(`  ${COLOR.cyan}CF_ZONE_ID${COLOR.reset}       ${COLOR.dim}Zone ID of your domain${COLOR.reset}\n`);
+      write(`  ${COLOR.cyan}DOMAIN${COLOR.reset}           ${COLOR.dim}Base domain (e.g. embark.dev)${COLOR.reset}\n`);
+    }
   }
 
   // Cloudflare DNS secrets (only for gcp/netlify, cloudflare-pages has its own secrets above)
@@ -568,9 +575,10 @@ async function collectMissingFields(
           "GCP - Google Cloud Run (generates workflow + Dockerfile)",
           "Netlify (generates workflow)",
           "Cloudflare Pages (generates workflow with DNS setup)",
+          "Cloudflare Workers (generates workflow for serverless backend)",
           "Other (custom deploy — you must create the workflow manually)",
         ]);
-        const appDeployments: AppDeployment[] = ["gcp", "netlify", "cloudflare-pages", "other"];
+        const appDeployments: AppDeployment[] = ["gcp", "netlify", "cloudflare-pages", "cloudflare-workers", "other"];
         const appDeployment = appDeployments[targetIndex] ?? "gcp";
 
         write(`\n${COLOR.bold}${COLOR.blue}? Workflow Generation${COLOR.reset}\n`);
@@ -586,6 +594,10 @@ async function collectMissingFields(
           write(`\n${COLOR.bold}${COLOR.blue}? Custom Domain${COLOR.reset}\n`);
           write(`  ${COLOR.dim}Your app will be live at project.pages.dev — connect a custom domain too?${COLOR.reset}\n`);
           cloudflareUse = await askYesNo("Publish under a custom domain (e.g. app.yourdomain.com)?");
+        } else if (appDeployment === "cloudflare-workers") {
+          write(`\n${COLOR.bold}${COLOR.blue}? Custom Domain${COLOR.reset}\n`);
+          write(`  ${COLOR.dim}Your worker will be live at name.workers.dev — connect a custom domain too?${COLOR.reset}\n`);
+          cloudflareUse = await askYesNo("Publish under a custom domain (e.g. api.yourdomain.com)?");
         } else if (appDeployment !== "other") {
           write(`\n${COLOR.bold}${COLOR.blue}? Cloudflare${COLOR.reset}\n`);
           cloudflareUse = await askYesNo("Use Cloudflare for custom domain/DNS setup?");

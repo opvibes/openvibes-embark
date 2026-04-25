@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agentistics — AI Coding Analytics</title>
+    <meta name="description" content="Local analytics dashboard for AI coding assistants. Tokens, costs, agent metrics, activity heatmap — all from your ~/.claude/ sessions." />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta property="og:title" content="Agentistics — AI Coding Analytics" />
+    <meta property="og:description" content="Every token counts. Track them all." />
+    <meta property="og:image" content="/logo.png" />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>body { opacity: 0; background: #0a0a0f; }</style>
+  </head>
+  <body>
+
+    <!-- Nav -->
+    <nav id="nav">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <img src="/minimalistLogo.png" alt="Agentistics" class="nav-logo-img" />
+          <span class="nav-logo-text">Agentistics</span>
+        </a>
+        <div class="nav-links">
+          <a href="#preview" data-i18n="nav.dashboard">Dashboard</a>
+          <a href="#terminals" data-i18n="nav.cli">CLI</a>
+          <a href="#features" data-i18n="nav.features">Features</a>
+          <a href="#how" data-i18n="nav.install">Install</a>
+          <a href="https://github.com/blpsoares/agentistics/releases/latest" target="_blank" class="nav-release-badge" title="Latest release">
+            <img src="https://img.shields.io/github/v/release/blpsoares/agentistics?style=flat-square&label=&color=D97706&labelColor=111118&logo=github&logoColor=D97706" alt="Latest Release" />
+          </a>
+          <button class="lang-toggle" id="lang-toggle">PT</button>
+          <a href="https://github.com/blpsoares/agentistics" target="_blank" class="nav-cta" data-i18n="nav.github">GitHub ↗</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Background canvas (token particle stream) -->
+    <canvas id="hero-canvas"></canvas>
+
+    <!-- ── Hero ───────────────────────────────── -->
+    <section id="hero">
+      <div class="hero-left">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span data-i18n="hero.badge">local-first · zero cloud · open source</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span data-i18n="hero.title.1">Every token</span><br />
+          <span class="line-accent" data-i18n="hero.title.2">counts.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          <span data-i18n="hero.sub.1">Local analytics dashboard for AI coding assistants.</span><br />
+          <span data-i18n="hero.sub.2">Tokens, costs, agent metrics and activity heatmap —</span><br />
+          <span data-i18n="hero.sub.3">parsed straight from</span> <span class="mono">~/.claude/</span>
+        </p>
+
+        <div class="hero-actions">
+          <a href="https://github.com/blpsoares/agentistics" target="_blank" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            <span data-i18n="hero.cta.primary">Get started</span>
+          </a>
+          <a href="#terminals" class="btn btn-ghost" data-i18n="hero.cta.secondary">See it in action →</a>
+        </div>
+
+        <div class="hero-stats" id="hero-stats">
+          <div class="hero-stat-item">
+            <span class="hero-stat-val" id="hs-tokens">0</span>
+            <span class="hero-stat-lbl" data-i18n="hero.stat.tokens">tokens today</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-val" id="hs-cost">$0.00</span>
+            <span class="hero-stat-lbl" data-i18n="hero.stat.cost">total cost</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-val" id="hs-sessions">0</span>
+            <span class="hero-stat-lbl" data-i18n="hero.stat.sessions">sessions</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-streak">
+              <span class="hero-stat-val" id="hs-streak">0d</span>
+              <i data-lucide="flame" class="streak-flame"></i>
+            </div>
+            <span class="hero-stat-lbl" data-i18n="hero.stat.streak">streak</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Dashboard Preview ───────────────────────── -->
+    <section id="preview">
+      <div class="container">
+        <div class="preview-header" data-reveal>
+          <div class="section-tag" data-i18n="preview.tag">Dashboard</div>
+          <h2 class="section-title">
+            <span data-i18n="preview.title.1">Every metric.</span><br />
+            <span class="accent" data-i18n="preview.title.2">One interface.</span>
+          </h2>
+          <p class="section-sub" data-i18n="preview.sub">
+            Real screenshots from a live agentistics instance.
+          </p>
+        </div>
+
+        <div class="preview-tabs-wrap" data-reveal>
+          <div class="preview-tabs">
+            <button class="preview-tab active" data-tab="0" data-i18n="preview.tab.demo">Demo</button>
+            <button class="preview-tab" data-tab="1" data-i18n="preview.tab.overview">Overview</button>
+            <button class="preview-tab" data-tab="2" data-i18n="preview.tab.activity">Activity</button>
+            <button class="preview-tab" data-tab="3" data-i18n="preview.tab.models">Models</button>
+            <button class="preview-tab" data-tab="4" data-i18n="preview.tab.projects">Projects</button>
+            <button class="preview-tab" data-tab="5" data-i18n="preview.tab.agents">Agents</button>
+            <button class="preview-tab" data-tab="6" data-i18n="preview.tab.sessions">Sessions</button>
+          </div>
+        </div>
+
+        <div class="preview-frame" data-reveal>
+          <div class="preview-chrome">
+            <div class="term-dots">
+              <span class="term-dot term-dot-r"></span>
+              <span class="term-dot term-dot-y"></span>
+              <span class="term-dot term-dot-g"></span>
+            </div>
+            <span class="preview-url">
+              <span class="preview-url-dot">●</span>
+              localhost:3001
+            </span>
+          </div>
+          <div class="preview-content">
+            <div class="preview-video-wrap">
+              <video
+                class="preview-video active"
+                src="https://github.com/blpsoares/agentistics/releases/download/v1.1.0/presentation.mp4"
+                autoplay
+                muted
+                playsinline
+                preload="auto"
+                poster="/screenshots/section1.png"
+              ></video>
+              <button class="preview-video-play" aria-label="Play video">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <img src="/screenshots/section1.png" alt="Dashboard Overview"    class="preview-img" />
+            <img src="/screenshots/section2.png" alt="Activity"              class="preview-img" />
+            <img src="/screenshots/section3.png" alt="Model Usage"           class="preview-img" />
+            <img src="/screenshots/section4.png" alt="Projects &amp; Tools"  class="preview-img" />
+            <img src="/screenshots/section5.png" alt="Agent Metrics"         class="preview-img" />
+            <img src="/screenshots/section6.png" alt="Recent Sessions"       class="preview-img" />
+          </div>
+        </div>
+        <!-- PDF Export showcase -->
+        <div class="preview-pdf" data-reveal>
+          <div class="preview-pdf-header">
+            <i data-lucide="file-text" class="feat-icon pdf-feat-icon"></i>
+            <div>
+              <h4 data-i18n="preview.pdf.title">PDF Export</h4>
+              <p data-i18n="preview.pdf.sub">One-click report — dark &amp; light themes, shareable anywhere</p>
+            </div>
+          </div>
+          <div class="preview-pdf-grid">
+            <div class="preview-pdf-item">
+              <img src="/screenshots/pdfFirstView.png" alt="PDF Export — dark theme page 1" />
+            </div>
+            <div class="preview-pdf-item">
+              <img src="/screenshots/pdfSecondView.png" alt="PDF Export — dark theme page 2" />
+            </div>
+            <div class="preview-pdf-item">
+              <img src="/screenshots/pdfLightView.png" alt="PDF Export — light theme" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Inline CTA -->
+        <div class="preview-cta" data-reveal>
+          <p data-i18n="preview.cta.label">Ready to see your own data?</p>
+          <div class="preview-cta-actions">
+            <a href="https://github.com/blpsoares/agentistics" target="_blank" class="btn btn-primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+              <span data-i18n="preview.cta.github">Get started on GitHub</span>
+            </a>
+            <div class="preview-cta-cmd">
+              <span class="cta-cmd-prompt">$</span>
+              <span class="cta-cmd-name">agentop</span>
+              <span class="cta-cmd-arg"> server</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Terminal showcase ─────────────────────── -->
+    <section id="terminals">
+      <div class="container">
+        <div class="terminals-header" data-reveal>
+          <div class="section-tag" data-i18n="terminals.tag">CLI</div>
+          <h2 class="section-title">
+            <span data-i18n="terminals.title.1">Three commands.</span><br />
+            <span class="accent" data-i18n="terminals.title.2">Total observability.</span>
+          </h2>
+          <p class="section-sub" data-i18n="terminals.sub">
+            Three commands, three modes — a fullscreen TUI for live metrics, a background OTel daemon, and a server with embedded React dashboard.
+          </p>
+        </div>
+
+        <div class="term-showcase" data-reveal>
+          <div class="term-tabs-wrap">
+            <div class="term-tabs">
+              <button class="term-tab active" data-term="0">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> tui</span>
+              </button>
+              <button class="term-tab" data-term="1">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> watch</span>
+              </button>
+              <button class="term-tab" data-term="2">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> server</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="term-frame">
+            <div class="term-card-chrome">
+              <div class="term-dots">
+                <span class="term-dot term-dot-r"></span>
+                <span class="term-dot term-dot-y"></span>
+                <span class="term-dot term-dot-g"></span>
+              </div>
+              <span class="term-cmd-label">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg" id="term-active-arg"> tui</span>
+              </span>
+            </div>
+            <div class="term-frame-body">
+              <div class="term-pane active" id="tui-term-body"></div>
+              <div class="term-pane" id="watch-term-body"></div>
+              <div class="term-pane" id="server-term-body"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Features ──────────────────────────────── -->
+    <section id="features">
+      <div class="container">
+        <div data-reveal>
+          <div class="section-tag" data-i18n="features.tag">Features</div>
+          <h2 class="section-title">
+            <span data-i18n="features.title.1">Everything you need to</span><br />
+            <span class="accent" data-i18n="features.title.2">understand your AI usage</span>
+          </h2>
+        </div>
+        <div class="feat-acc" id="feat-acc" data-reveal>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">01</span>
+              <i data-lucide="zap" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.1.title">Token tracking — per model, per session, per type</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.1.desc">Input, output, cache read and cache write tokens broken down separately for every session and every model. Understand exactly where your token budget goes and which cache strategies save you the most.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">02</span>
+              <i data-lucide="dollar-sign" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.2.title">Cost analysis in USD &amp; BRL</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.2.desc">Real costs in USD and BRL with live exchange rates. Blended cost-per-token across your entire model mix. Per-model breakdown with exact Anthropic pricing so you know which model is costing what.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">03</span>
+              <i data-lucide="bot" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.3.title">Agent metrics — deep per-invocation data</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.3.desc">Every Agent tool call is tracked individually: duration, token usage, cost, and detailed tool stats including file reads, edits, bash executions, and searches. Compare success rates per agent type across your sessions.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">04</span>
+              <i data-lucide="calendar-days" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.4.title">Activity heatmap &amp; streak tracking</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.4.desc">GitHub-style contribution heatmap of your AI coding activity across 52 weeks. Streak counter that tracks consecutive active days — without penalizing you for not having worked yet today. Intensity reflects token volume per day.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">05</span>
+              <i data-lucide="bar-chart-3" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.5.title">Model breakdown by project</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.5.desc">Token and cost distribution across every Claude model in your usage history. Filter by project to identify which workstreams lean most heavily on expensive models. Donut chart and per-model table with share percentages.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">06</span>
+              <i data-lucide="shield-check" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.6.title">100% local — zero cloud, zero telemetry</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.6.desc">Reads directly from ~/.claude/ on your filesystem. No cloud sync, no account creation, no analytics, no telemetry. A single binary that parses JSONL files locally and serves everything from your machine.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">07</span>
+              <i data-lucide="telescope" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.7.title">OpenTelemetry export</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.7.desc">Export your AI usage metrics to any OTel-compatible backend. Token counters, cost gauge, session count, streak days, git line stats, and per-tool-type call counts. Works with Prometheus, Grafana, Datadog, and any OTLP endpoint.</p>
+            </div>
+          </div>
+
+          <div class="feat-acc-item">
+            <button class="feat-acc-trigger">
+              <span class="feat-acc-num">08</span>
+              <i data-lucide="file-text" class="feat-acc-icon"></i>
+              <span class="feat-acc-title" data-i18n="feat.8.title">PDF export — dark &amp; light themes</span>
+              <span class="feat-acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+            </button>
+            <div class="feat-acc-body">
+              <p data-i18n="feat.8.desc">One-click export of your full analytics report as a PDF. Includes token usage, cost breakdown, session history, model distribution, and agent metrics. Choose between dark and light themes — perfect for sharing with your team.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── How it works ──────────────────────────── -->
+    <section id="how">
+      <div class="container">
+        <div class="how-grid">
+          <div data-reveal>
+            <div class="section-tag" data-i18n="how.tag">Install</div>
+            <h2 class="section-title">
+              <span data-i18n="how.title.1">Up and running</span><br />
+              <span class="accent" data-i18n="how.title.2">in 30 seconds</span>
+            </h2>
+            <p class="section-sub" style="margin-bottom: 2rem;" data-i18n="how.sub">
+              Single binary, no config, no dependencies. Drop it anywhere in your <span class="mono">$PATH</span> and start exploring your AI usage immediately.
+            </p>
+
+            <div class="how-steps">
+              <div class="how-step">
+                <div class="how-step-num">01</div>
+                <div class="how-step-body">
+                  <h4 data-i18n="how.step1.title">Download the binary</h4>
+                  <p data-i18n="how.step1.desc">One-line install for Linux/macOS. Or clone and build from source with Bun.</p>
+                </div>
+              </div>
+              <div class="how-step">
+                <div class="how-step-num">02</div>
+                <div class="how-step-body">
+                  <h4 data-i18n="how.step2.title">Run <span class="mono">agentop server</span></h4>
+                  <p data-i18n="how.step2.desc">Starts the API on port 3001 and serves the full React dashboard. Your <span class="mono">~/.claude/</span> is read directly — no config needed.</p>
+                </div>
+              </div>
+              <div class="how-step">
+                <div class="how-step-num">03</div>
+                <div class="how-step-body">
+                  <h4 data-i18n="how.step3.title">Watch metrics live</h4>
+                  <p data-i18n="how.step3.desc">Use <span class="mono">agentop tui</span> for a fullscreen terminal dashboard or <span class="mono">agentop watch</span> to stream OTel metrics to your observability stack.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div data-reveal>
+            <div class="how-code">
+              <div class="how-code-chrome">
+                <span>~/install.sh</span>
+              </div>
+              <pre><code><span class="c"># download the latest release</span>
+<span class="k">curl</span> -fsSL \
+  https://github.com/blpsoares/agentistics/\
+releases/latest/download/agentop-linux \
+  -o agentop
+
+<span class="k">chmod</span> +x agentop
+<span class="k">sudo</span> mv agentop /usr/local/bin/
+
+<span class="c"># start the dashboard</span>
+<span class="k">agentop</span> server
+
+<span class="c"># open in browser</span>
+<span class="p">→</span>  http://localhost:3001
+
+<span class="c"># live TUI (separate terminal)</span>
+<span class="k">agentop</span> tui
+
+<span class="c"># OTel metrics export</span>
+<span class="p">OTEL_EXPORTER_OTLP_ENDPOINT</span>=\
+  http://localhost:4318 \
+<span class="k">agentop</span> watch</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Arch / 3D neural net ───────────────────── -->
+    <section id="arch">
+      <div class="container">
+        <div class="arch-inner">
+          <div data-reveal>
+            <div class="section-tag" data-i18n="arch.tag">Architecture</div>
+            <h2 class="section-title">
+              <span data-i18n="arch.title.1">Data flow from</span><br />
+              <span class="accent" data-i18n="arch.title.2">file to insight</span>
+            </h2>
+            <p class="section-sub" style="margin-bottom: 2rem;" data-i18n="arch.sub">
+              Every session is a JSONL file. Agentistics parses them locally, aggregates stats-cache, extracts agent metrics, and streams live updates via SSE — all without ever touching a remote server.
+            </p>
+          </div>
+          <div class="arch-canvas-wrap" data-reveal>
+            <canvas id="arch-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA ───────────────────────────────────── -->
+    <section id="cta">
+      <div class="container">
+        <div class="cta-box" data-reveal>
+          <div class="cta-glow"></div>
+          <img src="/logo.png" alt="Agentistics" class="cta-logo" />
+          <h2 data-i18n="cta.title">Start tracking your AI usage today</h2>
+          <p data-i18n="cta.sub">Open source · Local first · Built with Bun + React + TypeScript</p>
+          <div class="cta-actions">
+            <a href="https://github.com/blpsoares/agentistics" target="_blank" class="btn btn-primary btn-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+              <span data-i18n="cta.primary">View on GitHub</span>
+            </a>
+            <a href="#how" class="btn btn-ghost btn-lg" data-i18n="cta.secondary">Read the docs</a>
+          </div>
+          <div class="cta-stack">
+            <span>Bun</span><span class="sep"> · </span>
+            <span>React</span><span class="sep"> · </span>
+            <span>TypeScript</span><span class="sep"> · </span>
+            <span>Vite</span><span class="sep"> · </span>
+            <span>Three.js</span><span class="sep"> · </span>
+            <span>chokidar</span><span class="sep"> · </span>
+            <span>OpenTelemetry</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ───────────────────────────────────── -->
+    <footer>
+      <div class="container">
+        <div class="footer-top">
+
+          <div class="footer-brand-col">
+            <div class="footer-brand">
+              <img src="/minimalistLogo.png" alt="Agentistics" class="footer-logo" />
+              <span class="footer-name">Agentistics</span>
+            </div>
+            <p class="footer-tagline">
+              <span data-i18n="footer.tagline.1">Local analytics for AI coding assistants.</span><br />
+              <span data-i18n="footer.tagline.2">Built for the vibe coding era.</span>
+            </p>
+            <div class="footer-badges">
+              <a href="https://github.com/blpsoares/agentistics/releases/latest" target="_blank" class="footer-badge-link">
+                <img src="https://img.shields.io/github/v/release/blpsoares/agentistics?style=flat-square&label=latest&color=D97706&labelColor=111118" alt="Latest Release" />
+              </a>
+              <a href="https://github.com/blpsoares/agentistics/blob/main/LICENSE" target="_blank" class="footer-badge-link">
+                <img src="https://img.shields.io/github/license/blpsoares/agentistics?style=flat-square&color=6366f1&labelColor=111118" alt="License" />
+              </a>
+              <a href="https://github.com/blpsoares/agentistics/stargazers" target="_blank" class="footer-badge-link">
+                <img src="https://img.shields.io/github/stars/blpsoares/agentistics?style=flat-square&color=F59E0B&labelColor=111118" alt="Stars" />
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-links-grid">
+            <div class="footer-col">
+              <h5 class="footer-col-title" data-i18n="footer.col.project">Project</h5>
+              <a href="https://github.com/blpsoares/agentistics" target="_blank">GitHub</a>
+              <a href="https://github.com/blpsoares/agentistics/releases" target="_blank" data-i18n="footer.link.releases">Releases</a>
+              <a href="https://github.com/blpsoares/agentistics/issues" target="_blank" data-i18n="footer.link.issues">Issues</a>
+              <a href="https://github.com/blpsoares/agentistics/blob/main/CHANGELOG.md" target="_blank" data-i18n="footer.link.changelog">Changelog</a>
+            </div>
+            <div class="footer-col">
+              <h5 class="footer-col-title" data-i18n="footer.col.resources">Resources</h5>
+              <a href="#how" data-i18n="footer.link.install">Install guide</a>
+              <a href="#terminals" data-i18n="footer.link.cli">CLI reference</a>
+              <a href="#features" data-i18n="footer.link.features">Features</a>
+              <a href="#arch" data-i18n="footer.link.arch">Architecture</a>
+            </div>
+            <div class="footer-col">
+              <h5 class="footer-col-title">Stack</h5>
+              <a href="https://bun.sh" target="_blank">Bun</a>
+              <a href="https://react.dev" target="_blank">React</a>
+              <a href="https://vitejs.dev" target="_blank">Vite</a>
+              <a href="https://threejs.org" target="_blank">Three.js</a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="footer-bottom">
+          <span class="footer-copy">
+            <span data-i18n="footer.made">Made with vibes by</span>
+            <a href="https://github.com/blpsoares" target="_blank">@blpsoares</a>
+          </span>
+          <span class="footer-sep">·</span>
+          <span class="footer-copy" data-i18n="footer.rights">© 2025 agentistics. MIT License.</span>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

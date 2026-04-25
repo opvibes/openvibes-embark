@@ -16,6 +16,7 @@
     "duckflux-docs": "bun run --filter @embark/duckflux-docs dev",
     "autoducks-docs": "bun run --filter @embark/autoducks-docs dev",
     "duckflux-site": "bun run --filter @embark/duckflux-site dev",
+    "agentistics": "bun run --filter @embark/agentistics dev",
     "duckflux-editor": "bun run --filter @embark/duckflux-editor dev",
     "embark-site": "bun run --filter @embark/embark-site dev"
   },

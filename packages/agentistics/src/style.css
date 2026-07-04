@@ -688,6 +688,104 @@ section { padding: 6rem 0; }
 .tui-table .value-blue  { color: var(--blue); font-weight: 700; }
 .tui-table .sep-row td  { padding: 0.25rem 0; border-top: 1px solid rgba(255,255,255,0.05); }
 
+/* ── Release: Team Mode + unified CLI ── */
+#release { position: relative; padding: 8rem 0; }
+.release-header { max-width: 640px; margin: 0 auto 3rem; text-align: center; }
+
+.release-tabs-wrap { display: flex; justify-content: center; margin-bottom: 2.5rem; }
+.release-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.release-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.release-tab:hover { color: rgba(255, 255, 255, 0.85); }
+.release-tab.active { background: #d97706; color: #0a0a0f; }
+.release-tab-icon { width: 16px; height: 16px; }
+
+.release-frame {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.015);
+  overflow: hidden;
+}
+.release-pane { display: none; grid-template-columns: 1.1fr 1fr; gap: 0; }
+.release-pane.active { display: grid; }
+
+.release-pane-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #0d0d12;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.release-img, .release-video {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: block;
+}
+.release-pane-media-ports {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+.release-port-card {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.release-port-num { font-family: "JetBrains Mono", monospace; font-size: 1.5rem; font-weight: 700; color: #d97706; }
+
+.release-pane-copy { padding: 2.5rem; }
+.release-pane-copy h3 { font-size: 1.4rem; margin-bottom: 0.75rem; }
+.release-pane-copy > p { color: rgba(255, 255, 255, 0.65); line-height: 1.6; margin-bottom: 1.75rem; }
+
+.release-points { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 1.5rem; }
+.release-point h4 { font-size: 0.95rem; margin-bottom: 0.35rem; color: #f5f5f5; }
+.release-point p { font-size: 0.875rem; color: rgba(255, 255, 255, 0.55); line-height: 1.55; }
+
+.release-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+.release-thumbs img { width: 100%; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.08); }
+.release-thumbs-gif img { aspect-ratio: 16 / 9; object-fit: cover; }
+
+.release-install {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #0d0d12;
+}
+.release-install-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.45); }
+.release-install-cmd { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; color: #34d399; }
+
 /* ── Features ────────────────────────────────── */
 #features { background: var(--bg-base); }
 .feat-icon { font-size: 1.6rem; margin-bottom: 0.875rem; }
@@ -1021,6 +1119,9 @@ footer {
   .footer-links-grid { grid-template-columns: repeat(3, 1fr); }
   /* Accordion: hide inline tags on tablet too */
   .feat-acc-inline-tags { display: none; }
+  .release-pane.active { grid-template-columns: 1fr; }
+  .release-pane-media { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .release-thumbs { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
   section { padding: 4rem 0; }
@@ -1041,4 +1142,6 @@ footer {
   .lb-prev { left: 0.5rem; }
   .lb-next { right: 0.5rem; }
   .lb-img-wrap { padding: 0 3.5rem; }
+  .release-tabs { flex-direction: column; width: 100%; }
+  .release-tab { justify-content: center; }
 }

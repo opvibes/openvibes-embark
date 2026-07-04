@@ -652,6 +652,11 @@ section { padding: 6rem 0; }
   overflow-x: auto;
 }
 .term-pane.active { display: block; }
+.term-gif {
+  width: 100%;
+  display: block;
+  border-radius: 0 0 12px 12px;
+}
 
 .term-card-chrome {
   background: var(--bg-elevated);

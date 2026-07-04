@@ -137,18 +137,11 @@
           </div>
           <div class="preview-content">
             <div class="preview-video-wrap">
-              <video
+              <img
                 class="preview-video active"
-                src="https://github.com/blpsoares/agentistics/releases/download/v1.1.0/presentation.mp4"
-                autoplay
-                muted
-                playsinline
-                preload="auto"
-                poster="/screenshots/section1.png"
-              ></video>
-              <button class="preview-video-play" aria-label="Play video">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
-              </button>
+                src="/release/gifs/demo-ui.gif"
+                alt="Agentistics dashboard walkthrough — home, compare, and per-harness views"
+              />
             </div>
             <img src="/screenshots/section1.png" alt="Dashboard Overview"    class="preview-img" />
             <img src="/screenshots/section2.png" alt="Activity"              class="preview-img" />
@@ -248,9 +241,15 @@
               </span>
             </div>
             <div class="term-frame-body">
-              <div class="term-pane active" id="tui-term-body"></div>
-              <div class="term-pane" id="watch-term-body"></div>
-              <div class="term-pane" id="server-term-body"></div>
+              <div class="term-pane active" id="tui-term-body">
+                <img src="/release/gifs/agentop-tui.gif" alt="agentop tui — live terminal dashboard" class="term-gif" />
+              </div>
+              <div class="term-pane" id="watch-term-body">
+                <img src="/release/gifs/agentop-watch.gif" alt="agentop watch — background metrics daemon" class="term-gif" />
+              </div>
+              <div class="term-pane" id="server-term-body">
+                <img src="/release/gifs/agentop-server.gif" alt="agentop server — starts the web dashboard and api" class="term-gif" />
+              </div>
             </div>
           </div>
         </div>

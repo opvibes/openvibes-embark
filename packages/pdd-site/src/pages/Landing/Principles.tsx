@@ -13,7 +13,7 @@ export default function Principles() {
       </div>
       <div className="grid sm:grid-cols-2 gap-px bg-accent-soft overflow-hidden border border-accent-soft">
         {t.principles.items.map((item, i) => (
-          <div key={item} className="bg-[#0a1b2e] p-6 flex gap-4">
+          <div key={item} className="bg-[var(--surface-0)] p-6 flex gap-4">
             <span className="text-accent font-mono text-sm shrink-0">{String(i + 1).padStart(2, "0")}</span>
             <span className="text-[#dbeaf5] text-[14.5px] leading-relaxed">{item}</span>
           </div>

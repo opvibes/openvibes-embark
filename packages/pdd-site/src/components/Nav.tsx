@@ -19,12 +19,12 @@ export default function Nav() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 px-4 py-4">
-      <div className="max-w-4xl mx-auto rounded-3xl sm:rounded-full border border-zinc-800 bg-[#0a1b2e]/70 backdrop-blur-xl shadow-lg shadow-black/30 overflow-visible">
+      <div className="max-w-6xl mx-auto rounded-3xl lg:rounded-full border border-zinc-800 bg-[var(--surface-0-70)] backdrop-blur-xl shadow-lg shadow-black/30 overflow-visible">
         <div className="flex items-center justify-between gap-4 px-5 py-2.5">
           <Link to="/" className="text-accent font-bold font-mono text-sm shrink-0">
             ▲ pdd
           </Link>
-          <div className="hidden md:flex items-center gap-5 text-[12.5px] font-medium text-zinc-300">
+          <div className="hidden lg:flex items-center gap-4 text-[12.5px] font-medium text-zinc-300 whitespace-nowrap">
             <Link to="/" className="hover:text-accent transition-colors">
               {t.nav.home}
             </Link>
@@ -42,7 +42,7 @@ export default function Nav() {
                 {t.nav.pipeline}
               </a>
               <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 hidden group-hover:block group-focus-within:block">
-                <div className="w-64 rounded-2xl border border-zinc-800 bg-[#0a1b2e]/95 backdrop-blur-xl shadow-xl shadow-black/40 p-2">
+                <div className="w-64 rounded-2xl border border-zinc-800 bg-[var(--surface-0-95)] backdrop-blur-xl shadow-xl shadow-black/40 p-2">
                   {PIPELINE_STAGES.map((stage) => (
                     <a
                       key={stage.id}
@@ -69,19 +69,17 @@ export default function Nav() {
           <div className="flex items-center gap-3">
             <a
               href="https://github.com/blpsoares/parity-driven-development"
-              className="hidden md:inline-block text-[13px] font-medium text-zinc-300 hover:text-accent transition-colors"
+              className="hidden lg:inline-block text-[13px] font-medium text-zinc-300 hover:text-accent transition-colors"
             >
               {t.nav.github}
             </a>
-            <div className="w-px h-5 bg-zinc-800 hidden md:block" />
-            <div className="rounded-full bg-zinc-900 px-2.5 py-1">
-              <LangToggle />
-            </div>
+            <div className="w-px h-5 bg-zinc-800 hidden lg:block" />
+            <LangToggle />
             <button
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={t.nav.toggleMenu}
               aria-expanded={menuOpen}
-              className="md:hidden flex flex-col gap-1 p-1.5 -mr-1"
+              className="lg:hidden flex flex-col gap-1 p-1.5 -mr-1"
             >
               <span className={`block w-4 h-px bg-zinc-300 transition-transform ${menuOpen ? "translate-y-[5px] rotate-45" : ""}`} />
               <span className={`block w-4 h-px bg-zinc-300 transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
@@ -92,7 +90,7 @@ export default function Nav() {
       </div>
 
       <div
-        className={`md:hidden fixed left-4 right-4 top-[76px] z-30 max-h-[calc(100vh-96px)] overflow-y-auto rounded-3xl border border-zinc-800 bg-[#0a1b2e] shadow-2xl shadow-black/50 flex flex-col gap-1 px-6 pb-6 pt-4 text-[14px] font-medium text-zinc-300 origin-top transition-all duration-200 ease-out ${
+        className={`lg:hidden fixed left-4 right-4 top-[76px] z-30 max-h-[calc(100vh-96px)] overflow-y-auto rounded-3xl border border-zinc-800 bg-[var(--surface-0)] shadow-2xl shadow-black/50 flex flex-col gap-1 px-6 pb-6 pt-4 text-[14px] font-medium text-zinc-300 origin-top transition-all duration-200 ease-out ${
           menuOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
         }`}
         aria-hidden={!menuOpen}

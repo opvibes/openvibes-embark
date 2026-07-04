@@ -95,7 +95,7 @@ export default function Hero() {
           </text>
         </svg>
 
-        <div className="mx-auto w-full max-w-lg bg-[#0d2438]/90 backdrop-blur-sm border border-accent-soft px-5 py-4 mb-10 text-left shadow-2xl">
+        <div className="mx-auto w-full max-w-lg bg-[var(--surface-1-90)] backdrop-blur-sm border border-accent-soft px-5 py-4 mb-10 text-left shadow-2xl">
           <div className="font-mono text-[13px] sm:text-[15px] text-[#dbeaf5] min-h-[1.5em] break-words">
             <span className="text-accent">{prompt}</span> {typed}
             <span className="inline-block w-2 h-4 ml-0.5 bg-accent align-middle animate-pulse" />

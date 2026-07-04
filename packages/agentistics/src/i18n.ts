@@ -5,6 +5,7 @@ const T: Record<Lang, Record<string, string>> = {
     // Nav
     "nav.dashboard": "Dashboard",
     "nav.cli": "CLI",
+    "nav.release": "Team Mode",
     "nav.features": "Features",
     "nav.install": "Install",
     "nav.github": "GitHub ↗",
@@ -152,6 +153,7 @@ const T: Record<Lang, Record<string, string>> = {
     "footer.link.changelog": "Changelog",
     "footer.link.install": "Install guide",
     "footer.link.cli": "CLI reference",
+    "footer.link.release": "Team Mode",
     "footer.link.features": "Features",
     "footer.link.arch": "Architecture",
     "footer.made": "Made with vibes by",
@@ -161,6 +163,7 @@ const T: Record<Lang, Record<string, string>> = {
     // Nav
     "nav.dashboard": "Dashboard",
     "nav.cli": "CLI",
+    "nav.release": "Modo Time",
     "nav.features": "Recursos",
     "nav.install": "Instalar",
     "nav.github": "GitHub ↗",
@@ -308,6 +311,7 @@ const T: Record<Lang, Record<string, string>> = {
     "footer.link.changelog": "Changelog",
     "footer.link.install": "Guia de instalação",
     "footer.link.cli": "Referência CLI",
+    "footer.link.release": "Modo Time",
     "footer.link.features": "Recursos",
     "footer.link.arch": "Arquitetura",
     "footer.made": "Feito com vibes por",

@@ -22,6 +22,13 @@ Sleep 500ms
 Type "export PROJECT=capture-central ENV_FILE=central.capture.env"
 Enter
 Sleep 500ms
+# Hide only skips recording frames — it does NOT clear the terminal's own
+# scrollback, so the hidden bookkeeping above would still be visibly sitting
+# on screen once Show resumes. Clear the screen while still hidden so the
+# public-facing recording starts from a clean prompt.
+Type "clear"
+Enter
+Sleep 300ms
 Show
 Type "agentop central up"
 Enter

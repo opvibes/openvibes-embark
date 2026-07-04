@@ -198,11 +198,11 @@
         <div class="terminals-header" data-reveal>
           <div class="section-tag" data-i18n="terminals.tag">CLI</div>
           <h2 class="section-title">
-            <span data-i18n="terminals.title.1">Three commands.</span><br />
-            <span class="accent" data-i18n="terminals.title.2">Total observability.</span>
+            <span data-i18n="terminals.title.1">One CLI.</span><br />
+            <span class="accent" data-i18n="terminals.title.2">Every real mode.</span>
           </h2>
           <p class="section-sub" data-i18n="terminals.sub">
-            Three commands, three modes — a fullscreen TUI for live metrics, a background OTel daemon, and a server with embedded React dashboard.
+            agentop start is the one launcher you need — but every mode underneath it is a real, independent command. All recorded live, nothing scripted.
           </p>
         </div>
 
@@ -212,14 +212,34 @@
               <button class="term-tab active" data-term="0">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
-                <span class="cmd-arg"> tui</span>
+                <span class="cmd-arg"> start</span>
               </button>
               <button class="term-tab" data-term="1">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
-                <span class="cmd-arg"> watch</span>
+                <span class="cmd-arg"> setup</span>
               </button>
               <button class="term-tab" data-term="2">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> central up</span>
+              </button>
+              <button class="term-tab" data-term="3">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> member connect</span>
+              </button>
+              <button class="term-tab" data-term="4">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> tui</span>
+              </button>
+              <button class="term-tab" data-term="5">
+                <span class="cmd-dollar">$</span>
+                <span class="cmd-name">agentop</span>
+                <span class="cmd-arg"> watch</span>
+              </button>
+              <button class="term-tab" data-term="6">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
                 <span class="cmd-arg"> server</span>
@@ -237,11 +257,23 @@
               <span class="term-cmd-label">
                 <span class="cmd-dollar">$</span>
                 <span class="cmd-name">agentop</span>
-                <span class="cmd-arg" id="term-active-arg"> tui</span>
+                <span class="cmd-arg" id="term-active-arg"> start</span>
               </span>
             </div>
             <div class="term-frame-body">
-              <div class="term-pane active" id="tui-term-body">
+              <div class="term-pane active" id="start-term-body">
+                <img src="/release/gifs/agentop-start-en.gif" alt="agentop start — interactive launcher" class="term-gif" />
+              </div>
+              <div class="term-pane" id="setup-term-body">
+                <img src="/release/gifs/agentop-setup.gif" alt="agentop setup — first-run wizard" class="term-gif" />
+              </div>
+              <div class="term-pane" id="central-term-body">
+                <img src="/release/gifs/agentop-central-up.gif" alt="agentop central up — starts the team aggregator" class="term-gif" />
+              </div>
+              <div class="term-pane" id="connect-term-body">
+                <img src="/release/gifs/agentop-connect.gif" alt="agentop member connect — joins this machine to a central" class="term-gif" />
+              </div>
+              <div class="term-pane" id="tui-term-body">
                 <img src="/release/gifs/agentop-tui.gif" alt="agentop tui — live terminal dashboard" class="term-gif" />
               </div>
               <div class="term-pane" id="watch-term-body">

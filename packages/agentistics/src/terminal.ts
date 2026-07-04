@@ -4,7 +4,7 @@ export function initTerminalTabs(): void {
   const tabs   = document.querySelectorAll<HTMLButtonElement>(".term-tab");
   const panes  = document.querySelectorAll<HTMLElement>(".term-pane");
   const argEl  = document.getElementById("term-active-arg");
-  const args   = [" tui", " watch", " server"];
+  const args   = [" start", " setup", " central up", " member connect", " tui", " watch", " server"];
 
   if (!tabs.length || !panes.length) return;
 

@@ -43,9 +43,9 @@ const T: Record<Lang, Record<string, string>> = {
 
     // Terminals section
     "terminals.tag": "CLI",
-    "terminals.title.1": "Three commands.",
-    "terminals.title.2": "Total observability.",
-    "terminals.sub": "Three commands, three modes — a fullscreen TUI for live metrics, a background OTel daemon, and a server with embedded React dashboard.",
+    "terminals.title.1": "One CLI.",
+    "terminals.title.2": "Every real mode.",
+    "terminals.sub": "agentop start is the one launcher you need — but every mode underneath it is a real, independent command. All recorded live, nothing scripted.",
 
     // Release — Team Mode + unified CLI
     "release.tag": "New in v1.7",
@@ -201,9 +201,9 @@ const T: Record<Lang, Record<string, string>> = {
 
     // Terminals section
     "terminals.tag": "CLI",
-    "terminals.title.1": "Três comandos.",
-    "terminals.title.2": "Observabilidade total.",
-    "terminals.sub": "Três comandos, três modos — TUI fullscreen para métricas ao vivo, daemon OTel em background, e servidor com dashboard React embutido.",
+    "terminals.title.1": "Um CLI.",
+    "terminals.title.2": "Todo modo real.",
+    "terminals.sub": "O agentop start é o único launcher que você precisa — mas cada modo por trás dele é um comando real e independente. Tudo gravado ao vivo, nada roteirizado.",
 
     // Release — Team Mode + CLI unificada
     "release.tag": "Novo na v1.7",

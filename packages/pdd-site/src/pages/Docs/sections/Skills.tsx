@@ -244,7 +244,7 @@ export default function Skills() {
               <p className="text-[#8fb3cc] text-[14px] leading-relaxed mb-4">{content.does}</p>
 
               <div className="text-[11px] uppercase tracking-wide text-[#8fb3cc] mb-1.5">{t.docs.skills.labels.skillMd}</div>
-              <pre className="bg-[#0d2438] border border-accent-soft p-4 font-mono text-[11.5px] text-[#8fb3cc] leading-relaxed overflow-x-auto overflow-y-hidden mb-1 whitespace-pre-wrap">
+              <pre className="bg-[var(--surface-1)] border border-accent-soft p-4 font-mono text-[11.5px] text-[#8fb3cc] leading-relaxed overflow-x-auto overflow-y-hidden mb-1 whitespace-pre-wrap">
                 {skill.header}
                 {"\n\n"}
                 {skill.bodyPreview}

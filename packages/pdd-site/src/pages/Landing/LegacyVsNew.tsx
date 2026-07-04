@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "../../i18n";
 import { useInView } from "../../lib/useInView";
+import { useIsMobile } from "../../lib/useIsMobile";
 
 const DRACULA = {
   bg: "#282a36",
@@ -335,20 +336,20 @@ function CodeEditor({
   const typing = revealed > 0 && revealed < lines.length;
 
   return (
-    <div className="shadow-2xl h-[560px] flex flex-col rounded-xl overflow-hidden" style={{ backgroundColor: DRACULA.bg }}>
+    <div className="shadow-2xl h-auto sm:h-[420px] md:h-[560px] flex flex-col rounded-xl overflow-hidden" style={{ backgroundColor: DRACULA.bg }}>
       <div className="flex items-center border-b border-black/30 shrink-0">
         <div className="px-4 py-2.5 text-[12px] font-mono border-r border-black/30" style={{ color: DRACULA.fg, backgroundColor: "#21222c" }}>
           {filename}
         </div>
         <div className="flex-1" />
       </div>
-      <div className="flex flex-1 min-h-0 overflow-x-auto">
-        <div className="select-none text-right px-3 py-4 font-mono text-[12px] leading-[1.7]" style={{ color: DRACULA.comment }}>
+      <div className="flex flex-1 min-h-0 overflow-x-hidden sm:overflow-x-auto">
+        <div className="select-none text-right px-3 py-4 font-mono text-[11px] sm:text-[12px] leading-[1.7]" style={{ color: DRACULA.comment }}>
           {lines.map((_, i) => (
             <div key={i}>{i + 1}</div>
           ))}
         </div>
-        <pre className="flex-1 px-2 py-4 font-mono text-[12px] leading-[1.7] whitespace-pre">
+        <pre className="flex-1 min-w-0 px-2 py-4 font-mono text-[11px] sm:text-[12px] leading-[1.7] whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal">
           {visibleLines.map((line, i) => (
             <div key={i}>
               {highlightLine(line) || " "}
@@ -857,6 +858,15 @@ function NewSettings() {
 }
 
 function NewUI({ page, onNavigate }: SystemPageProps) {
+  const isMobile = useIsMobile();
+  return isMobile ? (
+    <NewUIMobile page={page} onNavigate={onNavigate} />
+  ) : (
+    <NewUIDesktop page={page} onNavigate={onNavigate} />
+  );
+}
+
+function NewUIDesktop({ page, onNavigate }: SystemPageProps) {
   return (
     <div className="w-full h-full overflow-hidden shadow-2xl flex flex-col rounded-xl" style={{ boxShadow: "0 25px 60px -12px rgba(124,58,237,.35)" }}>
       <div className="bg-[#eceef2] px-4 py-2.5 flex items-center gap-2 shrink-0">
@@ -1014,6 +1024,92 @@ function NewUI({ page, onNavigate }: SystemPageProps) {
   );
 }
 
+const NEW_PAGE_TITLE: Record<string, string> = {
+  Dashboard: "Dashboard",
+  Orders: "Order #4471",
+  Customers: "Customers",
+  Inventory: "Products",
+  Reports: "Reports",
+  Settings: "Settings",
+};
+
+function NewUIMobile({ page, onNavigate }: SystemPageProps) {
+  return (
+    <div className="w-full h-full overflow-hidden shadow-2xl flex flex-col rounded-xl" style={{ boxShadow: "0 25px 60px -12px rgba(124,58,237,.35)" }}>
+      <div className="bg-[#eceef2] px-4 py-2.5 flex items-center gap-2 shrink-0">
+        <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+        <span className="ml-3 flex-1 bg-white rounded-md px-3 py-1 text-[11px] text-slate-400 font-sans">
+          checkout.app
+        </span>
+      </div>
+
+      <div className="bg-slate-900 px-4 py-2.5 flex items-center gap-3 shrink-0 font-sans">
+        <span className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-indigo-500 shrink-0" />
+        <span className="text-[12.5px] font-semibold text-white truncate">{NEW_PAGE_TITLE[page] ?? page}</span>
+      </div>
+
+      <div className={`flex-1 min-h-0 bg-slate-50 p-3.5 overflow-y-auto font-sans ${NEW_SCROLL}`} style={NEW_SCROLL_STYLE}>
+        {page === "Dashboard" && <NewDashboard />}
+        {page === "Customers" && <NewTable head={["Name", "Email", "Orders"]} rows={NEW_CUSTOMERS} />}
+        {page === "Inventory" && <NewTable head={["SKU", "Name", "Stock"]} rows={NEW_PRODUCTS} />}
+        {page === "Reports" && <NewReports />}
+        {page === "Settings" && <NewSettings />}
+        {page === "Orders" && (
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mb-2.5">
+              <span className="font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">Pending</span>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-3 mb-2.5">
+              <div className="grid grid-cols-1 gap-y-2.5">
+                <label className="block">
+                  <div className="text-[10px] text-slate-400 mb-1">Customer *</div>
+                  <input readOnly value="A. Ferreira" className="w-full border-2 border-slate-300 rounded-md px-2 py-1.5 text-[12px] text-slate-800 focus:outline-none" />
+                </label>
+                <label className="block">
+                  <div className="text-[10px] text-slate-400 mb-1">E-mail *</div>
+                  <input readOnly value="a.f@corp.com" className="w-full border-2 border-slate-300 rounded-md px-2 py-1.5 text-[12px] text-slate-800 focus:outline-none" />
+                </label>
+                <label className="block">
+                  <div className="text-[10px] text-slate-400 mb-1">Payment method</div>
+                  <input readOnly value="Corp card •4471" className="w-full border-2 border-slate-300 rounded-md px-2 py-1.5 text-[12px] text-slate-800 focus:outline-none" />
+                </label>
+              </div>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-3">
+              <div className="flex justify-between items-baseline py-1.5">
+                <span className="text-[11px] text-slate-500">Total</span>
+                <span className="text-lg font-bold text-slate-900">$129.90</span>
+              </div>
+              <button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold text-[12px] py-2.5 rounded-md shadow-md shadow-violet-600/30 mt-1">
+                Confirm order
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="shrink-0 bg-white border-t border-slate-200 flex items-stretch font-sans">
+        {NEW_NAV.map((item) => (
+          <button
+            key={item.label}
+            onClick={() => onNavigate(item.label)}
+            className={`flex-1 flex flex-col items-center gap-0.5 py-2 text-[9px] ${
+              item.label === page ? "text-indigo-600 font-semibold" : "text-slate-400"
+            }`}
+          >
+            <span className="text-[13px] leading-none">{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const EDGE_THRESHOLD = 3;
 
 function RevealCompare({ page, onNavigate }: SystemPageProps) {
@@ -1067,7 +1163,7 @@ function RevealCompare({ page, onNavigate }: SystemPageProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-[16/10] sm:aspect-[16/9] select-none overflow-hidden rounded-xl"
+      className="relative w-full aspect-[9/16] sm:aspect-[16/9] select-none overflow-hidden rounded-xl"
     >
       {/* base layer, full width: new system */}
       <div className="absolute inset-0">

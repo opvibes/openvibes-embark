@@ -33,7 +33,7 @@ export default function DocsSidebar({ groups, onNavigate }: DocsSidebarProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t.docs.sidebar.searchPlaceholder}
-          className="w-full bg-[#0d2438] border border-accent-soft text-[#dbeaf5] placeholder:text-[#4a7690] text-[13px] px-3 py-2 focus:outline-none focus:border-accent"
+          className="w-full bg-[var(--surface-1)] border border-accent-soft text-[#dbeaf5] placeholder:text-[#4a7690] text-[13px] px-3 py-2 focus:outline-none focus:border-accent"
         />
       </div>
       <div className="space-y-6">

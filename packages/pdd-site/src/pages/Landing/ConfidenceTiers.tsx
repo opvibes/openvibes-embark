@@ -7,7 +7,7 @@ export default function ConfidenceTiers() {
   const { t } = useI18n();
 
   return (
-    <section id="tiers" className="bg-[#0d2438] border-y border-accent-soft scroll-mt-24">
+    <section id="tiers" className="bg-[var(--surface-1)] border-y border-accent-soft scroll-mt-24">
       <div className="px-6 py-28 max-w-3xl mx-auto">
         <div className="text-center mb-14">
           <h2 className="font-display text-[clamp(1.75rem,3.2vw,2.75rem)] font-semibold text-[#f2f8fc] mb-4 tracking-tight leading-tight">

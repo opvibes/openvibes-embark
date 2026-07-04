@@ -83,8 +83,8 @@ export default function BootstrapStage() {
       description={t.pipeline.bootstrap.description}
       why={t.pipeline.bootstrap.why}
     >
-      <div ref={containerRef} className="flex gap-5 text-xs font-mono">
-        <div className="flex-1">
+      <div ref={containerRef} className="flex flex-col sm:flex-row gap-5 sm:gap-5 text-xs font-mono">
+        <div className="sm:flex-1 min-w-0">
           <div className="text-zinc-600 uppercase text-[10px] mb-3">{t.bootstrapSim.interviewLabel}</div>
           <div className="text-zinc-100 text-[13px] font-sans font-semibold mb-1">{question.title}</div>
           <div className="text-zinc-600 text-[11px] mb-3">{question.sub}</div>
@@ -101,9 +101,9 @@ export default function BootstrapStage() {
             </div>
           ))}
         </div>
-        <div className="flex-1">
+        <div className="sm:flex-1 min-w-0 border-t sm:border-t-0 sm:border-l border-zinc-800 pt-4 sm:pt-0 sm:pl-5">
           <div className="text-zinc-600 uppercase text-[10px] mb-3">{t.bootstrapSim.fileLabel}</div>
-          <div className="space-y-2 text-[12px]">
+          <div className="space-y-2 text-[12px] break-words">
             {fileLines.map((line) => (
               <div key={line.key}>
                 <span className="text-zinc-500">{line.key}:</span>{" "}

@@ -1,18 +1,19 @@
 const pt = {
   nav: {
+    home: "Início",
     docs: "Docs",
     install: "Instalar",
     github: "GitHub",
-    why: "Por que",
+    why: "O Problema",
     compare: "Comparar",
     principles: "Princípios",
     pipeline: "Pipeline",
-    tiers: "Níveis",
+    tiers: "Níveis de Confiança",
     toggleMenu: "Alternar menu",
   },
   hero: {
     eyebrow: "Parity-Driven Development",
-    headline: "Prove que sua migração não quebrou nada.",
+    headline: "Prove que seu refactor não quebrou nada.",
     cta: "Ver o pipeline",
   },
   problem: {
@@ -70,7 +71,7 @@ const pt = {
   },
   legacyVsNew: {
     title: "Mesmo comportamento. Nada mais igual.",
-    body: "Pro PDD não importa que o código, a linguagem ou a tela tenham mudado completamente: só que o total do checkout continue dando 129.90.",
+    body: "Pro PDD não importa que o código, a linguagem ou a tela tenham mudado completamente. O que importa é que cada resultado visível pro usuário continue exatamente igual.",
     legacyLabel: "Legado · Java",
     newLabel: "Novo · TypeScript",
   },
@@ -112,6 +113,7 @@ const pt = {
     siteLabel: "Site",
     connectLabel: "Conecte-se",
     starGithub: "Dê uma estrela no GitHub",
+    madeBy: "Feito por Bryan Soares",
   },
   bootstrapSim: {
     interviewLabel: "entrevista do bootstrap",
@@ -173,7 +175,7 @@ const pt = {
       title: "Instalação",
       introPrefix: "O PDD é distribuído como um marketplace de plugin único. Instale por projeto: o trabalho dele é rastrear a paridade de",
       introEmphasis1: "uma",
-      introMiddle: "migração contra",
+      introMiddle: "refactor contra",
       introEmphasis2: "um",
       introSuffix: "sistema de referência, e esse estado fica salvo no diretório .audit/ do projeto.",
       otherAgentsIntro: "Pra Codex, Cursor, Copilot ou Gemini CLI, use o instalador universal:",

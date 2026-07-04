@@ -28,7 +28,7 @@ export default function Docs() {
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={() => setDrawerOpen(false)} />
-          <div className="relative w-72 max-w-[85vw] bg-[#0a1b2e] border-r border-accent-soft h-full overflow-y-auto p-6">
+          <div className="relative w-72 max-w-[85vw] bg-[var(--surface-0)] border-r border-accent-soft h-full overflow-y-auto p-6">
             <button
               onClick={() => setDrawerOpen(false)}
               className="font-mono text-[13px] text-[#8fb3cc] mb-6"

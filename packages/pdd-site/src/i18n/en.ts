@@ -13,7 +13,7 @@ const en = {
   },
   hero: {
     eyebrow: "Parity-Driven Development",
-    headline: "Prove your migration didn't break anything.",
+    headline: "Prove your refactor didn't break anything.",
     cta: "See the pipeline",
   },
   problem: {
@@ -71,7 +71,7 @@ const en = {
   },
   legacyVsNew: {
     title: "Same behavior. Nothing else the same.",
-    body: "PDD doesn't care that the code, the language, or the screen changed completely: only that the system's behavior stays the same for every user-facing outcome — like a checkout total that still comes out to 129.90.",
+    body: "PDD doesn't care that the code, the language, or the screen changed completely. What matters is that every user-facing outcome stays exactly the same.",
     legacyLabel: "Legacy · Java",
     newLabel: "New · TypeScript",
   },
@@ -175,7 +175,7 @@ const en = {
       title: "Installation",
       introPrefix: "PDD ships as a single-plugin marketplace. Install it per-project: its whole job is to track the parity of",
       introEmphasis1: "one",
-      introMiddle: "migration against",
+      introMiddle: "refactor against",
       introEmphasis2: "one",
       introSuffix: "reference system, and it stores that state in the project's .audit/ directory.",
       otherAgentsIntro: "For Codex, Cursor, Copilot, or Gemini CLI, use the universal installer:",

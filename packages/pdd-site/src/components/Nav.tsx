@@ -91,53 +91,56 @@ export default function Nav() {
         </div>
       </div>
 
-      {menuOpen && (
-        <div className="md:hidden fixed inset-0 top-[72px] z-30 overflow-y-auto bg-[#0a1b2e] flex flex-col gap-1 px-6 pb-10 pt-4 text-[14px] font-medium text-zinc-300">
-          <Link to="/" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.home}
-          </Link>
-          <a href="/#problem" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.why}
-          </a>
-          <a href="/#compare" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.compare}
-          </a>
-          <a href="/#principles" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.principles}
-          </a>
-          <a href="/#pipeline" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.pipeline}
-          </a>
-          <div className="pl-3 flex flex-col gap-0.5 border-l border-white/10 ml-1 mb-1">
-            {PIPELINE_STAGES.map((stage) => (
-              <a
-                key={stage.id}
-                href={`/#stage-${stage.id}`}
-                onClick={() => setMenuOpen(false)}
-                className="py-1 text-[12px] font-mono text-zinc-400 hover:text-accent transition-colors"
-              >
-                {stage.command}
-              </a>
-            ))}
-          </div>
-          <a href="/#tiers" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.tiers}
-          </a>
-          <a href="/#install" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.install}
-          </a>
-          <Link to="/docs" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
-            {t.nav.docs}
-          </Link>
-          <a
-            href="https://github.com/blpsoares/parity-driven-development"
-            onClick={() => setMenuOpen(false)}
-            className="py-2 hover:text-accent transition-colors"
-          >
-            {t.nav.github}
-          </a>
+      <div
+        className={`md:hidden fixed left-4 right-4 top-[76px] z-30 max-h-[calc(100vh-96px)] overflow-y-auto rounded-3xl border border-zinc-800 bg-[#0a1b2e] shadow-2xl shadow-black/50 flex flex-col gap-1 px-6 pb-6 pt-4 text-[14px] font-medium text-zinc-300 origin-top transition-all duration-200 ease-out ${
+          menuOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+        }`}
+        aria-hidden={!menuOpen}
+      >
+        <Link to="/" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.home}
+        </Link>
+        <a href="/#problem" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.why}
+        </a>
+        <a href="/#compare" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.compare}
+        </a>
+        <a href="/#principles" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.principles}
+        </a>
+        <a href="/#pipeline" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.pipeline}
+        </a>
+        <div className="pl-3 flex flex-col gap-0.5 border-l border-white/10 ml-1 mb-1">
+          {PIPELINE_STAGES.map((stage) => (
+            <a
+              key={stage.id}
+              href={`/#stage-${stage.id}`}
+              onClick={() => setMenuOpen(false)}
+              className="py-1 text-[12px] font-mono text-zinc-400 hover:text-accent transition-colors"
+            >
+              {stage.command}
+            </a>
+          ))}
         </div>
-      )}
+        <a href="/#tiers" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.tiers}
+        </a>
+        <a href="/#install" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.install}
+        </a>
+        <Link to="/docs" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+          {t.nav.docs}
+        </Link>
+        <a
+          href="https://github.com/blpsoares/parity-driven-development"
+          onClick={() => setMenuOpen(false)}
+          className="py-2 hover:text-accent transition-colors"
+        >
+          {t.nav.github}
+        </a>
+      </div>
     </nav>
   );
 }

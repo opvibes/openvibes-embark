@@ -20,7 +20,7 @@ export default function StageSection({ stageId, tag, title, description, why, ch
   return (
     <section
       ref={ref}
-      className={`stage relative flex flex-col ${reversed ? "lg:flex-row-reverse" : "lg:flex-row"} lg:items-center gap-10 lg:gap-16 px-6 md:pl-14 lg:pl-20 md:pr-10 py-16 md:py-24 lg:py-28 max-w-[1240px] mx-auto`}
+      className={`stage relative overflow-x-hidden flex flex-col ${reversed ? "lg:flex-row-reverse" : "lg:flex-row"} lg:items-center gap-10 lg:gap-16 px-6 md:pl-14 lg:pl-20 md:pr-10 py-16 md:py-24 lg:py-28 max-w-[1240px] mx-auto`}
     >
       <span className="rail-dot hidden md:block absolute left-[21px] top-1/2 -translate-y-1/2 w-3 h-3 bg-[#0a1b2e] border-2 border-[#4a7690] rotate-45 z-[2]" />
       <span

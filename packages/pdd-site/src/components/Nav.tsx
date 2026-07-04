@@ -74,9 +74,9 @@ export default function Nav() {
               aria-expanded={menuOpen}
               className="md:hidden flex flex-col gap-1 p-1.5 -mr-1"
             >
-              <span className={`block w-4 h-px bg-zinc-300 transition-transform ${menuOpen ? "translate-y-[3.5px] rotate-45" : ""}`} />
+              <span className={`block w-4 h-px bg-zinc-300 transition-transform ${menuOpen ? "translate-y-[5px] rotate-45" : ""}`} />
               <span className={`block w-4 h-px bg-zinc-300 transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
-              <span className={`block w-4 h-px bg-zinc-300 transition-transform ${menuOpen ? "-translate-y-[3.5px] -rotate-45" : ""}`} />
+              <span className={`block w-4 h-px bg-zinc-300 transition-transform ${menuOpen ? "-translate-y-[5px] -rotate-45" : ""}`} />
             </button>
           </div>
         </div>

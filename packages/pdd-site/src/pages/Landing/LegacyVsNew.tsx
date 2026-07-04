@@ -336,20 +336,20 @@ function CodeEditor({
   const typing = revealed > 0 && revealed < lines.length;
 
   return (
-    <div className="shadow-2xl h-[320px] sm:h-[420px] md:h-[560px] flex flex-col rounded-xl overflow-hidden" style={{ backgroundColor: DRACULA.bg }}>
+    <div className="shadow-2xl h-auto sm:h-[420px] md:h-[560px] flex flex-col rounded-xl overflow-hidden" style={{ backgroundColor: DRACULA.bg }}>
       <div className="flex items-center border-b border-black/30 shrink-0">
         <div className="px-4 py-2.5 text-[12px] font-mono border-r border-black/30" style={{ color: DRACULA.fg, backgroundColor: "#21222c" }}>
           {filename}
         </div>
         <div className="flex-1" />
       </div>
-      <div className="flex flex-1 min-h-0 overflow-x-auto">
-        <div className="select-none text-right px-3 py-4 font-mono text-[12px] leading-[1.7]" style={{ color: DRACULA.comment }}>
+      <div className="flex flex-1 min-h-0 overflow-x-hidden sm:overflow-x-auto">
+        <div className="select-none text-right px-3 py-4 font-mono text-[11px] sm:text-[12px] leading-[1.7]" style={{ color: DRACULA.comment }}>
           {lines.map((_, i) => (
             <div key={i}>{i + 1}</div>
           ))}
         </div>
-        <pre className="flex-1 px-2 py-4 font-mono text-[12px] leading-[1.7] whitespace-pre">
+        <pre className="flex-1 min-w-0 px-2 py-4 font-mono text-[11px] sm:text-[12px] leading-[1.7] whitespace-pre-wrap break-all sm:whitespace-pre sm:break-normal">
           {visibleLines.map((line, i) => (
             <div key={i}>
               {highlightLine(line) || " "}
@@ -1163,7 +1163,7 @@ function RevealCompare({ page, onNavigate }: SystemPageProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-[16/10] sm:aspect-[16/9] select-none overflow-hidden rounded-xl"
+      className="relative w-full aspect-[9/16] sm:aspect-[16/9] select-none overflow-hidden rounded-xl"
     >
       {/* base layer, full width: new system */}
       <div className="absolute inset-0">

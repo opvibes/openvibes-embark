@@ -1,0 +1,52 @@
+.reveal {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.stage-active .reveal {
+  animation: pdd-reveal-in 0.4s ease forwards;
+}
+.reveal-d1 { animation-delay: 0.3s !important; }
+.reveal-d2 { animation-delay: 0.8s !important; }
+.reveal-d3 { animation-delay: 1.3s !important; }
+.reveal-d4 { animation-delay: 1.8s !important; }
+
+@keyframes pdd-reveal-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stage-active .rail-dot {
+  border-color: #5eb8ff;
+  background: #5eb8ff;
+  box-shadow: 0 0 12px 2px rgba(94, 184, 255, 0.4);
+}
+.stage-done .rail-dot {
+  border-color: #4a7690;
+  background: #4a7690;
+}
+
+.stage-active .rail-label {
+  color: #5eb8ff;
+}
+.stage-done .rail-label {
+  color: #4a7690;
+}
+
+.stage-even {
+  background-color: #0a1b2e;
+  background-image: radial-gradient(ellipse 900px 500px at 15% 20%, rgba(94, 184, 255, 0.07), transparent 60%);
+  border-top: 1px solid rgba(94, 184, 255, 0.1);
+}
+.stage-odd {
+  background-color: #0d2438;
+  background-image: radial-gradient(ellipse 900px 500px at 85% 80%, rgba(94, 184, 255, 0.06), transparent 60%);
+  border-top: 1px solid rgba(94, 184, 255, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .stage-active .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

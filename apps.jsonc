@@ -46,5 +46,13 @@
     "subdomain": "embark",
     "appDeployment": "cloudflare-pages",
     "cloudflareUse": true
+  },
+  {
+    "name": "pdd-site",
+    "folderName": "pdd-site",
+    "rootDomain": false,
+    "subdomain": "pdd",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
   }
 ]

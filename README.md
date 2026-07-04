@@ -494,6 +494,7 @@ When changes are pushed to `main` **outside of `packages/`** (scripts, workflows
 | `duckflux-editor` | Real time editor to duckflux |
 | `duckflux-site` | Define complex multi-agent pipelines in YAML. Let LLMs do creative work. Let duckflux handle the plumbing. |
 | `embark-site` | Embark |
+| `pdd-site` | Parity-Driven Development — marketing site and docs |
 <!-- PACKAGES:END -->
 
 ### Embark Website

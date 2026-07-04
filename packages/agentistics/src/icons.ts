@@ -9,6 +9,11 @@ import {
   Telescope,
   FileText,
   Flame,
+  Users,
+  Terminal,
+  GitCompare,
+  Type,
+  Network,
 } from "lucide";
 
 export function initIcons(): void {
@@ -23,6 +28,11 @@ export function initIcons(): void {
       Telescope,
       FileText,
       Flame,
+      Users,
+      Terminal,
+      GitCompare,
+      Type,
+      Network,
     },
     attrs: {
       "stroke-width": "1.75",

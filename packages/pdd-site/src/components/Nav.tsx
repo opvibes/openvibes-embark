@@ -16,6 +16,9 @@ export default function Nav() {
             ▲ pdd
           </Link>
           <div className="hidden md:flex items-center gap-5 text-[12.5px] font-medium text-zinc-300">
+            <Link to="/" className="hover:text-accent transition-colors">
+              {t.nav.home}
+            </Link>
             <a href="/#problem" className="hover:text-accent transition-colors">
               {t.nav.why}
             </a>
@@ -80,6 +83,9 @@ export default function Nav() {
 
         {menuOpen && (
           <div className="md:hidden flex flex-col gap-1 px-5 pb-4 pt-1 border-t border-white/10 text-[14px] font-medium text-zinc-300 max-h-[70vh] overflow-y-auto">
+            <Link to="/" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
+              {t.nav.home}
+            </Link>
             <a href="/#problem" onClick={() => setMenuOpen(false)} className="py-2 hover:text-accent transition-colors">
               {t.nav.why}
             </a>

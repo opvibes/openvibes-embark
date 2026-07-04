@@ -1,13 +1,14 @@
 const en = {
   nav: {
+    home: "Home",
     docs: "Docs",
     install: "Install",
     github: "GitHub",
-    why: "Why",
+    why: "The Problem",
     compare: "Compare",
     principles: "Principles",
     pipeline: "Pipeline",
-    tiers: "Tiers",
+    tiers: "Confidence Tiers",
     toggleMenu: "Toggle menu",
   },
   hero: {
@@ -70,7 +71,7 @@ const en = {
   },
   legacyVsNew: {
     title: "Same behavior. Nothing else the same.",
-    body: "PDD doesn't care that the code, the language, or the screen changed completely: only that the checkout total still comes out to 129.90.",
+    body: "PDD doesn't care that the code, the language, or the screen changed completely: only that the system's behavior stays the same for every user-facing outcome — like a checkout total that still comes out to 129.90.",
     legacyLabel: "Legacy · Java",
     newLabel: "New · TypeScript",
   },
@@ -112,6 +113,7 @@ const en = {
     siteLabel: "Site",
     connectLabel: "Connect",
     starGithub: "Star us on GitHub",
+    madeBy: "Built by Bryan Soares",
   },
   bootstrapSim: {
     interviewLabel: "bootstrap interview",

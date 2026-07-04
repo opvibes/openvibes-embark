@@ -1,13 +1,14 @@
 const pt = {
   nav: {
+    home: "Início",
     docs: "Docs",
     install: "Instalar",
     github: "GitHub",
-    why: "Por que",
+    why: "O Problema",
     compare: "Comparar",
     principles: "Princípios",
     pipeline: "Pipeline",
-    tiers: "Níveis",
+    tiers: "Níveis de Confiança",
     toggleMenu: "Alternar menu",
   },
   hero: {
@@ -70,7 +71,7 @@ const pt = {
   },
   legacyVsNew: {
     title: "Mesmo comportamento. Nada mais igual.",
-    body: "Pro PDD não importa que o código, a linguagem ou a tela tenham mudado completamente: só que o total do checkout continue dando 129.90.",
+    body: "Pro PDD não importa que o código, a linguagem ou a tela tenham mudado completamente: só que o comportamento do sistema continue igual em cada resultado visível pro usuário — como um total de checkout que continua dando 129.90.",
     legacyLabel: "Legado · Java",
     newLabel: "Novo · TypeScript",
   },
@@ -112,6 +113,7 @@ const pt = {
     siteLabel: "Site",
     connectLabel: "Conecte-se",
     starGithub: "Dê uma estrela no GitHub",
+    madeBy: "Feito por Bryan Soares",
   },
   bootstrapSim: {
     interviewLabel: "entrevista do bootstrap",

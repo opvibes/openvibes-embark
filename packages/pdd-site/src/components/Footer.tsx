@@ -26,6 +26,16 @@ function MailIcon() {
   );
 }
 
+function GlobeIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   const { t } = useI18n();
 
@@ -38,6 +48,14 @@ export default function Footer() {
           <p className="text-zinc-600 text-[12px] mt-4 font-mono">
             © {new Date().getFullYear()} Bryan Soares. {t.footer.rights}
           </p>
+          <a
+            href="https://blpsoares.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-zinc-600 hover:text-accent text-[12px] mt-1 font-mono transition-colors"
+          >
+            {t.footer.madeBy} → blpsoares.dev
+          </a>
         </div>
 
         <div className="flex gap-16">
@@ -88,6 +106,15 @@ export default function Footer() {
                 aria-label="LinkedIn"
               >
                 <LinkedinIcon />
+              </a>
+              <a
+                href="https://blpsoares.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-500 hover:text-accent transition-colors"
+                aria-label="Website"
+              >
+                <GlobeIcon />
               </a>
               <a
                 href="mailto:bryanluccas@hotmail.com"

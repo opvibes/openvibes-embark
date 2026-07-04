@@ -335,7 +335,7 @@ function CodeEditor({
   const typing = revealed > 0 && revealed < lines.length;
 
   return (
-    <div className="shadow-2xl h-[560px] flex flex-col rounded-xl overflow-hidden" style={{ backgroundColor: DRACULA.bg }}>
+    <div className="shadow-2xl h-[320px] sm:h-[420px] md:h-[560px] flex flex-col rounded-xl overflow-hidden" style={{ backgroundColor: DRACULA.bg }}>
       <div className="flex items-center border-b border-black/30 shrink-0">
         <div className="px-4 py-2.5 text-[12px] font-mono border-r border-black/30" style={{ color: DRACULA.fg, backgroundColor: "#21222c" }}>
           {filename}

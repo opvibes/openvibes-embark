@@ -46,6 +46,57 @@ const T: Record<Lang, Record<string, string>> = {
     "terminals.title.2": "Total observability.",
     "terminals.sub": "Three commands, three modes — a fullscreen TUI for live metrics, a background OTel daemon, and a server with embedded React dashboard.",
 
+    // Release — Team Mode + unified CLI
+    "release.tag": "New in v1.7",
+    "release.title.1": "One machine.",
+    "release.title.2": "Or a whole team.",
+    "release.sub": "agentistics is the single-machine app. agentistics central aggregates metrics from every machine on your team into one live view — without ever storing your chats.",
+
+    "release.tab.central": "agentistics central",
+    "release.tab.cli": "agentop start",
+    "release.tab.harness": "Multi-harness",
+    "release.tab.sessions": "Session titles",
+    "release.tab.ports": "Ports & install",
+
+    "release.central.title": "agentistics central — the team aggregator",
+    "release.central.desc": "Every machine that connects to a central sends only computed metrics — tokens, cost, sessions, agent stats. Chat is never stored centrally: opening a transcript pulls it on demand over a reverse WebSocket straight from that member's machine.",
+    "release.central.point1.title": "Mint, rotate, revoke, rename",
+    "release.central.point1.desc": "Full token lifecycle from Team Manager. Rotating preserves a member's history under its new credential; revoking cascades and resets that machine back to solo.",
+    "release.central.point2.title": "Live presence + latency",
+    "release.central.point2.desc": "Presence is WebSocket-authoritative — a member flips offline within seconds of disconnecting, not minutes. Latency shown is real WS ping/pong round-trip time.",
+    "release.central.point3.title": "Auto-reconciliation",
+    "release.central.point3.desc": "If the central's data resets or a token rotates, members detect the change automatically and re-sync their full history — no manual resets, no double-counted stats.",
+    "release.central.point4.title": "Real-time via SSE",
+    "release.central.point4.desc": "Every metrics push from a member notifies connected dashboards instantly through server-sent events. Tokens are stored only as a sha256 hash — never logged, never reversible.",
+
+    "release.cli.title": "agentop start — one launcher for everything",
+    "release.cli.desc": "A single re-runnable control panel: arrow keys and Enter, a live status line for every service (configured vs. actually running), and one place to start agentistics, spin up agentistics central, connect or disconnect from a team, or stop whatever's running.",
+    "release.cli.point1.title": "English and pt-BR",
+    "release.cli.point1.desc": "Toggle the whole launcher's language in place, no restart needed.",
+    "release.cli.point2.title": "Everything else, one command away",
+    "release.cli.point2.desc": "setup · restart · central · member · autostart · check-update — plus running the machine itself inside Docker when you'd rather not install anything on the host.",
+
+    "release.harness.title": "One dashboard, four coding agents",
+    "release.harness.desc": "Claude Code, Codex CLI, Gemini CLI and GitHub Copilot CLI all report into the same dashboard. A harness selector appears the moment you have data from more than one; /compare puts them side by side.",
+    "release.harness.point1.title": "Per-harness pages",
+    "release.harness.point1.desc": "/h/:harness gives every agent its own Overview plus a \"Data & sources\" tab that's upfront about what that harness's data can and can't tell you.",
+    "release.harness.point2.title": "Honest N/A, not fake zeros",
+    "release.harness.point2.desc": "A metric a harness can't produce shows as N/A instead of a misleading 0 — compare view respects each agent's real capabilities.",
+
+    "release.sessions.title": "Real session titles",
+    "release.sessions.desc": "Session lists now show the title Claude itself generated for the conversation instead of a truncated first prompt, with a clean fallback when no title exists yet.",
+    "release.sessions.point1.title": "Everywhere sessions show up",
+    "release.sessions.point1.desc": "Highlights, recent sessions, the drilldown modal and the PDF export all use the same real title.",
+    "release.sessions.point2.title": "Transcript spacing fixed",
+    "release.sessions.point2.desc": "Chat bubbles no longer double their line breaks — markdown newlines render exactly once, on the central and locally.",
+
+    "release.ports.title": "New ports, one install command",
+    "release.ports.desc": "The web dashboard and the api + MCP server now run on dedicated ports, and agentistics central ships as its own service.",
+    "release.ports.web": "web dashboard",
+    "release.ports.api": "api + MCP",
+    "release.ports.central": "agentistics central",
+    "release.ports.install.label": "Install",
+
     // Features
     "features.tag": "Features",
     "features.title.1": "Everything you need to",
@@ -75,7 +126,7 @@ const T: Record<Lang, Record<string, string>> = {
     "how.step1.title": "Download the binary",
     "how.step1.desc": "One-line install for Linux/macOS. Or clone and build from source with Bun.",
     "how.step2.title": "Run agentop server",
-    "how.step2.desc": "Starts the API on port 3001 and serves the full React dashboard. Your ~/.claude/ is read directly — no config needed.",
+    "how.step2.desc": "Starts the api + MCP on port 47291 and the web dashboard on port 47292. Your ~/.claude/ is read directly — no config needed.",
     "how.step3.title": "Watch metrics live",
     "how.step3.desc": "Use agentop tui for a fullscreen terminal dashboard or agentop watch to stream OTel metrics to your observability stack.",
 
@@ -151,6 +202,57 @@ const T: Record<Lang, Record<string, string>> = {
     "terminals.title.2": "Observabilidade total.",
     "terminals.sub": "Três comandos, três modos — TUI fullscreen para métricas ao vivo, daemon OTel em background, e servidor com dashboard React embutido.",
 
+    // Release — Team Mode + CLI unificada
+    "release.tag": "Novo na v1.7",
+    "release.title.1": "Uma máquina.",
+    "release.title.2": "Ou o time inteiro.",
+    "release.sub": "O agentistics é o app de uma máquina. O agentistics central agrega métricas de todas as máquinas do time numa visão só ao vivo — sem nunca guardar suas conversas.",
+
+    "release.tab.central": "agentistics central",
+    "release.tab.cli": "agentop start",
+    "release.tab.harness": "Multi-harness",
+    "release.tab.sessions": "Títulos de sessão",
+    "release.tab.ports": "Portas & instalação",
+
+    "release.central.title": "agentistics central — o agregador do time",
+    "release.central.desc": "Toda máquina conectada a um central envia só métricas calculadas — tokens, custo, sessões, stats de agentes. O chat nunca é guardado no central: abrir uma transcrição busca ela sob demanda via WebSocket reverso direto da máquina daquele membro.",
+    "release.central.point1.title": "Mint, rotate, revoke, rename",
+    "release.central.point1.desc": "Ciclo de vida completo do token pelo Team Manager. Rotacionar preserva o histórico do membro na nova credencial; revogar faz cascata e devolve a máquina pro modo solo.",
+    "release.central.point2.title": "Presença e latência ao vivo",
+    "release.central.point2.desc": "A presença é comandada pelo WebSocket — um membro vira offline em segundos após desconectar, não minutos. A latência mostrada é o round-trip real do ping/pong do WS.",
+    "release.central.point3.title": "Auto-reconciliação",
+    "release.central.point3.desc": "Se os dados do central resetam ou um token é rotacionado, os membros detectam a mudança sozinhos e ressincronizam o histórico completo — sem reset manual, sem contar estatística em dobro.",
+    "release.central.point4.title": "Tempo real via SSE",
+    "release.central.point4.desc": "Todo envio de métricas de um membro notifica os dashboards conectados na hora via server-sent events. Tokens são guardados só como hash sha256 — nunca logados, nunca reversíveis.",
+
+    "release.cli.title": "agentop start — um launcher pra tudo",
+    "release.cli.desc": "Um painel de controle re-executável: setas e Enter, status ao vivo de cada serviço (configurado vs. rodando de verdade), e um lugar só pra iniciar o agentistics, subir o agentistics central, conectar ou desconectar de um time, ou parar o que estiver rodando.",
+    "release.cli.point1.title": "Inglês e pt-BR",
+    "release.cli.point1.desc": "Alterna o idioma do launcher inteiro no lugar, sem reiniciar.",
+    "release.cli.point2.title": "Tudo o resto, a um comando de distância",
+    "release.cli.point2.desc": "setup · restart · central · member · autostart · check-update — e ainda rodar a máquina inteira dentro do Docker quando você não quiser instalar nada no host.",
+
+    "release.harness.title": "Um dashboard, quatro agentes de código",
+    "release.harness.desc": "Claude Code, Codex CLI, Gemini CLI e GitHub Copilot CLI reportam todos pro mesmo dashboard. Um seletor de harness aparece assim que você tem dados de mais de um; /compare coloca eles lado a lado.",
+    "release.harness.point1.title": "Páginas por harness",
+    "release.harness.point1.desc": "/h/:harness dá a cada agente sua própria Overview mais uma aba \"Data & sources\" que é transparente sobre o que os dados daquele harness conseguem — e não conseguem — te contar.",
+    "release.harness.point2.title": "N/A honesto, não zero fake",
+    "release.harness.point2.desc": "Uma métrica que um harness não consegue produzir aparece como N/A em vez de um 0 enganoso — o compare respeita a capacidade real de cada agente.",
+
+    "release.sessions.title": "Títulos de sessão de verdade",
+    "release.sessions.desc": "As listas de sessão agora mostram o título que o próprio Claude gerou pra conversa, em vez de um primeiro prompt truncado, com um fallback limpo quando ainda não existe título.",
+    "release.sessions.point1.title": "Em todo lugar que sessão aparece",
+    "release.sessions.point1.desc": "Highlights, sessões recentes, o modal de drilldown e a exportação em PDF usam todos o mesmo título real.",
+    "release.sessions.point2.title": "Espaçamento do transcript corrigido",
+    "release.sessions.point2.desc": "As bolhas do chat não duplicam mais as quebras de linha — as quebras do markdown renderizam uma única vez, no central e localmente.",
+
+    "release.ports.title": "Portas novas, um comando de instalação",
+    "release.ports.desc": "O dashboard web e o servidor api + MCP agora rodam em portas dedicadas, e o agentistics central sai como serviço próprio.",
+    "release.ports.web": "dashboard web",
+    "release.ports.api": "api + MCP",
+    "release.ports.central": "agentistics central",
+    "release.ports.install.label": "Instalar",
+
     // Features
     "features.tag": "Recursos",
     "features.title.1": "Tudo que você precisa para",
@@ -180,7 +282,7 @@ const T: Record<Lang, Record<string, string>> = {
     "how.step1.title": "Baixe o binário",
     "how.step1.desc": "Instalação em uma linha para Linux/macOS. Ou clone e compile com Bun.",
     "how.step2.title": "Execute agentop server",
-    "how.step2.desc": "Inicia a API na porta 3001 e serve o dashboard React completo. Seu ~/.claude/ é lido diretamente — sem configuração.",
+    "how.step2.desc": "Inicia a api + MCP na porta 47291 e o dashboard web na porta 47292. Seu ~/.claude/ é lido diretamente — sem configuração.",
     "how.step3.title": "Veja as métricas ao vivo",
     "how.step3.desc": "Use agentop tui para um dashboard em terminal ou agentop watch para exportar métricas OTel.",
 

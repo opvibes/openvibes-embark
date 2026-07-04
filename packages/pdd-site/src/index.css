@@ -6,10 +6,31 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-color: #3aa0f5 #0a1b2e;
+  scrollbar-width: thin;
 }
 
 body {
   background-color: #0a1b2e;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a1b2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1e85e0;
+  border-radius: 8px;
+  border: 3px solid #0a1b2e;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #5eb8ff;
 }
 
 .grid-bg {

@@ -10,6 +10,7 @@ import { initI18n } from "./i18n";
 import { initPreview } from "./preview";
 import { initFeatures } from "./features";
 import { initLightbox } from "./lightbox";
+import { initRelease } from "./release";
 
 function boot() {
   // Fade in body
@@ -55,6 +56,9 @@ function boot() {
     initWatchTerm();
     initServerTerm();
   });
+
+  // Release section tabs — lazy init when section enters viewport
+  lazyInit("release", () => initRelease());
 
   // Arch 3D neural net
   lazyInit("arch", () => initArchCanvas());

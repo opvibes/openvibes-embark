@@ -516,8 +516,8 @@ export function initServerTerm(): void {
     { delay: 1140, spans: [span(sep, "dim")] },
     { delay: 1200, spans: [span("  ", ""), span("agentistics", "amber")] },
     { delay: 1260, spans: [span(sep, "dim")] },
-    { delay: 1340, spans: [span("  api  ", "dim"), span("●", "green"), span("  ", ""), span("http://localhost:3001", "cyan")] },
-    { delay: 1420, spans: [span("   ui  ", "dim"), span("●", "green"), span("  ", ""), span("http://localhost:3001 embedded", "cyan")] },
+    { delay: 1340, spans: [span("  api  ", "dim"), span("●", "green"), span("  ", ""), span("http://localhost:47291", "cyan")] },
+    { delay: 1420, spans: [span("   ui  ", "dim"), span("●", "green"), span("  ", ""), span("http://localhost:47292 embedded", "cyan")] },
     { delay: 1500, spans: [span(sep, "dim")] },
     { delay: 1600, spans: [span("", "")] },
     {
@@ -533,7 +533,7 @@ export function initServerTerm(): void {
     { delay: 1980, spans: [span("[otel] ", "dim"), span("No OTLP endpoint — export disabled", "muted")] },
     { delay: 2140, spans: [span("[watch] ", "dim"), span("~/.claude/usage-data/session-meta", "blue")] },
     { delay: 2300, spans: [span("[watch] ", "dim"), span("~/.claude/projects", "blue")] },
-    { delay: 2460, spans: [span("[watch] ", "dim"), span("open ", "dim"), span("http://localhost:3001", "cyan"), span(" in browser", "dim")] },
+    { delay: 2460, spans: [span("[watch] ", "dim"), span("open ", "dim"), span("http://localhost:47292", "cyan"), span(" in browser", "dim")] },
   ];
 
   let html = "";

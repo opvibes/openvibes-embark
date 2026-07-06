@@ -569,11 +569,9 @@ section { padding: 6rem 0; }
 
 .term-tabs-wrap { /* no margin-bottom — tabs connect flush to frame */ }
 .term-tabs {
-  display: flex; gap: 3px;
-  overflow-x: auto; scrollbar-width: none;
+  display: flex; flex-wrap: wrap; gap: 3px;
   padding: 0; align-items: flex-end;
 }
-.term-tabs::-webkit-scrollbar { display: none; }
 .term-tab {
   padding: 0.5rem 1.1rem;
   background: rgba(255,255,255,0.03);
@@ -623,20 +621,20 @@ section { padding: 6rem 0; }
   position: relative;
   height: 440px;
   overflow: hidden;
+  background: #000;
 }
 .term-pane {
   display: none;
-  padding: 1rem 1.25rem;
-  font-family: var(--font-mono); font-size: 0.74rem;
-  line-height: 1.55;
-  height: 100%; overflow-y: auto;
-  overflow-x: auto;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }
-.term-pane.active { display: block; }
+.term-pane.active { display: flex; }
 .term-gif {
   width: 100%;
+  height: 100%;
+  object-fit: contain;
   display: block;
-  border-radius: 0 0 12px 12px;
 }
 
 .term-card-chrome {

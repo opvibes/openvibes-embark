@@ -49,6 +49,65 @@ body {
   background-color: #5eb8ff;
 }
 
+/* Syntax highlighting (rehype-highlight / highlight.js token classes),
+   tuned to the site's blue-on-black docs theme. */
+.hljs {
+  color: #dbeaf5;
+  background: transparent;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #4a7690;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-doctag,
+.hljs-name,
+.hljs-tag {
+  color: #5eb8ff;
+}
+.hljs-string,
+.hljs-attr,
+.hljs-attribute,
+.hljs-regexp,
+.hljs-addition,
+.hljs-meta-string {
+  color: #7fd6a6;
+}
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #f0a35e;
+}
+.hljs-title,
+.hljs-function .hljs-title,
+.hljs-built_in,
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #9ad7ff;
+}
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params {
+  color: #dbeaf5;
+}
+.hljs-meta,
+.hljs-deletion {
+  color: #c98a8a;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 600;
+}
+
 .grid-bg {
   background-image:
     linear-gradient(rgba(95, 180, 220, 0.07) 1px, transparent 1px),

@@ -157,6 +157,7 @@ const en = {
       groups: {
         getStarted: "Get started",
         concepts: "Concepts",
+        guides: "Guides",
         skills: "Skills",
         reference: "Reference",
       },

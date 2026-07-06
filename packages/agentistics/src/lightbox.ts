@@ -1,16 +1,11 @@
-// PDF lightbox — fullscreen carousel with keyboard navigation
+// Fullscreen lightbox — reused by the PDF carousel and the release section's images
+
+interface LightboxEntry { src: string; alt: string; }
 
 export function initLightbox(): void {
-  const pdfItems = document.querySelectorAll<HTMLElement>(".preview-pdf-item");
-  if (!pdfItems.length) return;
-
-  const images = Array.from(pdfItems).map((item) => {
-    const img = item.querySelector<HTMLImageElement>("img")!;
-    return { src: img.src, alt: img.alt };
-  });
-
-  let current = 0;
   let overlay: HTMLElement | null = null;
+  let images: LightboxEntry[] = [];
+  let current = 0;
 
   function buildOverlay(): HTMLElement {
     const el = document.createElement("div");
@@ -63,7 +58,8 @@ export function initLightbox(): void {
     counter.textContent = `${current + 1} / ${images.length}`;
   }
 
-  function open(index: number): void {
+  function open(group: LightboxEntry[], index: number): void {
+    images = group;
     current = ((index % images.length) + images.length) % images.length;
     if (!overlay) overlay = buildOverlay();
     updateImage();
@@ -90,9 +86,19 @@ export function initLightbox(): void {
     else if (e.key === "Escape") close();
   });
 
-  // Wire click on each PDF item
-  pdfItems.forEach((item, i) => {
-    item.style.cursor = "zoom-in";
-    item.addEventListener("click", () => open(i));
-  });
+  // Wire a group of elements (each containing one <img>) as one independent carousel
+  function wireGroup(items: NodeListOf<HTMLElement>): void {
+    if (!items.length) return;
+    const group = Array.from(items).map((item) => {
+      const img = item.tagName === "IMG" ? (item as HTMLImageElement) : item.querySelector<HTMLImageElement>("img")!;
+      return { src: img.src, alt: img.alt };
+    });
+    items.forEach((item, i) => {
+      item.style.cursor = "zoom-in";
+      item.addEventListener("click", () => open(group, i));
+    });
+  }
+
+  wireGroup(document.querySelectorAll<HTMLElement>(".preview-pdf-item"));
+  wireGroup(document.querySelectorAll<HTMLElement>(".release-frame img"));
 }

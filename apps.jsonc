@@ -8,6 +8,14 @@
     "cloudflareUse": true
   },
   {
+    "name": "autoducks-docs",
+    "folderName": "autoducks-docs",
+    "rootDomain": false,
+    "subdomain": "autoducks",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
+  },
+  {
     "name": "duckflux-docs",
     "folderName": "duckflux-docs",
     "rootDomain": false,
@@ -36,6 +44,14 @@
     "folderName": "embark-site",
     "rootDomain": false,
     "subdomain": "embark",
+    "appDeployment": "cloudflare-pages",
+    "cloudflareUse": true
+  },
+  {
+    "name": "pdd-site",
+    "folderName": "pdd-site",
+    "rootDomain": false,
+    "subdomain": "pdd",
     "appDeployment": "cloudflare-pages",
     "cloudflareUse": true
   }

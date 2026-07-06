@@ -1,19 +1,19 @@
-name: agentistics
+name: pdd-site
 
 on:
   push:
     branches: [main]
     paths:
-      - "packages/agentistics/**"
+      - "packages/pdd-site/**"
 
   workflow_dispatch:
 
 env:
-  SUBDOMAIN: agentistics
+  SUBDOMAIN: pdd
   ROOT_DOMAIN: false
   DOMAIN_SETUP: true
   DOMAIN: ${{ secrets.DOMAIN }}
-  PACKAGE_NAME: agentistics
+  PACKAGE_NAME: pdd-site
 
 jobs:
   build:
@@ -26,24 +26,18 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      # EMBARK:CUSTOM
-      # --ignore-scripts skips the root preinstall (git submodule update)
-      # which requires SSH access to private submodule repos not needed here
-      - name: Install dependencies
-        run: bun install --ignore-scripts
-      # END EMBARK:CUSTOM
 
       - name: Install dependencies
         run: bun install --ignore-scripts
 
       - name: Build
-        run: bun run --cwd packages/agentistics build
+        run: bun run --cwd packages/pdd-site build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-agentistics
-          path: packages/agentistics/dist
+          name: build-pdd-site
+          path: packages/pdd-site/dist
           retention-days: 1
 
   provision:
@@ -106,8 +100,8 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-agentistics
-          path: packages/agentistics/dist
+          name: build-pdd-site
+          path: packages/pdd-site/dist
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
@@ -115,7 +109,7 @@ jobs:
           apiToken: ${{ secrets.CF_TOKEN_PAGES }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages deploy dist --project-name=${{ needs.provision.outputs.project_name }} --commit-dirty=true
-          workingDirectory: packages/agentistics
+          workingDirectory: packages/pdd-site
 
   dns:
     if: true

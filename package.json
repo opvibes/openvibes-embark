@@ -16,8 +16,10 @@
     "duckflux-site": "bun run --filter @embark/duckflux-site dev",
     "duckflux-editor": "bun run --filter @embark/duckflux-editor dev",
     "duckflux-docs": "bun run --filter @embark/duckflux-docs dev",
+    "autoducks-docs": "bun run --filter @embark/autoducks-docs dev",
     "embark-site": "bun run --filter @embark/embark-site dev",
-    "agentistics": "bun run --filter @embark/agentistics dev"
+    "agentistics": "bun run --filter @embark/agentistics dev",
+    "pdd-site": "bun run --filter @embark/pdd-site dev"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",

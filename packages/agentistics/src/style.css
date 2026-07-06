@@ -567,52 +567,43 @@ section { padding: 6rem 0; }
 /* ── Terminal showcase (tabbed) ─────────────── */
 .term-showcase { width: 100%; }
 
-.term-tabs-wrap { /* no margin-bottom — tabs connect flush to frame */ }
+.term-tabs-wrap { display: flex; justify-content: center; margin-bottom: 1.5rem; }
 .term-tabs {
-  display: flex; flex-wrap: wrap; gap: 3px;
-  padding: 0; align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
 }
 .term-tab {
-  padding: 0.5rem 1.1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--term-border);
-  border-bottom: none;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  padding: 0.65rem 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
   cursor: pointer;
-  font-family: var(--font-mono); font-size: 0.74rem;
-  color: var(--text-dim);
-  transition: background 0.18s, color 0.18s, border-color 0.18s;
-  white-space: nowrap; flex-shrink: 0;
-  position: relative;
-  /* push down so active tab covers the frame's top border */
-  margin-bottom: -1px;
+  font-family: var(--font-mono); font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .term-tab .cmd-dollar { color: var(--text-ghost); margin-right: 0.25rem; }
-.term-tab .cmd-name   { color: var(--text-dim); }
-.term-tab .cmd-arg    { color: var(--text-dim); }
-.term-tab:hover {
-  background: rgba(255,255,255,0.06);
-  color: var(--text-muted);
-  border-color: rgba(255,255,255,0.14);
-}
-.term-tab:hover .cmd-name { color: var(--text-muted); }
-.term-tab:hover .cmd-arg  { color: var(--text-muted); }
-.term-tab.active {
-  background: var(--term-bg);
-  border-color: var(--term-border);
-  /* bottom border same color as terminal bg — hides frame's top border */
-  border-bottom: 1px solid var(--term-bg);
-  color: var(--text);
-  z-index: 1;
-}
-.term-tab.active .cmd-dollar { color: var(--text-dim); }
-.term-tab.active .cmd-name   { color: var(--orange-light); }
-.term-tab.active .cmd-arg    { color: var(--blue); }
+.term-tab .cmd-name   { color: rgba(255, 255, 255, 0.55); }
+.term-tab .cmd-arg    { color: rgba(255, 255, 255, 0.55); }
+.term-tab:hover { color: rgba(255, 255, 255, 0.85); }
+.term-tab:hover .cmd-name,
+.term-tab:hover .cmd-arg { color: rgba(255, 255, 255, 0.85); }
+.term-tab.active { background: #d97706; }
+.term-tab.active .cmd-dollar { color: rgba(10, 10, 15, 0.6); }
+.term-tab.active .cmd-name,
+.term-tab.active .cmd-arg { color: #0a0a0f; }
 
 .term-frame {
   background: var(--term-bg);
   border: 1px solid var(--term-border);
-  border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
   position: relative; z-index: 0;

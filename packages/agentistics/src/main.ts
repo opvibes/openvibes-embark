@@ -1,7 +1,7 @@
 import "./style.css";
 import { initIcons } from "./icons";
 import { initHeroCanvas } from "./hero";
-import { initHeroTerm, initTuiTermCard, initWatchTerm, initServerTerm, initTerminalTabs } from "./terminal";
+import { initTerminalTabs } from "./terminal";
 import { initArchCanvas } from "./arch";
 import { initNav } from "./nav";
 import { initReveal } from "./reveal";
@@ -10,6 +10,7 @@ import { initI18n } from "./i18n";
 import { initPreview } from "./preview";
 import { initFeatures } from "./features";
 import { initLightbox } from "./lightbox";
+import { initRelease } from "./release";
 
 function boot() {
   // Fade in body
@@ -27,9 +28,6 @@ function boot() {
 
   // Hero background particle stream
   initHeroCanvas();
-
-  // Hero terminal (TUI) — always visible
-  initHeroTerm();
 
   // Hero stat counters
   initHeroCounters();
@@ -49,12 +47,8 @@ function boot() {
   // Terminal tab switching (immediate — tabs exist in DOM)
   initTerminalTabs();
 
-  // Terminal cards — lazy init when section enters viewport
-  lazyInit("terminals", () => {
-    initTuiTermCard();
-    initWatchTerm();
-    initServerTerm();
-  });
+  // Release section tabs — lazy init when section enters viewport
+  lazyInit("release", () => initRelease());
 
   // Arch 3D neural net
   lazyInit("arch", () => initArchCanvas());

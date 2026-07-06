@@ -1,12 +1,12 @@
 // Dashboard preview — tab 0: demo GIF, tabs 1-6: screenshots
 
 const SCREENSHOT_SRCS = [
-  "/screenshots/section1.png",
-  "/screenshots/section2.png",
-  "/screenshots/section3.png",
-  "/screenshots/section4.png",
-  "/screenshots/section5.png",
-  "/screenshots/section6.png",
+  "/screenshots/section1.png?v=2",
+  "/screenshots/section2.png?v=2",
+  "/screenshots/section3.png?v=2",
+  "/screenshots/section4.png?v=2",
+  "/screenshots/section5.png?v=2",
+  "/screenshots/section6.png?v=2",
 ];
 
 export function initPreview(): void {

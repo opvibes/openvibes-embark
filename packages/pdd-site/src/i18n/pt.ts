@@ -157,6 +157,7 @@ const pt = {
       groups: {
         getStarted: "Primeiros passos",
         concepts: "Conceitos",
+        guides: "Guias",
         skills: "Skills",
         reference: "Referência",
       },

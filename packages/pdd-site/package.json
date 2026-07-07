@@ -12,20 +12,16 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@react-three/fiber": "^9.6.1",
     "buffer": "^6.0.3",
-    "framer-motion": "^12.40.0",
     "gray-matter": "^4.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.13.1",
     "rehype-highlight": "^7.0.2",
-    "remark-gfm": "^4.0.1",
-    "three": "^0.184.0"
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@types/three": "^0.184.1",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.15",

@@ -101,6 +101,7 @@ const en = {
   },
   coverageClose: {
     title: "Parity coverage, tracked to the last percent.",
+    pickAgent: "Pick your agent — copy the install command.",
     cta: "Install PDD",
     claudeLabel: "Claude Code",
     otherAgentsLabel: "Codex · Cursor · Copilot · Gemini",

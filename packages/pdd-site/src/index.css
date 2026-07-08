@@ -30,6 +30,40 @@ body {
   max-width: 100vw;
 }
 
+/* Soften the site's sharp corners. Buttons, form controls, and code blocks get a
+   default radius site-wide; components that must stay square opt out with rounded-none. */
+@layer base {
+  button,
+  input,
+  textarea,
+  select {
+    border-radius: 0.5rem;
+  }
+  pre {
+    border-radius: 0.625rem;
+  }
+}
+
+/* Round every bordered card/panel site-wide by matching its border-color class.
+   Placed in `components` so any explicit `rounded-*` (or `rounded-none`) utility on an
+   element still wins. Attribute-substring selectors avoid escaping Tailwind's arbitrary
+   values (e.g. border-[#808080]) and stay robust. */
+@layer components {
+  [class*="border-accent"],
+  [class*="border-[#808080]"],
+  [class*="border-[#404040]"],
+  [class*="border-[#4a7690]"] {
+    border-radius: 0.75rem;
+  }
+  /* Single-axis borders are dividers / section separators, not cards — keep them square.
+     (Listed after the rule above so it wins; explicit rounded-* utilities still win over both.) */
+  [class*="border-t"],
+  [class*="border-b"],
+  [class*="border-y"] {
+    border-radius: 0;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;

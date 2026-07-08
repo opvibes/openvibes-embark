@@ -104,7 +104,7 @@ export default function Hero() {
 
         <a
           href="#pipeline"
-          className="relative inline-block bg-accent text-[#06131f] font-mono font-semibold text-sm px-7 py-3.5 shadow-[0_0_40px_-6px_#5eb8ff] hover:shadow-[0_0_56px_-6px_#5eb8ff] transition-shadow"
+          className="relative inline-block bg-accent text-[#06131f] font-mono font-semibold text-sm px-7 py-3.5 rounded-lg shadow-[0_0_40px_-6px_#5eb8ff] hover:shadow-[0_0_56px_-6px_#5eb8ff] transition-shadow"
         >
           {t.hero.cta} ↓
         </a>

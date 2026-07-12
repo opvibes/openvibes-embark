@@ -12,5 +12,5 @@
 	fetchRecurseSubmodules = true
 [submodule "packages/autoducks-docs"]
 	path = packages/autoducks-docs
-	url = git@github.com:deepducks/autoducks.git
+	url = git@github.com:deepducks/autoducks-docs.git
 	fetchRecurseSubmodules = true
